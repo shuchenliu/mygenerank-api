@@ -14,12 +14,8 @@ class User(models.Model):
     def __str__(self):
         return '<TwentyThreeAndMe: User: %s>' % self.email
 
-    def from_json(data):
-        user = User()
-        user.user_id = data['id']
-        user.email = data['email']
-        return user
-
+    def from_json(self, data):
+        pass
 
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -38,17 +34,9 @@ class Profile(models.Model):
     def __str__(self):
         return '<TwentyThreeAndMe: Profile: %s>' % self.user.email
 
-    def from_json(data):
-        user_id = data['id']
-        profiles = []
-        for profile_data in data['profiles']:
-            profile = Profile()
-            profile.profile_id = profile_data['id']
+    def from_json(self, data):
+        pass
 
-
-            profile.user = User.objects.filter(user_id=user_id)[0]
-            profiles.append(profile)
-        return profiles
 
 class Genome(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -66,3 +54,6 @@ class Genome(models.Model):
 
     def __str__(self):
         return '<TwentyThreeAndMe: Genome: %s>' % self.profile.id
+
+    def from_json(self, data):
+        pass
