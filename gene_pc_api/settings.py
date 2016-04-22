@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
-    'gene_pc_api.gene_pc_api'
+    'gene_pc_api.gene_pc_api',
+    'gene_pc_api.twentythreeandme'
 ]
 
 REST_FRAMEWORK = {
@@ -89,6 +91,8 @@ DATABASES = {
 }
 
 
+AUTH_USER_MODEL = 'gene_pc_api.User'
+
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -126,3 +130,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#CELERY_TASK_SERIALIZER = 'json'
+
+#try:
+#    BROKER_URL = os.environ['BROKER_URL']
+#except KeyError:
+#    CELERY_ALWAYS_EAGER = True

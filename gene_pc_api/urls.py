@@ -16,13 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from rest_framework import routers
-from gene_pc_api.gene_pc_api import views
+from gene_pc_api.gene_pc_api import views as gpc_views
+from gene_pc_api.twentythreeandme import views as ttm_views
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+api_router = routers.DefaultRouter()
+api_router.register(r'users', gpc_views.UserViewSet)
+api_router.register(r'phenotypes', gpc_views.PhenotypesViewSet)
+api_router.register(r'risk-scores', gpc_views.RiskScoresViewSet)
+
+ttm_router = routers.DefaultRouter()
+ttm_router.register(r'users', ttm_views.UserViewSet)
+ttm_router.register(r'profiles', ttm_views.ProfileViewSet)
+ttm_router.register(r'genomes', ttm_views.GenomeViewSet)
+
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^api/', include(api_router.urls, namespace="api",
+        app_name='gene_pc_api')),
+    url(r'^twentythreeandme/', include(ttm_router.urls,
+        namespace="twentythreeandme", app_name='twentythreeandme')),
     #url(r'^admin/', admin.site.urls),
+
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
