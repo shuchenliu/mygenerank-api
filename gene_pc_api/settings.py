@@ -131,9 +131,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#CELERY_TASK_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
 
-#try:
-#    BROKER_URL = os.environ['BROKER_URL']
-#except KeyError:
-#    CELERY_ALWAYS_EAGER = True
+try:
+    BROKER_URL = os.environ['BROKER_URL']
+except KeyError:
+    CELERY_ALWAYS_EAGER = True

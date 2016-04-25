@@ -1,3 +1,3 @@
-#from . import celery
+from . import celery
 
-#celery  # bootstrap Celery
+celery  # bootstrap Celery

@@ -17,9 +17,11 @@ class User(AbstractUser):
     profile_id = models.CharField(max_length=100, blank=True)
     auth_code = models.CharField(max_length=100, blank=True)
 
+    @property
     def is_complete(self):
         """ Returns true if a user model is ready to be imported. """
-        return self.profile_id and self.auth_code and self.user_id
+        return (len(self.profile_id) > 0 and len(self.auth_code) > 0 and
+            len(self.user_id) > 0)
 
     def __str__(self):
         return '<API: User: %s' % self.email
@@ -65,11 +67,11 @@ def check_should_import(sender, instance, **kwargs):
     If so: kick off the import task.
     """
     try:
-        if instance.is_complete():
+        if instance.is_complete:
             profile = Profile.objects.filter(profile_id=instance.profile_id)
             if len(profile) == 0:
                 # TODO Integrate Celery
-                genome_import_task(instance.user_id, instance.profile_id,
+                genome_import_task.delay(instance.user_id, instance.profile_id,
                     instance.auth_code)
     except (AttributeError, IndexError):
         pass
