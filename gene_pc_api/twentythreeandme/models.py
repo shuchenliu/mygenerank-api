@@ -15,7 +15,13 @@ class User(models.Model):
         return '<TwentyThreeAndMe: User: %s>' % self.email
 
     def from_json(self, data):
-        pass
+        uobj = User()
+        uobj.user_id = data
+        uobj.email = data
+
+        return uobj
+
+
 
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

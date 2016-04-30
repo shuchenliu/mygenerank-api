@@ -27,36 +27,41 @@ class User(AbstractUser):
         return '<API: User: %s' % self.email
 
 
-class Phenotypes(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='phenotypes',
-        on_delete=models.CASCADE, blank=True)
+class CommomnInfo(models.Model):
 
-    age = models.IntegerField()
-    sex = models.CharField(max_length=100)
-    smoking_status = models.BooleanField()
-    total_cholesterol = models.DecimalField(decimal_places=2, max_digits=5)
-    hdl_cholesterol = models.DecimalField(decimal_places=2, max_digits=5)
-    systolic_blood_pressure = models.DecimalField(decimal_places=2, max_digits=5)
-    taking_blood_pressure_medication = models.BooleanField()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, blank=True)
+    value = models.CharField(max_length=100, blank=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    DATA_TYPES = (
+        ('str', 'string'),
+        ('float', 'floating point nunber'),
+        ('int', 'integer'),
+        ('bool', 'boolean')
+    )
+    datatype = models.CharField( max_length=10, blank=True, choices = DATA_TYPES)
+
+    class Meta:
+        abstract = True
+
+class Phenotypes(CommomnInfo):
+    user = models.ForeignKey(User, related_name='phenotypes',
+        on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
         return '<API: Phenotypes: %s' % self.user.email
 
 
-class RiskScores(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='risk_scores',
-        on_delete=models.CASCADE, blank=True)
-
-    framingham_score = models.DecimalField(decimal_places=2, max_digits=5)
+class RiskScores(CommomnInfo):
+    user = models.ForeignKey(User, related_name='risk_scores',
+        on_delete=models.PROTECT, blank=True)
 
     def __str__(self):
         try:
             return '<API: RiskScores: %s' % self.user.email
         except:
             return ''
-
 
 # Signals
 
@@ -70,8 +75,9 @@ def check_should_import(sender, instance, **kwargs):
         if instance.is_complete:
             profile = Profile.objects.filter(profile_id=instance.profile_id)
             if len(profile) == 0:
+                pass
                 # TODO Integrate Celery
-                genome_import_task.delay(instance.user_id, instance.profile_id,
-                    instance.auth_code)
+                #genome_import_task.delay(instance.user_id, instance.profile_id,
+                #    instance.auth_code)
     except (AttributeError, IndexError):
         pass
