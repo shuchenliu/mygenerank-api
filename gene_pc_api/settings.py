@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'gene_pc_api.gene_pc_api',
-    'gene_pc_api.twentythreeandme'
+    'gene_pc_api.twentythreeandme',
+    'debug_toolbar'
 ]
 
 REST_FRAMEWORK = {

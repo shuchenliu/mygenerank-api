@@ -5,13 +5,13 @@ from .models import Phenotypes, User, RiskScores
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     phenotypes = serializers.HyperlinkedRelatedField(
             view_name='api:phenotypes-detail',
-            many=False,
+            many=True,
             read_only=True
         )
 
     risk_scores = serializers.HyperlinkedRelatedField(
             view_name='api:riskscores-detail',
-            many=False,
+            many=True,
             read_only=True
         )
 
@@ -32,9 +32,7 @@ class PhenotypesSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Phenotypes
-        fields = ('url', 'user', 'age', 'sex', 'smoking_status',
-            'total_cholesterol', 'hdl_cholesterol', 'systolic_blood_pressure',
-            'taking_blood_pressure_medication')
+        fields = ('user', 'name', 'value', 'description', 'datatype')
         extra_kwargs = {'url': {'view_name': 'api:phenotypes-detail'}}
 
 
@@ -47,5 +45,5 @@ class RiskScoresSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RiskScores
-        fields = ('url', 'user', 'framingham_score')
+        fields = ('user', 'name', 'value', 'description', 'datatype')
         extra_kwargs = {'url': {'view_name': 'api:riskscores-detail'}}
