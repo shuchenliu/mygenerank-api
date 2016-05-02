@@ -17,6 +17,9 @@ class User(AbstractUser):
     profile_id = models.CharField(max_length=100, blank=True)
     auth_code = models.CharField(max_length=100, blank=True)
 
+    class Meta:
+        unique_together = ("user_id", "profile_id")
+
     @property
     def is_complete(self):
         """ Returns true if a user model is ready to be imported. """
@@ -50,18 +53,35 @@ class Phenotypes(CommomnInfo):
         on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        return '<API: Phenotypes: %s' % self.user.email
+        return '<API: Phenotype: %s %s' % (self.user.email, self.name)
 
 
 class RiskScores(CommomnInfo):
     user = models.ForeignKey(User, related_name='risk_scores',
         on_delete=models.PROTECT, blank=True)
+    calculated = models.BooleanField(default = False)
 
     def __str__(self):
         try:
-            return '<API: RiskScores: %s' % self.user.email
+            return '<API: RiskScore: %s %s' % (self.user.email, self.name)
         except:
             return ''
+
+
+class Activities(models.Model):
+    user = models.ForeignKey(User, related_name='activities',
+        on_delete=models.CASCADE, blank=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, blank=True)
+    subtitle = models.CharField(max_length=100, blank=True)
+    complete = models.BooleanField(default = False)
+
+    def __str__(self):
+        try:
+            return '<API: Activity: %s %s' % (self.user.email, self.name)
+        except:
+            return ''
+
 
 # Signals
 
