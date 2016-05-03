@@ -23,6 +23,8 @@ api_router = routers.DefaultRouter()
 api_router.register(r'users', gpc_views.UserViewSet)
 api_router.register(r'phenotypes', gpc_views.PhenotypesViewSet)
 api_router.register(r'risk-scores', gpc_views.RiskScoresViewSet)
+api_router.register(r'activities', gpc_views.ActivitiesViewSet)
+
 
 ttm_router = routers.DefaultRouter()
 ttm_router.register(r'users', ttm_views.UserViewSet)
