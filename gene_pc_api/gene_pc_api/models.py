@@ -10,12 +10,16 @@ from gene_pc_api.twentythreeandme.tasks import genome_import_task
 
 
 class User(AbstractUser):
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # 23andMe API keys
-    user_id = models.CharField(max_length=100, blank=True)
-    profile_id = models.CharField(max_length=100, blank=True)
-    auth_code = models.CharField(max_length=100, blank=True)
+    user_id = models.CharField(max_length=100, blank=True, editable = False)
+    profile_id = models.CharField(max_length=100, blank=True, editable = False)
+    auth_code = models.CharField(max_length=100, blank=True, editable = False)
+    #email = models.EmailField(editable=False)
+    AbstractUser._meta.get_field('email').editable = False
+
 
     class Meta:
         unique_together = ("user_id", "profile_id")
