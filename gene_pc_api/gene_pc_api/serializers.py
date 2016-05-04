@@ -24,7 +24,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'phenotypes', 'risk_scores',
+        fields = ('url', 'email', 'phenotypes', 'risk_scores',
             'profile_id', 'auth_code', 'user_id', 'activities')
         write_only_fields = ('auth_code',)
         extra_kwargs = {'url': {'view_name': 'api:user-detail'}}
