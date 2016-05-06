@@ -5,30 +5,22 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_save
 
-from gene_pc_api.twentythreeandme.models import Profile
-from gene_pc_api.twentythreeandme.tasks import genome_import_task
-
-
 class User(AbstractUser):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    # 23andMe API keys
-    user_id = models.CharField(max_length=100, blank=True, editable = False)
-    profile_id = models.CharField(max_length=100, blank=True, editable = False)
-    auth_code = models.CharField(max_length=100, blank=True, editable = False)
-    #email = models.EmailField(editable=False)
     AbstractUser._meta.get_field('email').editable = False
-
-
-    class Meta:
-        unique_together = ("user_id", "profile_id")
 
     @property
     def is_complete(self):
         """ Returns true if a user model is ready to be imported. """
         return (len(self.profile_id) > 0 and len(self.auth_code) > 0 and
             len(self.user_id) > 0)
+
+    def new_user(self,email):
+        uobj = User()
+        uobj.email = email
+        uobj.username = uobj.id
+        return uobj
 
     def __str__(self):
         return '<API: User: %s' % self.email
@@ -94,7 +86,7 @@ class Activities(models.Model):
 def check_should_import(sender, instance, **kwargs):
     """ After a user is saved, check if it is complete
     If so: kick off the import task.
-    """
+
     try:
         if instance.is_complete:
             profile = Profile.objects.filter(profile_id=instance.profile_id)
@@ -105,3 +97,5 @@ def check_should_import(sender, instance, **kwargs):
                 #    instance.auth_code)
     except (AttributeError, IndexError):
         pass
+    """
+    pass

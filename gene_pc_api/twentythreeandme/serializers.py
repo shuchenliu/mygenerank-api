@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'user_id', 'email', 'profiles')
+        fields = ('url', 'user_id', 'email', 'profiles', 'token')
         extra_kwargs = {'url': {'view_name': 'twentythreeandme:user-detail'}}
 
 
@@ -40,5 +40,3 @@ class GenomeSerializer(serializers.HyperlinkedModelSerializer):
         model = Genome
         fields = ('url', 'profile', 'genome_file_url')
         extra_kwargs = {'url': {'view_name': 'twentythreeandme:genome-detail'}}
-
-
