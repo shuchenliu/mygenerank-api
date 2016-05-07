@@ -4,6 +4,7 @@ from .models import Genome, Profile, User
 from gene_pc_api.gene_pc_api.models import User as AppUser
 from .api_client import get
 
+import logging
 
 def twentythreeandme_import_task(user_info, token):
     """ Given a token and a user info JSON object this will

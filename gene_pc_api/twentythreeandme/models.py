@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.core.files.storage import FileSystemStorage
-
+#import logging
 
 
 class User(models.Model):
@@ -30,7 +30,6 @@ class User(models.Model):
         return uobj
 
 
-
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -49,6 +48,7 @@ class Profile(models.Model):
         return '<TwentyThreeAndMe: Profile: %s>' % self.user.email
 
     def from_json(self, data, uobj):
+
         pobj = Profile()
         pobj.genotyped = profile_data['genotyped']
         pobj.profile_id = profile_data['id']
