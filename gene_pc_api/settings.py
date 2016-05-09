@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -113,6 +113,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# LOGGING = {
+#     'handlers': {
+#         'console':{
+#             'level':'INFO',
+#             'class':'logging.StreamHandler',
+#             'stream': sys.stdout
+#         }
+#
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -139,3 +149,4 @@ try:
     BROKER_URL = os.environ['BROKER_URL']
 except KeyError:
     CELERY_ALWAYS_EAGER = True
+    CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
