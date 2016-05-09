@@ -16,7 +16,8 @@ class User(AbstractUser):
         return (len(self.profile_id) > 0 and len(self.auth_code) > 0 and
             len(self.user_id) > 0)
 
-    def new_user(self,email):
+    @staticmethod
+    def new_user(email):
         uobj = User()
         uobj.email = email
         uobj.username = uobj.id

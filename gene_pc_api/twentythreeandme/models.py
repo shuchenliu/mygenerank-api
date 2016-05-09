@@ -21,7 +21,8 @@ class User(models.Model):
     def __str__(self):
         return '<TwentyThreeAndMe: User: %s>' % self.email
 
-    def from_json(self, data, token):
+    @staticmethod
+    def from_json(data, token):
         uobj = User()
         uobj.user_id = data['id']
         uobj.email = data['email']
@@ -47,13 +48,15 @@ class Profile(models.Model):
     def __str__(self):
         return '<TwentyThreeAndMe: Profile: %s>' % self.user.email
 
-    def from_json(self, data, uobj):
 
-        pobj = Profile()
-        pobj.genotyped = profile_data['genotyped']
-        pobj.profile_id = profile_data['id']
-        pobj.user = uobj
+    @staticmethod
+    def from_json(profile_data, user):
 
+        pobj = Profile(
+            user = user,
+            genotyped = profile_data['genotyped'],
+            profile_id = profile_data['id']
+        )
         return pobj
 
 class Genome(models.Model):
