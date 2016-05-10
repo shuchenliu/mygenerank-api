@@ -19,6 +19,7 @@ from rest_framework import routers
 from gene_pc_api.gene_pc_api import views as gpc_views
 from gene_pc_api.twentythreeandme import views as ttm_views
 
+
 api_router = routers.DefaultRouter()
 api_router.register(r'users', gpc_views.UserViewSet)
 api_router.register(r'phenotypes', gpc_views.PhenotypesViewSet)
