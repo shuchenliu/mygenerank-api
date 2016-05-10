@@ -9,11 +9,13 @@ from gene_pc_api.twentythreeandme.api_client import *
 from django.core.exceptions import ObjectDoesNotExist
 from gene_pc_api.twentythreeandme.tasks import twentythreeandme_import_task
 
-from django.http import HttpResponse
+from django.shortcuts import render
 #import logging
+
 
 def import23andme(request):
 
+    auth_template = 'authentication_response.html'
     code = request.GET.get('code', '')
     try:
         token = get_token(code)
@@ -27,13 +29,17 @@ def import23andme(request):
         existing_user_ttm = ttm_models.User.objects.get(user_id__exact=user_id)
         gpc_id = existing_user_ttm.apiuserid
         existing_user_gpc = gpc_models.User.objects.get(id__exact=gpc_id)
-        return HttpResponse(existing_user_gpc.id)
+        response = render(request, auth_template, {})
+        response['X-User-Token'] = existing_user_gpc.id
+        return response
 
     except ObjectDoesNotExist:
         """ Create a new user and start the import tasks
         if the user doesn't exist """
         new_user =  twentythreeandme_import_task(user_info, token)
-        return HttpResponse(new_user.id)
+        response = render(request, auth_template, {})
+        response['X-User-Token'] = new_user.id
+        return response
 
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
