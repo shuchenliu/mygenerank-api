@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Genome, Profile, User
+from .models import Genotype, Profile, User
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,21 +22,26 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
             many=False,
             queryset=User.objects.all()
         )
+    genotype = serializers.HyperlinkedRelatedField(
+            view_name='twentythreeandme:genotype-detail',
+            many=False,
+            queryset=Genotype.objects.all()
+        )
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'profile_id', 'genotyped', 'genome')
+        fields = ('url', 'user', 'profile_id', 'genotyped', 'genotype')
         extra_kwargs = {'url': {'view_name': 'twentythreeandme:profile-detail'}}
 
 
-class GenomeSerializer(serializers.HyperlinkedModelSerializer):
+class GenotypeSerializer(serializers.HyperlinkedModelSerializer):
     profile = serializers.HyperlinkedRelatedField(
-            view_name='twentythreeandme:genome-detail',
+            view_name='twentythreeandme:profile-detail',
             many=False,
             queryset=Profile.objects.all()
         )
 
     class Meta:
-        model = Genome
-        fields = ('url', 'profile', 'genome_file_url')
-        extra_kwargs = {'url': {'view_name': 'twentythreeandme:genome-detail'}}
+        model = Genotype
+        fields = ('url', 'profile', 'genotype_file', 'converted_file')
+        extra_kwargs = {'url': {'view_name': 'twentythreeandme:genotype-detail'}}

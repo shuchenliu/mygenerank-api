@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -82,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gene_pc_api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -113,17 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# LOGGING = {
-#     'handlers': {
-#         'console':{
-#             'level':'INFO',
-#             'class':'logging.StreamHandler',
-#             'stream': sys.stdout
-#         }
-#
-#     }
-# }
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -145,6 +132,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+# File storage options
+
+DATA_STORAGE = os.path.join(BASE_DIR, "data")
+TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
+TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
+
+# Celery Settings
 
 CELERY_TASK_SERIALIZER = 'json'
 

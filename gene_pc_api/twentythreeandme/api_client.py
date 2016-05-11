@@ -2,7 +2,7 @@
 
 import json
 import requests
-from .models import User, Genome
+from .models import User, Genotype
 
 def get(url, token):
     """ Given a resource URL and token, return
@@ -15,21 +15,21 @@ def get(url, token):
     data = json.loads(response.text)
     return data
 
-
 def get_user_info(token):
-
+    """ Given a bearer token this function will fetch the
+    user json data from 23 and me."""
     url = User.resource_url
-    #url = 'https://api.23andme.com/1/demo/user/'
     response = get(url,token)
     return response
 
-def get_genome_data(token,profile_id):
-
-    url = Genome.resource_url.format(profile_id=profile_id)
-    #url = 'https://api.23andme.com/1/demo/genomes/{profile_id}/'.format(profile_id=profile_id)
+def get_genotype_data(token,profile):
+    """ Given a bearer token and a profile id this function will
+    fetch the genotype json data from 23 and me."""
+    profile_id = profile.profile_id
+    url = Genotype.resource_url.format(profile_id=profile_id)
     response = get(url,token)
     return response
-    #return model.from_json(json.loads(response.text))
+
 
 def get_token(auth_code):
     """ Given an authentication code this function should
@@ -49,5 +49,3 @@ def get_token(auth_code):
     data = json.loads(response.text)
     token = data['access_token']
     return token
-
-    #return "e0381f38c43ca92e0dba285374bb7457"
