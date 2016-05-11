@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
-from gene_pc_api.twentythreeandme.models import Profile, User, Genome
+from gene_pc_api.twentythreeandme.models import Profile, User, Genotype
 from gene_pc_api.twentythreeandme.serializers import UserSerializer,\
-    ProfileSerializer, GenomeSerializer
+    ProfileSerializer, GenotypeSerializer
 
 
 
@@ -16,6 +16,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
 
-class GenomeViewSet(viewsets.ModelViewSet):
-    queryset = Genome.objects.all().order_by('-profile')
-    serializer_class = GenomeSerializer
+class GenotypeViewSet(viewsets.ModelViewSet):
+    queryset = Genotype.objects.all().order_by('-profile')
+    serializer_class = GenotypeSerializer

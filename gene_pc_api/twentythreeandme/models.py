@@ -1,7 +1,8 @@
 import uuid
-
+from django.conf import settings
 from django.db import models
 from django.core.files.storage import FileSystemStorage
+from django.core.files.base import ContentFile
 #import logging
 
 
@@ -43,7 +44,7 @@ class Profile(models.Model):
     @property
     def has_imported(self):
         """ Whether or not a given user has been imported. """
-        return not self.profile_id and self.genome.genome_file_url
+        return not self.profile_id and self.genotype.genotype_file_url
 
     def __str__(self):
         return '<TwentyThreeAndMe: Profile: %s>' % self.user.email
@@ -51,30 +52,37 @@ class Profile(models.Model):
 
     @staticmethod
     def from_json(profile_data, user):
-
-        pobj = Profile(
+        profile = Profile(
             user = user,
             genotyped = profile_data['genotyped'],
             profile_id = profile_data['id']
         )
-        return pobj
+        return profile
 
-class Genome(models.Model):
+class Genotype(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE,
         blank=True)
 
-    fs = FileSystemStorage(location='/tmp/django_tmp/')
-    genome_file = models.FileField(storage=fs)
+    fs_raw = FileSystemStorage(location=settings.TTM_RAW_STORAGE)
+    fs_con = FileSystemStorage(location=settings.TTM_CONVERTED_STORAGE)
+    genotype_file = models.FileField(storage=fs_raw)
+    converted_file = models.FileField(storage=fs_con)
 
     resource_url = 'https://api.23andme.com/1/demo/genomes/{profile_id}/'
 
     @property
-    def genome_file_url(self):
-        return self.genome_file.url
+    def genotype_file_url(self):
+        return self.genotype_file.url
 
     def __str__(self):
-        return '<TwentyThreeAndMe: Genome: %s>' % self.profile.id
+        return '<TwentyThreeAndMe: Genotype: %s>' % self.profile.id
 
-    def from_json(self, data):
-        pass
+    @staticmethod
+    def from_json(data,profile):
+        genotype_data = data['genome']
+        genotype = Genotype()
+        genotype.profile = profile
+        genotype.genotype_file.save(name = str(profile.id)+'_genotype.raw',
+                    content = ContentFile(genotype_data) )
+        return genotype
