@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os, sys
 
+env = os.environ.get('ENVIRONMENT', 'dev').lower()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,8 +25,8 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if env == 'dev':
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -83,19 +85,14 @@ WSGI_APPLICATION = 'gene_pc_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-try:
-    env = os.environ['ENVIRONMENT'].lower()
-except KeyError:
-    env = 'dev'
-
 if env == 'test':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['DATABASE_NAME'],
-            'USER': os.environ['POSTGRES_USER'],
-            'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-            'HOST': os.environ['POSTGRES_HOST'],
+            'NAME': os.environ.get('DATABASE_NAME', None),
+            'USER': os.environ.get('POSTGRES_USER', None),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', None),
+            'HOST': os.environ.get('POSTGRES_HOST', None),
             'PORT': '5432',
         }
     }
