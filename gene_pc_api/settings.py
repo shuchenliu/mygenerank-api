@@ -25,8 +25,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
 
-if env == 'dev':
-    DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
