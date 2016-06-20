@@ -1,2 +1,4 @@
+.coverage
+*.sh
 __pycache__
 *.sqlite*

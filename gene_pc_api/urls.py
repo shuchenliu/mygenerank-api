@@ -15,16 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
-from rest_framework import routers
 from gene_pc_api.gene_pc_api import views as gpc_views
 from gene_pc_api.twentythreeandme import views as ttm_views
+from rest_framework.authtoken import views
+from rest_framework import routers
 
 
 api_router = routers.DefaultRouter()
 api_router.register(r'users', gpc_views.UserViewSet)
-api_router.register(r'phenotypes', gpc_views.PhenotypesViewSet)
-api_router.register(r'risk-scores', gpc_views.RiskScoresViewSet)
-api_router.register(r'activities', gpc_views.ActivitiesViewSet)
+api_router.register(r'activities', gpc_views.ActivityViewSet)
+api_router.register(r'conditions', gpc_views.ConditionViewSet)
+api_router.register(r'populations', gpc_views.PopulationViewSet)
+api_router.register(r'activity-answers', gpc_views.ActivityAnswerViewSet)
+api_router.register(r'activity-statuses', gpc_views.ActivityStatusViewSet)
+api_router.register(r'risk-scores', gpc_views.RiskScoreViewSet)
 
 
 ttm_router = routers.DefaultRouter()
@@ -34,12 +38,21 @@ ttm_router.register(r'genomes', ttm_views.GenotypeViewSet)
 
 
 urlpatterns = [
-    url(r'^api/', include(api_router.urls, namespace="api",
-        app_name='gene_pc_api')),
+    # Public API
+    url(r'^api/', include(
+            api_router.urls,
+            namespace="api",
+            app_name='gene_pc_api'
+        )
+    ),
+    url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^api/register/', gpc_views.CreateUserView.as_view()),
+    url(r'^api/import23andme/', gpc_views.import23andme),
+
+    # Internal API
     url(r'^twentythreeandme/', include(ttm_router.urls,
         namespace="twentythreeandme", app_name='twentythreeandme')),
-    #url(r'^admin/', admin.site.urls),
 
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-        url(r'^import23andme/', gpc_views.import23andme)
+    # Admin
+    url(r'^admin/', admin.site.urls),
 ]
