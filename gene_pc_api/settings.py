@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
 
+    "push_notifications",
+
     'gene_pc_api.gene_pc_api',
     'gene_pc_api.twentythreeandme',
     'debug_toolbar',
@@ -64,6 +66,11 @@ REST_FRAMEWORK = {
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
+}
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "GCM_API_KEY": os.environ.get('GCM_API_KEY', None),
+        "APNS_CERTIFICATE": os.environ.get('APNS_CERTIFICATE', None),
 }
 
 MIDDLEWARE_CLASSES = [
