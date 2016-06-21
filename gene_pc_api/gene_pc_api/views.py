@@ -1,8 +1,11 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework import viewsets, request, response, renderers
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, detail_route
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
@@ -28,6 +31,17 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = gpc_models.User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+
+    @detail_route(methods=['POST'], permission_classes=[IsAuthenticated])
+    def register(self, request, pk):
+        code = request.data.get('code', None)
+        try:
+            user = gpc_models.User.objects.get(id=pk, registration_code=code)
+            serializer = UserSerializer(user, context={'request': request})
+            return Response(serializer.data)
+        except ObjectDoesNotExist:
+            pass
+        return Response({'error': 'Invalid Registration Code'})
 
 
 class ActivityAnswerViewSet(viewsets.ModelViewSet):

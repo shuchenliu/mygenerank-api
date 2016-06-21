@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    registered = models.BooleanField(default=False, blank=False)
+    registration_code = models.UUIDField(default=uuid.uuid4)
 
     def __str__(self):
         return '<API: User: %s>' % self.email
