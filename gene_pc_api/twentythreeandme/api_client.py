@@ -41,7 +41,7 @@ def get_token(auth_code):
      'client_secret': '0e3863da484c3d167b5a4b65b663de9b',
      'grant_type': 'authorization_code',
      'code': auth_code,
-     'redirect_uri': 'http://localhost:5000/receive_code/',
+     'redirect_uri': 'http://localhost:8000/api/import23andme/',
      'scope': 'genomes basic names haplogroups ancestry family_tree analyses'
     }
 
