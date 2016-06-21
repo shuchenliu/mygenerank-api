@@ -13,7 +13,7 @@ class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     def __str__(self):
-        return '<API: User: %s' % self.email
+        return '<API: User: %s>' % self.email
 
 
 class Condition(models.Model):
@@ -52,7 +52,7 @@ class RiskScore(models.Model):
         unique_together = ('user', 'condition', 'population')
 
     def __str__(self):
-        return '<API: RiskScore: %s %s %s' % (self.user.email, self.condition,
+        return '<API: RiskScore: %s %s %s>' % (self.user.email, self.condition,
             self.population)
 
 
@@ -63,7 +63,7 @@ class Activity(models.Model):
     study_task_identifier = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return '<API: Activity: %s' % (self.name)
+        return '<API: Activity: %s>' % (self.name)
 
 
 class ActivityStatus(models.Model):
@@ -77,6 +77,10 @@ class ActivityStatus(models.Model):
     class Meta:
         unique_together = ('user', 'activity')
 
+    def __str__(self):
+        return '<API: ActivityStatus: %s %s>' % (self.user.email,
+            self.activity.study_task_identifier)
+
 
 class ActivityAnswer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -88,16 +92,26 @@ class ActivityAnswer(models.Model):
         on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        return '<API: ActivityAnswer: %s %s' % (self.user.email, self.question_identifier)
+        return '<API: ActivityAnswer: %s %s>' % (self.user.email, self.question_identifier)
 
 
 # Signals
 
 @receiver(post_save, sender=User)
 def create_related_models_for_user(sender, instance, created, **kwargs):
+    print('HI WORLD')
     if not created:
         return
     # New Empty Activity Statuses
     for activity in Activity.objects.all():
         status = ActivityStatus(user=instance, activity=activity)
+        status.save()
+
+
+@receiver(post_save, sender=Activity)
+def create_status_for__old_users(sender, instance, created, **kwargs):
+    if not created:
+        return
+    for user in User.objects.all():
+        status = ActivityStatus(user=user, activity=instance)
         status.save()
