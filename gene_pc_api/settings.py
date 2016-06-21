@@ -15,7 +15,7 @@ import os, sys
 env = os.environ.get('ENVIRONMENT', 'dev').lower()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -28,6 +28,8 @@ SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+ROOT_URLCONF = 'gene_pc_api.urls'
 
 # Application definition
 
@@ -47,9 +49,13 @@ INSTALLED_APPS = [
 
     'gene_pc_api.gene_pc_api',
     'gene_pc_api.twentythreeandme',
-    'debug_toolbar',
-    'django_nose'
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        'debug_toolbar',
+        'django_nose'
+    ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
@@ -83,8 +89,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-ROOT_URLCONF = 'gene_pc_api.urls'
 
 TEMPLATES = [
     {
