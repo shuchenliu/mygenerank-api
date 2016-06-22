@@ -10,9 +10,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'email', 'username')
-        write_only_fields = ('password',)
-        extra_kwargs = {'url': {'view_name': 'api:user-detail'}}
+        fields = ('url', 'username', 'password')
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'url': {'view_name': 'api:user-detail'}
+        }
+
+    def create(self, validated_data):
+            user = User(
+                email=validated_data['username'],
+                username=validated_data['username']
+            )
+            user.set_password(validated_data['password'])
+            user.save()
+            return user
 
 
 class PopulationSerializer(serializers.HyperlinkedModelSerializer):
