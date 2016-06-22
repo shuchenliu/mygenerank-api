@@ -9,7 +9,8 @@ from django.core.files.base import ContentFile
 class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    user_id = models.CharField(max_length=100, blank=True, editable = False)
+    user_id = models.CharField(max_length=100, blank=True, editable = False,
+                                unique = True)
     profile_id = models.CharField(max_length=100, blank=True, editable = False)
     token = models.CharField(max_length=100, blank=True,
                                  verbose_name = 'Bearer Token')
