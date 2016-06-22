@@ -178,6 +178,14 @@ DATA_STORAGE = os.path.join(BASE_DIR, "data")
 TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
 TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
 
+# Sending Email
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
+EMAIL_USE_TLS = True
+
 # Celery Settings
 
 CELERY_TASK_SERIALIZER = 'json'

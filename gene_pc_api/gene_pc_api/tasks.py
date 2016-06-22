@@ -7,6 +7,6 @@ def send_registration_email_to_user(user):
         'Subject here',
         'Here is the message.',
         'from@example.com',
-        ['to@example.com'],
+        [user.email],
         fail_silently=False,
     )
