@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
-from gene_pc_api.gene_pc_api import views as gpc_views
-from gene_pc_api.twentythreeandme import views as ttm_views
 from rest_framework.authtoken import views
 from rest_framework import routers
+
+from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
+    GCMDeviceAuthorizedViewSet
+
+from gene_pc_api.gene_pc_api import views as gpc_views
+from gene_pc_api.twentythreeandme import views as ttm_views
+from gene_pc_api.gene_pc_api import signals
 
 
 api_router = routers.DefaultRouter()
@@ -29,6 +34,9 @@ api_router.register(r'populations', gpc_views.PopulationViewSet)
 api_router.register(r'activity-answers', gpc_views.ActivityAnswerViewSet)
 api_router.register(r'activity-statuses', gpc_views.ActivityStatusViewSet)
 api_router.register(r'risk-scores', gpc_views.RiskScoreViewSet)
+
+api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
+api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
 
 
 ttm_router = routers.DefaultRouter()

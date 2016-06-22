@@ -1,6 +1,6 @@
 from django.conf import settings
-from . import celery
+from gene_pc_api import celery
 
 celery  # bootstrap Celery
 
-settings.configure()
+#settings.configure()

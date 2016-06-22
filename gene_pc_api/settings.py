@@ -15,7 +15,7 @@ import os, sys
 env = os.environ.get('ENVIRONMENT', 'dev').lower()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -28,6 +28,8 @@ SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+ROOT_URLCONF = 'gene_pc_api.urls'
 
 # Application definition
 
@@ -43,11 +45,17 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
 
+    "push_notifications",
+
     'gene_pc_api.gene_pc_api',
     'gene_pc_api.twentythreeandme',
-    'debug_toolbar',
-    'django_nose'
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        'debug_toolbar',
+        'django_nose'
+    ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
@@ -66,6 +74,11 @@ OAUTH2_PROVIDER = {
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
 }
 
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "GCM_API_KEY": os.environ.get('GCM_API_KEY', None),
+        "APNS_CERTIFICATE": os.environ.get('APNS_CERTIFICATE', None),
+}
+
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,8 +89,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-ROOT_URLCONF = 'gene_pc_api.urls'
 
 TEMPLATES = [
     {
@@ -156,6 +167,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', None)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
@@ -165,6 +177,14 @@ STATICFILES_DIRS = [
 DATA_STORAGE = os.path.join(BASE_DIR, "data")
 TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
 TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
+
+# Sending Email
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
+EMAIL_USE_TLS = True
 
 # Celery Settings
 
