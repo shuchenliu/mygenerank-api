@@ -1,10 +1,8 @@
 import uuid
 
 from django.conf import settings
-from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import post_save
 
 from rest_framework.authtoken.models import Token
 
@@ -95,25 +93,3 @@ class ActivityAnswer(models.Model):
 
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.email, self.question_identifier)
-
-
-# Signals
-
-@receiver(post_save, sender=User)
-def create_related_models_for_user(sender, instance, created, **kwargs):
-    print('HI WORLD')
-    if not created:
-        return
-    # New Empty Activity Statuses
-    for activity in Activity.objects.all():
-        status = ActivityStatus(user=instance, activity=activity)
-        status.save()
-
-
-@receiver(post_save, sender=Activity)
-def create_status_for__old_users(sender, instance, created, **kwargs):
-    if not created:
-        return
-    for user in User.objects.all():
-        status = ActivityStatus(user=user, activity=instance)
-        status.save()

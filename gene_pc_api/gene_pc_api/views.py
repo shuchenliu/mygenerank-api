@@ -17,11 +17,16 @@ from gene_pc_api.gene_pc_api.serializers import UserSerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer
 
 from gene_pc_api.twentythreeandme import models as ttm_models
-#import logging
+
 
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
     model = gpc_models.User
+
+    def create(self, request, *args, **kwargs):
+        resp = super().create(request, *args, **kwargs)
+        return Response(
+            {'description': 'User created. Registration Needed'}, 201)
 
 
 class UserViewSet(viewsets.ModelViewSet):

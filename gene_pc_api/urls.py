@@ -23,8 +23,7 @@ from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
 
 from gene_pc_api.gene_pc_api import views as gpc_views
 from gene_pc_api.twentythreeandme import views as ttm_views
-from rest_framework.authtoken import views
-from rest_framework import routers
+from gene_pc_api.gene_pc_api import signals
 
 
 api_router = routers.DefaultRouter()
