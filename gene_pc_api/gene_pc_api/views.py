@@ -17,6 +17,7 @@ from gene_pc_api.gene_pc_api.serializers import UserSerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer
 
 from gene_pc_api.twentythreeandme import models as ttm_models
+from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_task
 
 
 class CreateUserView(CreateAPIView):
@@ -104,10 +105,13 @@ class ActivityStatusViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@renderer_classes((renderers.StaticHTMLRenderer,))
 def import23andme(request):
-    code = request.data.get('code', None)
-    if not code:
-        return response.Response(None, status=400)
-    # TODO: Kick off import.
-    return response.Response({code: code}, template_name='authentication_response.html')
+    token = request.data.get('token', None)
+    userid = request.data.get('user', None)
+    profileid = request.data.get('profile', None)
+    if not (token and userid and profileid):
+        return response.Response({'status':"missing parameter"}, status=400)
+
+    ''' Start the delayed task to set the user '''
+    twentythreeandme_delayed_import_task.delay(token, userid, profileid)
+    return response.Response({'status':'all set'}, status=200)
