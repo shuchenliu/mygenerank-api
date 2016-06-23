@@ -11,7 +11,7 @@ def get(url, token):
     headers = {
         'Authorization': 'Bearer {token}'.format(token=token)
         }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=10)
     data = json.loads(response.text)
     return data
 
@@ -41,11 +41,11 @@ def get_token(auth_code):
      'client_secret': '0e3863da484c3d167b5a4b65b663de9b',
      'grant_type': 'authorization_code',
      'code': auth_code,
-     'redirect_uri': 'http://localhost:5000/receive_code/',
+     'redirect_uri': 'http://localhost:8000/auth_code',
      'scope': 'genomes basic names haplogroups ancestry family_tree analyses'
     }
 
-    response = requests.post(url, data=post_data)
+    response = requests.post(url, data=post_data, timeout=2)
     data = json.loads(response.text)
     token = data['access_token']
     return token
