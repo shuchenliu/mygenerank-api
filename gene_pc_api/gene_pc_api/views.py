@@ -10,9 +10,12 @@ from rest_framework.decorators import api_view, renderer_classes, detail_route
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
 
-from gene_pc_api.gene_pc_api import filters
-from gene_pc_api.gene_pc_api import models as gpc_models
-from gene_pc_api.gene_pc_api.serializers import UserSerializer,\
+from . import filters
+from .models import User, Activity, ActivityStatus, ActivityAnswer, \
+    Condition, RiskScore, Population
+from .tasks import send_registration_email_to_user
+from .permissions import IsRegistered
+from .serializers import UserSerializer,\
     ActivityAnswerSerializer, RiskScoreSerializer, ActivitySerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer
 
@@ -22,10 +25,13 @@ from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_t
 
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
-    model = gpc_models.User
+    model = User
 
     def create(self, request, *args, **kwargs):
-        resp = super().create(request, *args, **kwargs)
+        response = super().create(request, *args, **kwargs)
+
+        user = User.objects.get(username=response.data['username'])
+        send_registration_email_to_user.delay(request, user)
         return Response(
             {'description': 'User created. Registration Needed'}, 201)
 
@@ -33,16 +39,18 @@ class CreateUserView(CreateAPIView):
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.User.objects.all().order_by('-date_joined')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
-    @detail_route(methods=['POST'], permission_classes=[IsAuthenticated])
+    @detail_route(methods=['GET'], permission_classes=[])
     def register(self, request, pk):
-        code = request.data.get('code', None)
+        code = request.query_params.get('code', None)
         try:
-            user = gpc_models.User.objects.get(id=pk, registration_code=code)
+            user = User.objects.get(id=pk, registration_code=code)
+            user.registered = True
+            user.save()
             serializer = UserSerializer(user, context={'request': request})
             return Response(serializer.data)
         except ObjectDoesNotExist:
@@ -53,8 +61,8 @@ class UserViewSet(viewsets.ModelViewSet):
 class ActivityAnswerViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.ActivityAnswer.objects.all().order_by('-user')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = ActivityAnswer.objects.all().order_by('-user')
     serializer_class = ActivityAnswerSerializer
     search_fields = ['user__id','question_identifier']
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -63,24 +71,24 @@ class ActivityAnswerViewSet(viewsets.ModelViewSet):
 class ConditionViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.Condition.objects.all().order_by('-name')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = Condition.objects.all().order_by('-name')
     serializer_class = ConditionSerializer
 
 
 class PopulationViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.Population.objects.all().order_by('-name')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = Population.objects.all().order_by('-name')
     serializer_class = PopulationSerializer
 
 
 class RiskScoreViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.RiskScore.objects.all().order_by('-user')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = RiskScore.objects.all().order_by('-user')
     serializer_class = RiskScoreSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id','name', 'condition__id', 'condition__name']
@@ -89,16 +97,16 @@ class RiskScoreViewSet(viewsets.ModelViewSet):
 class ActivityViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.Activity.objects.all().order_by('-name')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = Activity.objects.all().order_by('-name')
     serializer_class = ActivitySerializer
 
 
 class ActivityStatusViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = gpc_models.ActivityStatus.objects.all().order_by('-user')
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = ActivityStatus.objects.all().order_by('-user')
     serializer_class = ActivityStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'activity__id', 'activity__name', 'question_identifier']

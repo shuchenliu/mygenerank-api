@@ -5,7 +5,9 @@ from django.core.mail import send_mail
 from push_notifications.models import APNSDevice
 
 from .models import User, Activity, ActivityStatus, RiskScore
-from .tasks import send_registration_email_to_user
+from .tasks import send_registration_email_to_user, \
+    create_statuses_for_new_user, create_statuses_for_existing_users, \
+    send_risk_score_notification, send_activity_notification
 
 
 @receiver(post_save, sender=User)
@@ -13,13 +15,6 @@ def create_related_models_for_user(sender, instance, created, **kwargs):
     """ Whenever a user is created, also create any related models. """
     if created:
         create_statuses_for_new_user.delay(instance)
-
-
-@receiver(post_save, sender=User)
-def send_registration_email_for_new_user(sender, instance, created, **kwargs):
-    """ When a new user is created, send an registration email. """
-    if created:
-        send_registration_email_to_user.delay(instance)
 
 
 @receiver(post_save, sender=Activity)

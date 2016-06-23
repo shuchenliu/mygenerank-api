@@ -1,15 +1,22 @@
 from celery import shared_task
 
 from django.template.loader import render_to_string
-from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.mail import send_mail
 
+from rest_framework.reverse import reverse
+from rest_framework.request import Request
+
+from .models import User, Activity, ActivityStatus, RiskScore
+
 
 @shared_task
-def send_registration_email_to_user(user):
+def send_registration_email_to_user(request, user):
     url = reverse('api:user-register', kwargs={'pk': user.id})
-    html = render_to_string('registration_email.html', {'url': url})
+    html = render_to_string('registration_email.html', {
+        'url': request.build_absolute_uri(url),
+        'code': user.registration_code
+    })
     send_mail(settings.REGISTER_EMAIL_SUBJECT, '', settings.EMAIL_HOST_USER,
         [user.email], fail_silently=False, html_message=html)
 
