@@ -22,8 +22,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
+SECRET_KEY = os.environ.get('SECRET_KEY', None)
 
 DEBUG = True
 
@@ -185,6 +184,7 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
 EMAIL_USE_TLS = True
+REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
 
 # Celery Settings
 
