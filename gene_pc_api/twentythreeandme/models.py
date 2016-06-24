@@ -64,8 +64,10 @@ class Genotype(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE,
         blank=True)
 
-    fs_raw = FileSystemStorage(location=settings.TTM_RAW_STORAGE)
-    fs_con = FileSystemStorage(location=settings.TTM_CONVERTED_STORAGE)
+    fs_raw = FileSystemStorage(location=settings.TTM_RAW_STORAGE,
+        base_url=settings.TTM_RAW_URL)
+    fs_con = FileSystemStorage(location=settings.TTM_CONVERTED_STORAGE,
+        base_url=settings.TTM_CONVERTED_URL)
     genotype_file = models.FileField(storage=fs_raw)
     converted_file = models.FileField(storage=fs_con)
 

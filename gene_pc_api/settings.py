@@ -28,8 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-ROOT_URLCONF = 'gene_pc_api.urls'
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -173,9 +171,21 @@ STATICFILES_DIRS = [
 
 # File storage options
 
+DATA_URL = '/data/'
 DATA_STORAGE = os.path.join(BASE_DIR, "data")
+
+TTM_RAW_URL = '/23andme/raw/'
 TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
+
+TTM_CONVERTED_URL = '/23andme/converted/'
 TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
+
+CONSENT_FILE_URL = '/data/consent/'
+CONSENT_FILE_LOCATION = os.path.join(DATA_STORAGE, 'consent')
+
+# Loaded URLs
+
+ROOT_URLCONF = 'gene_pc_api.urls'
 
 # Sending Email
 
@@ -185,6 +195,7 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
 EMAIL_USE_TLS = True
 REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
+
 
 # Celery Settings
 
