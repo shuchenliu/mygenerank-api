@@ -36,7 +36,7 @@ ttm_router.register(r'profiles', ttm_views.ProfileViewSet)
 ttm_router.register(r'genomes', ttm_views.GenotypeViewSet)
 
 
-urlpatterns = [
+urlpatterns = ([
     # Public API
     url(r'^api/', include(
             api_router.urls,
@@ -55,3 +55,7 @@ urlpatterns = [
     # Admin
     url(r'^admin/', admin.site.urls),
 ] + static(settings.CONSENT_FILE_URL, document_root=settings.CONSENT_FILE_LOCATION)
+    + static(settings.TTM_RAW_URL, document_root=settings.TTM_RAW_STORAGE)
+    + static(settings.TTM_CONVERTED_URL, document_root=settings.TTM_CONVERTED_STORAGE)
+    + static(settings.DATA_URL, document_root=settings.DATA_STORAGE)
+)
