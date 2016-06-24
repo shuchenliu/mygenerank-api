@@ -12,12 +12,13 @@ from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
 
 from . import filters
 from .models import User, Activity, ActivityStatus, ActivityAnswer, \
-    Condition, RiskScore, Population
+    Condition, RiskScore, Population, ConsentPDF, Signature
 from .tasks import send_registration_email_to_user
 from .permissions import IsRegistered
 from .serializers import UserSerializer,\
     ActivityAnswerSerializer, RiskScoreSerializer, ActivitySerializer,\
-    ConditionSerializer, ActivityStatusSerializer, PopulationSerializer
+    ConditionSerializer, ActivityStatusSerializer, PopulationSerializer, \
+    ConsentPDFSerializer, SignatureSerializer
 
 from gene_pc_api.twentythreeandme import models as ttm_models
 from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_task
@@ -32,8 +33,9 @@ class CreateUserView(CreateAPIView):
 
         user = User.objects.get(username=response.data['username'])
         send_registration_email_to_user.delay(request, user)
-        return Response(
-            {'description': 'User created. Registration Needed'}, 201)
+        return Response({
+            'description': 'User created. Registration Needed'
+        }, 201)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -56,6 +58,24 @@ class UserViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             pass
         return Response({'error': 'Invalid Registration Code'})
+
+
+class SignatureViewSet(viewsets.ModelViewSet):
+    """ API endpoint that allows users to be viewed or edited. """
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = Signature.objects.all().order_by('-user')
+    serializer_class = SignatureSerializer
+    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+
+
+class ConsentPDFViewSet(viewsets.ModelViewSet):
+    """ API endpoint that allows users to be viewed or edited. """
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [IsAuthenticated, IsRegistered]
+    queryset = ConsentPDF.objects.all().order_by('-user')
+    serializer_class = ConsentPDFSerializer
+    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
 
 class ActivityAnswerViewSet(viewsets.ModelViewSet):
