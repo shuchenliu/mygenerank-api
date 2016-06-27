@@ -2,13 +2,15 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import viewsets, request, response, renderers
 from rest_framework import filters as django_filters
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
-from rest_framework.decorators import api_view, renderer_classes, detail_route
+from rest_framework.decorators import api_view, renderer_classes, \
+    detail_route, permission_classes, authentication_classes
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
+from rest_condition import And, Or
 
 from . import filters
 from .models import User, Activity, ActivityStatus, ActivityAnswer, \
@@ -41,7 +43,7 @@ class CreateUserView(CreateAPIView):
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -63,7 +65,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class SignatureViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = Signature.objects.all().order_by('-user')
     serializer_class = SignatureSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -72,7 +74,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
 class ConsentPDFViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = ConsentPDF.objects.all().order_by('-user')
     serializer_class = ConsentPDFSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -81,7 +83,7 @@ class ConsentPDFViewSet(viewsets.ModelViewSet):
 class ActivityAnswerViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = ActivityAnswer.objects.all().order_by('-user')
     serializer_class = ActivityAnswerSerializer
     search_fields = ['user__id','question_identifier']
@@ -91,7 +93,7 @@ class ActivityAnswerViewSet(viewsets.ModelViewSet):
 class ConditionViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = Condition.objects.all().order_by('-name')
     serializer_class = ConditionSerializer
 
@@ -99,7 +101,7 @@ class ConditionViewSet(viewsets.ModelViewSet):
 class PopulationViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = Population.objects.all().order_by('-name')
     serializer_class = PopulationSerializer
 
@@ -107,7 +109,7 @@ class PopulationViewSet(viewsets.ModelViewSet):
 class RiskScoreViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = RiskScore.objects.all().order_by('-user')
     serializer_class = RiskScoreSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -117,7 +119,7 @@ class RiskScoreViewSet(viewsets.ModelViewSet):
 class ActivityViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = Activity.objects.all().order_by('-name')
     serializer_class = ActivitySerializer
 
@@ -125,7 +127,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
 class ActivityStatusViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated, IsRegistered]
+    permission_classes = [Or(IsRegistered, IsAdminUser)]
     queryset = ActivityStatus.objects.all().order_by('-user')
     serializer_class = ActivityStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -133,6 +135,8 @@ class ActivityStatusViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
+@authentication_classes([OAuth2Authentication])
+@permission_classes([Or(IsRegistered, And(IsAdminUser, IsAuthenticated))])
 def import23andme(request):
     token = request.data.get('token', None)
     userid = request.data.get('user', None)
