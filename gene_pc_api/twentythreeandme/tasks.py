@@ -1,8 +1,9 @@
+import requests
 from celery import shared_task
 
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
-import requests
+
 
 @shared_task
 def twentythreeandme_delayed_import_task(token, api_userid, profileid):
@@ -19,6 +20,7 @@ def twentythreeandme_delayed_import_task(token, api_userid, profileid):
         twentythreeandme_delayed_import_task.delay(token, api_userid,
                                                     profileid, countdown = 2)
 
+
 @shared_task
 def twentythreeandme_import_task(user_info, token, api_userid, profileid):
     """ Given a token and a user info JSON object this will
@@ -32,12 +34,12 @@ def twentythreeandme_import_task(user_info, token, api_userid, profileid):
     ttm_uobj.save()
 
     # Create a profile object
-    print(user_info)
     for prof in user_info['profiles']:
         if prof['id'] == profileid:
             profile = Profile.from_json(prof, ttm_uobj)
             profile.save()
             twentythreeandme_genotype_import_task.delay(profile,token)
+
 
 @shared_task
 def twentythreeandme_genotype_import_task(profile,token):
@@ -48,9 +50,11 @@ def twentythreeandme_genotype_import_task(profile,token):
     except requests.exceptions.Timeout:
         twentythreeandme_genotype_import_task.delay(profile,token, countdown=2)
 
+
 @shared_task
 def convert_genotype_task(genotype):
     pass
+
 
 @shared_task
 def submit_calculations_task(user_id, profile_id):

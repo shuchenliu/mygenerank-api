@@ -1,4 +1,5 @@
 import uuid
+
 from django.conf import settings
 from django.db import models
 from django.core.files.storage import FileSystemStorage
@@ -32,6 +33,7 @@ class User(models.Model):
 
         return uobj
 
+
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -58,6 +60,7 @@ class Profile(models.Model):
             profile_id = profile_data['id']
         )
         return profile
+
 
 class Genotype(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
