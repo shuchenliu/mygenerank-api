@@ -24,7 +24,8 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', None)
 
-DEBUG = True
+if env != 'prod':
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -107,7 +108,7 @@ WSGI_APPLICATION = 'gene_pc_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-if env == 'test':
+if env == 'test' or env == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
