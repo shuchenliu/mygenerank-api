@@ -22,14 +22,12 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-9b^x^ez&iwrim8d+nr7nb9+yo))t%g_)-1jgm!l#u2yyz49yc'
+SECRET_KEY = os.environ.get('SECRET_KEY', None)
 
-DEBUG = True
+if env != 'prod':
+    DEBUG = True
 
 ALLOWED_HOSTS = []
-
-ROOT_URLCONF = 'gene_pc_api.urls'
 
 # Application definition
 
@@ -110,7 +108,7 @@ WSGI_APPLICATION = 'gene_pc_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-if env == 'test':
+if env == 'test' or env == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -174,9 +172,21 @@ STATICFILES_DIRS = [
 
 # File storage options
 
+DATA_URL = '/data/'
 DATA_STORAGE = os.path.join(BASE_DIR, "data")
+
+TTM_RAW_URL = '/23andme/raw/'
 TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
+
+TTM_CONVERTED_URL = '/23andme/converted/'
 TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
+
+CONSENT_FILE_URL = '/data/consent/'
+CONSENT_FILE_LOCATION = os.path.join(DATA_STORAGE, 'consent')
+
+# Loaded URLs
+
+ROOT_URLCONF = 'gene_pc_api.urls'
 
 # Sending Email
 
@@ -185,6 +195,8 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
 EMAIL_USE_TLS = True
+REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
+
 
 # Celery Settings
 

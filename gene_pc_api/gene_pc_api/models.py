@@ -3,6 +3,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.files.storage import FileSystemStorage
 
 from rest_framework.authtoken.models import Token
 
@@ -14,6 +15,29 @@ class User(AbstractUser):
 
     def __str__(self):
         return '<API: User: %s>' % self.email
+
+
+class ConsentPDF(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, related_name='consent_pdfs',
+        on_delete=models.CASCADE)
+
+    fs = FileSystemStorage(location=settings.CONSENT_FILE_LOCATION,
+        base_url=settings.CONSENT_FILE_URL)
+    consent_pdf = models.FileField(storage=fs)
+
+    def __str__(self):
+        return '<Consent: %s %s>' % (self.user.email, self.consent_pdf)
+
+
+class Signature(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
+    consent_signed = models.BooleanField(default=False)
+    date_signed = models.DateField()
+
+    def __str__(self):
+        return '<Signature: %s %s>' % (self.user.email, self.consent_signed)
 
 
 class Condition(models.Model):

@@ -1,8 +1,10 @@
 """ Client functions for the 23andMe API. """
-
 import json
+
 import requests
+
 from .models import User, Genotype
+
 
 def get(url, token):
     """ Given a resource URL and token, return
@@ -15,12 +17,14 @@ def get(url, token):
     data = json.loads(response.text)
     return data
 
+
 def get_user_info(token):
     """ Given a bearer token this function will fetch the
     user json data from 23 and me."""
     url = User.resource_url
     response = get(url,token)
     return response
+
 
 def get_genotype_data(token,profile):
     """ Given a bearer token and a profile id this function will

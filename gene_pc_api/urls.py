@@ -1,20 +1,9 @@
-"""gene_pc_api URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.9/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
+"""gene_pc_api URL Configuration """
 from django.contrib import admin
 from django.conf.urls import url, include
+from django.conf import settings
+from django.conf.urls.static import static
+
 from rest_framework.authtoken import views
 from rest_framework import routers
 
@@ -34,6 +23,8 @@ api_router.register(r'populations', gpc_views.PopulationViewSet)
 api_router.register(r'activity-answers', gpc_views.ActivityAnswerViewSet)
 api_router.register(r'activity-statuses', gpc_views.ActivityStatusViewSet)
 api_router.register(r'risk-scores', gpc_views.RiskScoreViewSet)
+api_router.register(r'signatures', gpc_views.SignatureViewSet)
+api_router.register(r'consent-forms', gpc_views.ConsentPDFViewSet)
 
 api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
 api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
@@ -45,7 +36,7 @@ ttm_router.register(r'profiles', ttm_views.ProfileViewSet)
 ttm_router.register(r'genomes', ttm_views.GenotypeViewSet)
 
 
-urlpatterns = [
+urlpatterns = ([
     # Public API
     url(r'^api/', include(
             api_router.urls,
@@ -63,4 +54,8 @@ urlpatterns = [
 
     # Admin
     url(r'^admin/', admin.site.urls),
-]
+] + static(settings.CONSENT_FILE_URL, document_root=settings.CONSENT_FILE_LOCATION)
+    + static(settings.TTM_RAW_URL, document_root=settings.TTM_RAW_STORAGE)
+    + static(settings.TTM_CONVERTED_URL, document_root=settings.TTM_CONVERTED_STORAGE)
+    + static(settings.DATA_URL, document_root=settings.DATA_STORAGE)
+)

@@ -1,4 +1,5 @@
 import uuid
+
 from django.conf import settings
 from django.db import models
 from django.core.files.storage import FileSystemStorage
@@ -32,6 +33,7 @@ class User(models.Model):
 
         return uobj
 
+
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -59,13 +61,16 @@ class Profile(models.Model):
         )
         return profile
 
+
 class Genotype(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE,
         blank=True)
 
-    fs_raw = FileSystemStorage(location=settings.TTM_RAW_STORAGE)
-    fs_con = FileSystemStorage(location=settings.TTM_CONVERTED_STORAGE)
+    fs_raw = FileSystemStorage(location=settings.TTM_RAW_STORAGE,
+        base_url=settings.TTM_RAW_URL)
+    fs_con = FileSystemStorage(location=settings.TTM_CONVERTED_STORAGE,
+        base_url=settings.TTM_CONVERTED_URL)
     genotype_file = models.FileField(storage=fs_raw)
     converted_file = models.FileField(storage=fs_con)
 

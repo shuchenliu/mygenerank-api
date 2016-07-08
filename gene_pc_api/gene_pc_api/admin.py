@@ -10,4 +10,6 @@ admin.site.register(models.Population)
 admin.site.register(models.Activity)
 admin.site.register(models.ActivityStatus)
 admin.site.register(models.ActivityAnswer)
+admin.site.register(models.Signature)
+admin.site.register(models.ConsentPDF)
 
