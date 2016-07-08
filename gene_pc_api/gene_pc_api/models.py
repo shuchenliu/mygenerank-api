@@ -17,16 +17,6 @@ class User(AbstractUser):
         return '<API: User: %s>' % self.email
 
 
-class Signature(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
-    consent_signed = models.BooleanField(default=False)
-    date_signed = models.DateField()
-
-    def __str__(self):
-        return '<Signature: %s %s>' % (self.user.email, self.consent_signed)
-
-
 class ConsentPDF(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, related_name='consent_pdfs',
@@ -38,6 +28,16 @@ class ConsentPDF(models.Model):
 
     def __str__(self):
         return '<Consent: %s %s>' % (self.user.email, self.consent_pdf)
+
+
+class Signature(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
+    consent_signed = models.BooleanField(default=False)
+    date_signed = models.DateField()
+
+    def __str__(self):
+        return '<Signature: %s %s>' % (self.user.email, self.consent_signed)
 
 
 class Condition(models.Model):
