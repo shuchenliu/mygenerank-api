@@ -3,9 +3,12 @@ from celery import shared_task
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.reverse import reverse
 from rest_framework.request import Request
+
+from push_notifications.models import APNSDevice
 
 from .models import User, Activity, ActivityStatus, RiskScore
 
@@ -23,10 +26,12 @@ def send_registration_email_to_user(request, user):
 
 @shared_task
 def send_risk_score_notification(risk_score):
-    device = APNSDevice.objects.get(user__id=risk_score.user.id)
-    device.send("Your risk score for {condition} is available.".format(
-        condition=risk_score.condition.name))
-
+    try:
+        device = APNSDevice.objects.get(user__id=risk_score.user.id)
+        device.send("Your risk score for {condition} is available.".format(
+            condition=risk_score.condition.name))
+    except ObjectDoesNotExist:
+        print("Device for user %s does not exist." % risk_score.user.id)
 
 @shared_task
 def send_activity_notification(activity):
