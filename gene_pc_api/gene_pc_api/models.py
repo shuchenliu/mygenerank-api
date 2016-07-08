@@ -19,7 +19,7 @@ class User(AbstractUser):
 
 class Signature(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
     consent_signed = models.BooleanField(default=False)
     date_signed = models.DateField()
 
