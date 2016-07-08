@@ -32,7 +32,7 @@ class ConsentPDF(models.Model):
 
 class Signature(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
+    consent_pdf = models.OneToOneField(ConsentPDF, on_delete=models.CASCADE)
     consent_signed = models.BooleanField(default=False)
     date_signed = models.DateField()
 
