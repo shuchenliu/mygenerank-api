@@ -26,16 +26,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             return user
 
 class SignatureSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+    consent_pdf = serializers.HyperlinkedRelatedField(
+            view_name='api:consentpdf-detail',
             many=False,
-            queryset=User.objects.all()
+            queryset=ConsentPDF.objects.all()
         )
 
     class Meta:
         model = Signature
-        fields = ('url', 'date_signed', 'user', 'consent_signed')
-        extra_kwargs = {'url': {'view_name': 'api:consentpdf-detail'}}
+        fields = ('url', 'date_signed', 'consent_pdf', 'consent_signed')
+        extra_kwargs = {'url': {'view_name': 'api:signature-detail'}}
 
 
 class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
@@ -47,9 +47,8 @@ class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ConsentPDF
-        fields = ('url', 'consent_pdf', 'user')
+        fields = ('url', 'consent_pdf', 'user', 'signature')
         extra_kwargs = {'url': {'view_name': 'api:consentpdf-detail'}}
-
 
 
 class PopulationSerializer(serializers.HyperlinkedModelSerializer):
