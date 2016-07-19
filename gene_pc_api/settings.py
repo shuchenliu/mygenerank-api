@@ -207,3 +207,8 @@ try:
 except KeyError:
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+
+# Fabric settings
+
+REMOTE_HOSTS =  ['fabric@137.131.231.252']
+PIPELINE_DIRECTORY = '/home/fabric/gene-pc-pipeline'

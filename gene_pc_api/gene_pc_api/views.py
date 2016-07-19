@@ -144,6 +144,6 @@ def import23andme(request):
     if not (token and userid and profileid):
         return response.Response({'status':"missing parameter"}, status=400)
 
-    ''' Start the delayed task to set the user '''
+    # Start the delayed task to set the user
     twentythreeandme_delayed_import_task.delay(token, userid, profileid)
     return response.Response({'status':'all set'}, status=200)
