@@ -33,6 +33,7 @@ def send_risk_score_notification(risk_score):
     except ObjectDoesNotExist:
         print("Device for user %s does not exist." % risk_score.user.id)
 
+
 @shared_task
 def send_activity_notification(activity):
     devices = GCMDevice.objects.filter(active=True)

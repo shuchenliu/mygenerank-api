@@ -25,6 +25,7 @@ class ConsentPDF(models.Model):
     fs = FileSystemStorage(location=settings.CONSENT_FILE_LOCATION,
         base_url=settings.CONSENT_FILE_URL)
     consent_pdf = models.FileField(storage=fs)
+    name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return '<Consent: %s %s>' % (self.user.email, self.consent_pdf)
@@ -64,11 +65,11 @@ class RiskScore(models.Model):
     value = models.FloatField(max_length=100, blank=True, default=-1.0)
     description = models.CharField(max_length=1024, blank=True)
     user = models.ForeignKey(User, related_name='risk_scores',
-        on_delete=models.PROTECT)
+        on_delete=models.CASCADE)
     condition = models.ForeignKey(Condition, related_name='risk_scores',
-        on_delete=models.PROTECT)
+        on_delete=models.CASCADE)
     population = models.ForeignKey(Population, related_name='risk_scores',
-        on_delete=models.PROTECT)
+        on_delete=models.CASCADE)
     calculated = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
 
@@ -111,7 +112,7 @@ class ActivityAnswer(models.Model):
     question_identifier = models.CharField(max_length=100, blank=True)
     value = models.CharField(max_length=1000, blank=True)
     activity = models.ForeignKey(Activity, related_name='activity_answers',
-        on_delete=models.PROTECT, blank=True)
+        on_delete=models.CASCADE, blank=True)
     user = models.ForeignKey(User, related_name='activity_answers',
         on_delete=models.CASCADE, blank=True)
 

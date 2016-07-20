@@ -47,7 +47,7 @@ class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ConsentPDF
-        fields = ('url', 'consent_pdf', 'user', 'signature')
+        fields = ('url', 'consent_pdf', 'user', 'signature', 'name')
         extra_kwargs = {'url': {'view_name': 'api:consentpdf-detail'}}
 
 
