@@ -36,8 +36,8 @@ class User(models.Model):
 
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-        related_name='profiles', blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+         blank=True, null=True)
     profile_id = models.CharField(max_length=100)
     genotyped = models.BooleanField(blank=True)
 
