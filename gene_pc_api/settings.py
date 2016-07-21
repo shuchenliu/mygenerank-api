@@ -200,7 +200,7 @@ REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
 
 # Celery Settings
 
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'uuid_json'
 
 try:
     BROKER_URL = os.environ['BROKER_URL']

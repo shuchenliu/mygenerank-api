@@ -14,16 +14,16 @@ from .tasks import send_registration_email_to_user, \
 def create_related_models_for_user(sender, instance, created, **kwargs):
     """ Whenever a user is created, also create any related models. """
     if created:
-        create_statuses_for_new_user.delay(instance)
+        create_statuses_for_new_user.delay(instance.id)
 
 
 @receiver(post_save, sender=Activity)
-def create_status_for_old_users(sender, instance, created, **kwargs):
+def create_statuses_for_existing_users(sender, instance, created, **kwargs):
     """ Whenever a new Activity is created, add status objects to
     all existing users.
     """
     if created:
-        create_statuses_for_existing_users.delay(instance)
+        create_statuses_for_existing_users.delay(instance.id)
 
 
 @receiver(post_save, sender=RiskScore)
@@ -32,7 +32,8 @@ def send_nofitication_for_new_risk_score(sender, instance, created, **kwargs):
     a notification to let them know.
     """
     if created:
-        send_risk_score_notification.delay(instance)
+        send_risk_score_notification.delay(instance.user.id,
+            instance.condition.name)
 
 
 @receiver(post_save, sender=Activity)
@@ -41,4 +42,4 @@ def send_notification_for_new_activity(sender, instance, created, **kwargs):
     all existing users.
     """
     if created:
-        send_activity_notification.delay(instance)
+        send_activity_notification.delay(instance.id)

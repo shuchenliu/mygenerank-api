@@ -6,6 +6,7 @@ from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
+from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view, renderer_classes, \
     detail_route, permission_classes, authentication_classes
 
@@ -35,13 +36,18 @@ class CreateUserView(CreateAPIView):
         try:
             validate_password(request.data.get('password'))
         except ValidationError as e:
-            print(dir(e))
             return Response({ 'message': '\n'.join(e.messages) })
 
         response = super().create(request, *args, **kwargs)
 
+        # Prep to send email.
         user = User.objects.get(username=response.data['username'])
-        send_registration_email_to_user.delay(request, user)
+        url = reverse('api:user-register', kwargs={'pk': user.id})
+        registration_url = request.build_absolute_uri(url)
+
+        send_registration_email_to_user.delay(registration_url,
+            user.registration_code, user.id, user.email)
+
         return Response({
             'description': 'User created. Registration Needed'
         }, 201)
