@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
 
@@ -28,6 +30,9 @@ from gene_pc_api.twentythreeandme import models as ttm_models
 from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_task
 
 
+logger = logging.getLogger(__name__)
+
+
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
     model = User
@@ -36,6 +41,7 @@ class CreateUserView(CreateAPIView):
         try:
             validate_password(request.data.get('password'))
         except ValidationError as e:
+            logger.error('User creation failed: password did not validate.')
             return Response({ 'message': '\n'.join(e.messages) })
 
         response = super().create(request, *args, **kwargs)
@@ -46,7 +52,7 @@ class CreateUserView(CreateAPIView):
         registration_url = request.build_absolute_uri(url)
 
         send_registration_email_to_user.delay(registration_url,
-            user.registration_code, user.id, user.email)
+            user.registration_code, user.email)
 
         return Response({
             'description': 'User created. Registration Needed'
@@ -70,7 +76,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(user, context={'request': request})
             return Response(serializer.data)
         except ObjectDoesNotExist:
-            pass
+            logger.error('User registration failed: User did not exist.')
         return Response({'error': 'Invalid Registration Code'})
 
 
@@ -144,9 +150,11 @@ def import23andme(request):
     token = request.data.get('token', None)
     userid = request.data.get('user', None)
     profileid = request.data.get('profile', None)
-    if not (token and userid and profileid):
-        return response.Response({'status':"missing parameter"}, status=400)
 
-    ''' Start the delayed task to set the user '''
+    if not (token and userid and profileid):
+        return response.Response({'status': 'missing parameter'}, status=400)
+
     twentythreeandme_delayed_import_task.delay(token, userid, profileid)
+    logger.info('23andMe Import Started for user %s' % userid)
+
     return response.Response({'status':'all set'}, status=200)
