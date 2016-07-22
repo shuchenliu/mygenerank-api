@@ -193,13 +193,14 @@ LOGGING = {
         'django': {
             'handlers': ['file', 'console', 'mail_admins'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': True,
         },
 
         # Send email to admins for any request errors.
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': False,
+            'propagate': True,
         },
     },
     'handlers': {
@@ -219,9 +220,14 @@ LOGGING = {
     }
 }
 
+ADMINS = [
+    ('admin', os.getenv('ADMIN_EMAIL', None)),
+]
+
 # Celery Settings
 
 CELERY_TASK_SERIALIZER = 'uuid_json'
+CELERY_IGNORE_RESULT = True
 
 try:
     BROKER_URL = os.environ['BROKER_URL']
