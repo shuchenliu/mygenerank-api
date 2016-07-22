@@ -11,7 +11,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', None)
 
-if env == 'dev':
+if env != 'prod':
     DEBUG = True
 
 ALLOWED_HOSTS = []
