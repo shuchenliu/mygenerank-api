@@ -39,6 +39,7 @@ def send_risk_score_notification(user_id, condition_name):
 
 @shared_task
 def send_activity_notification(activity_id):
+    activity = Activity.objects.get(id=activity_id)
     # TODO: refactor to use mass_send
     devices = APNSDevice.objects.filter(active=True)
     devices.send_message('A new activity is ready for you!')
@@ -47,15 +48,17 @@ def send_activity_notification(activity_id):
 
 @shared_task
 def create_statuses_for_existing_users(activity_id):
+    activity = Activity.objects.get(id=activity_id)
     for user in User.objects.all():
-        status = ActivityStatus(user=user, activity__id=activity_id)
+        status = ActivityStatus(user=user, activity=activity)
         status.save()
     logger.info('New statuses created for existing users.')
 
 
 @shared_task
 def create_statuses_for_new_user(user_id):
+    user = User.objects.get(id=user_id)
     for activity in Activity.objects.all():
-        status = ActivityStatus(user__id=user_id, activity=activity)
+        status = ActivityStatus(user=user, activity=activity)
         status.save()
     logger.info('New statuses created for new user: %s' % user_id)

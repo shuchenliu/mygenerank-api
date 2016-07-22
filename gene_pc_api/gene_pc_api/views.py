@@ -30,7 +30,7 @@ from gene_pc_api.twentythreeandme import models as ttm_models
 from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_task
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class CreateUserView(CreateAPIView):
@@ -42,7 +42,7 @@ class CreateUserView(CreateAPIView):
             validate_password(request.data.get('password'))
         except ValidationError as e:
             logger.error('User creation failed: password did not validate.')
-            return Response({ 'message': '\n'.join(e.messages) })
+            return Response({ 'message': '\n'.join(e.messages) }, 400)
 
         response = super().create(request, *args, **kwargs)
 
@@ -51,9 +51,11 @@ class CreateUserView(CreateAPIView):
         url = reverse('api:user-register', kwargs={'pk': user.id})
         registration_url = request.build_absolute_uri(url)
 
-        send_registration_email_to_user.delay(registration_url,
-            user.registration_code, user.email)
-
+        try:
+            send_registration_email_to_user.delay(registration_url,
+                user.registration_code, user.email)
+        except Exception as e:
+            logger.error('An exception occurred while creating user. %s' % e)
         return Response({
             'description': 'User created. Registration Needed'
         }, 201)
