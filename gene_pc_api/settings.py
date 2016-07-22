@@ -73,8 +73,8 @@ OAUTH2_PROVIDER = {
 }
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "GCM_API_KEY": os.environ.get('GCM_API_KEY', None),
-        "APNS_CERTIFICATE": os.environ.get('APNS_CERTIFICATE', None),
+    "GCM_API_KEY": os.environ.get('GCM_API_KEY', None),
+    "APNS_CERTIFICATE": os.environ.get('APNS_CERTIFICATE', None),
 }
 
 MIDDLEWARE_CLASSES = [
@@ -197,6 +197,25 @@ EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
 EMAIL_USE_TLS = True
 REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
 
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/django.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Celery Settings
 
