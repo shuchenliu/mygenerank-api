@@ -228,6 +228,7 @@ ADMINS = [
 
 CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_IGNORE_RESULT = True
+CELERY_IMPORTS = ('gene_pc_api.gene_pc_api.tasks',)
 
 try:
     BROKER_URL = os.environ['BROKER_URL']
