@@ -252,3 +252,4 @@ except KeyError:
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 CELERY_TASK_SERIALIZER = 'uuid_json'
+CELERY_ACCEPT_CONTENT = ['application/json']
