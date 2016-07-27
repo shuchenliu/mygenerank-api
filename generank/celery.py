@@ -23,7 +23,7 @@ def debug_task(self):
 
 
 def _loads(data):
-    if isinstance(data, bytes_t):
+    if isinstance(data, bytes):
         data = data.decode('utf-8')
     return json_loads(data)
 
