@@ -23,9 +23,9 @@ def debug_task(self):
 
 
 def _loads(data):
-    if isinstance(obj, bytes_t):
-        obj = obj.decode('utf-8')
-    return json_loads(obj)
+    if isinstance(data, bytes_t):
+        data = data.decode('utf-8')
+    return json_loads(data)
 
 
 def _dumps(data):
