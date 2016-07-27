@@ -3,12 +3,9 @@ from uuid import UUID
 
 from celery import Celery
 from kombu.serialization import register
-import iron_celery
 from django.conf import settings
 from anyjson import loads as json_loads, dumps as json_dumps
 
-
-iron_celery  # iron_celery must be imported to inject the ironmq transport
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'generank.settings')
 

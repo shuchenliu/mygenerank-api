@@ -1,4 +1,5 @@
 .coverage
+*.pyc
 *.sh
 __pycache__
 *.sqlite*
