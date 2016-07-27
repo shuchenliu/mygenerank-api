@@ -4,8 +4,8 @@ from rest_framework.decorators import detail_route
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
-from gene_pc_api.twentythreeandme.models import Profile, User, Genotype
-from gene_pc_api.twentythreeandme.serializers import UserSerializer,\
+from twentythreeandme.models import Profile, User, Genotype
+from twentythreeandme.serializers import UserSerializer,\
     ProfileSerializer, GenotypeSerializer
 
 

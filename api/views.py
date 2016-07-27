@@ -26,8 +26,8 @@ from .serializers import UserSerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer, \
     ConsentPDFSerializer, SignatureSerializer
 
-from gene_pc_api.twentythreeandme import models as ttm_models
-from gene_pc_api.twentythreeandme.tasks import twentythreeandme_delayed_import_task
+from twentythreeandme import models as ttm_models
+from twentythreeandme.tasks import twentythreeandme_delayed_import_task
 
 
 logger = logging.getLogger()

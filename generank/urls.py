@@ -1,4 +1,4 @@
-"""gene_pc_api URL Configuration """
+""" GeneRank URL Configuration """
 from django.contrib import admin
 from django.conf.urls import url, include
 from django.conf import settings
@@ -10,9 +10,9 @@ from rest_framework import routers
 from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
     GCMDeviceAuthorizedViewSet
 
-from gene_pc_api.gene_pc_api import views as gpc_views
-from gene_pc_api.twentythreeandme import views as ttm_views
-from gene_pc_api.gene_pc_api import signals
+from api import views as gpc_views
+from twentythreeandme import views as ttm_views
+from api import signals
 
 
 api_router = routers.DefaultRouter()
@@ -41,7 +41,7 @@ urlpatterns = ([
     url(r'^api/', include(
             api_router.urls,
             namespace="api",
-            app_name='gene_pc_api'
+            app_name='generank'
         )
     ),
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),

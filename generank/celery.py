@@ -1,3 +1,4 @@
+import os
 from uuid import UUID
 
 from celery import Celery
@@ -9,7 +10,9 @@ from anyjson import loads as json_loads, dumps as json_dumps
 
 iron_celery  # iron_celery must be imported to inject the ironmq transport
 
-app = Celery('genepc')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'generank.settings')
+
+app = Celery('generank')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 

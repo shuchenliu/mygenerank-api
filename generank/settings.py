@@ -1,8 +1,9 @@
-""" Django settings for gene_pc_api project. """
+""" Django settings for generank project. """
 
 import os, sys
 
 env = os.environ.get('ENVIRONMENT', 'dev').lower()
+USE_SSL = (os.environ.get('USE_SSL', '').lower() == 'true')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -14,7 +15,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', None)
 if env != 'prod':
     DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '.generank.scripps.edu').split(':')
+
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_WHITELIST = (
+        'generank.scripps.edu',
+    )
 
 # Application definition
 
@@ -29,17 +37,16 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'oauth2_provider',
+    'push_notifications',
 
-    "push_notifications",
-
-    'gene_pc_api.gene_pc_api',
-    'gene_pc_api.twentythreeandme',
+    'api',
+    'twentythreeandme',
 ]
 
 if DEBUG:
     INSTALLED_APPS += [
         'debug_toolbar',
-        'django_nose'
+        'django_nose',
     ]
 
 REST_FRAMEWORK = {
@@ -91,7 +98,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'gene_pc_api.wsgi.application'
+WSGI_APPLICATION = 'generank.wsgi.application'
+
+
+# Security
+SECURE_HSTS_SECONDS = 518400
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_FRAME_DENY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_HTTPONLY = True
+
+if USE_SSL:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -114,7 +135,7 @@ else:
         }
     }
 
-AUTH_USER_MODEL = 'gene_pc_api.User'
+AUTH_USER_MODEL = 'api.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -173,7 +194,7 @@ CONSENT_FILE_LOCATION = os.path.join(DATA_STORAGE, 'consent')
 
 # Loaded URLs
 
-ROOT_URLCONF = 'gene_pc_api.urls'
+ROOT_URLCONF = 'generank.urls'
 
 # Sending Email
 
@@ -225,13 +246,9 @@ ADMINS = [
 ]
 
 # Celery Settings
-
-CELERY_TASK_SERIALIZER = 'uuid_json'
-CELERY_IGNORE_RESULT = True
-CELERY_IMPORTS = ('gene_pc_api.gene_pc_api.tasks',)
-
 try:
     BROKER_URL = os.environ['BROKER_URL']
 except KeyError:
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+CELERY_TASK_SERIALIZER = 'uuid_json'
