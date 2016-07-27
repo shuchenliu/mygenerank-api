@@ -10,9 +10,9 @@ from rest_framework import routers
 from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
     GCMDeviceAuthorizedViewSet
 
-from api import views as gpc_views
-from twentythreeandme import views as ttm_views
-from api import signals
+from .api import views as gpc_views
+from .twentythreeandme import views as ttm_views
+from .api import signals
 
 
 api_router = routers.DefaultRouter()

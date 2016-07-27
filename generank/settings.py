@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'push_notifications',
 
-    'api',
-    'twentythreeandme',
+    'generank.api',
+    'generank.twentythreeandme',
 ]
 
 if DEBUG:
