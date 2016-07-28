@@ -56,6 +56,7 @@ def convert_genotype_task(genotype):
     23 and Me format to a VCF format """
     pass
 
+
 @shared_task
 def submit_calculations_task(user_id, profile_id):
     pass
