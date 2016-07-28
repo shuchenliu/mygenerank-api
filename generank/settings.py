@@ -248,6 +248,7 @@ ADMINS = [
 # Celery Settings
 try:
     BROKER_URL = os.environ['BROKER_URL']
+    CELERY_RESULT_BACKEND = os.environ['BROKER_URL']
 except KeyError:
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
