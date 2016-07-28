@@ -15,9 +15,9 @@ import time
 env.hosts = REMOTE_HOSTS
 
 env.shell = '/bin/bash'
-def build_cad_grs_pipeline(data_file):
-    """ Given a VCF data file, generate a given CAD GRS pipeline
-    to analyze that user.
+def build_cad_grs_pipeline(profile_uuid):
+    """ Given a profile uuid, generate a given CAD GRS pipeline
+    to analyze that user's data.
     :returns pipeline_id: An identifier cooresponding to the pipeline
     script for the given sample.
     """
