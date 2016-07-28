@@ -40,7 +40,6 @@ def twentythreeandme_import_task(user_info, token, api_userid, profileid):
             profile.save()
             twentythreeandme_genotype_import_task.delay(profile,token)
 
-
 @shared_task
 def twentythreeandme_genotype_import_task(profile,token):
     try:
@@ -53,8 +52,9 @@ def twentythreeandme_genotype_import_task(profile,token):
 
 @shared_task
 def convert_genotype_task(genotype):
+    """ Given a genotype, this function converts the genotype data file from the
+    23 and Me format to a VCF format """
     pass
-
 
 @shared_task
 def submit_calculations_task(user_id, profile_id):
