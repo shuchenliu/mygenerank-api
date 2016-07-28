@@ -6,7 +6,7 @@ from .models import Genotype, Profile, User
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     profiles = serializers.HyperlinkedRelatedField(
             view_name='twentythreeandme:profile-detail',
-            many=True,
+            many=False,
             read_only=True
         )
 

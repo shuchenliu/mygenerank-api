@@ -253,3 +253,8 @@ except KeyError:
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+# Fabric settings
+
+REMOTE_HOSTS =  ['fabric@137.131.231.252']
+PIPELINE_DIRECTORY = '/home/fabric/gene-pc-pipeline'
