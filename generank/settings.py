@@ -233,7 +233,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/django.log',
+            'filename': 'django.log',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -255,6 +255,11 @@ except KeyError:
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_ROUTES = {
+    'generank.compute.tasks.convert': {'queue': 'conversion'},
+    'generank.compute.tasks.compute': {'queue': 'computation'}
+}
 
 # Celery Periodic Tasks
 
