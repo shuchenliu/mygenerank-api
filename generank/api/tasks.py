@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from datetime import timedelta
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
@@ -64,3 +66,20 @@ def create_statuses_for_new_user(user_id):
         status = ActivityStatus(user=user, activity=activity)
         status.save()
     logger.info('New statuses created for new user: %s' % user_id)
+
+
+@shared_task
+def send_followup_survey_to_users():
+    """ Search for any users that have seen their scores for 24wks (~6mo) and
+    add a new status for them to complete the followup survey.
+    """
+    activity = Activity.objects.get(identifier='CADFollowUpSurveyTask')
+
+    six_months_delta = timedelta(weeks=24)
+    date_limit = (date.today() - six_months_delta).strftime("%Y-%m-%d")
+
+    for user in User.objects.filter(date_joined__lte=date_limit):
+        if not Activity.objects.filter(activity=activity, user=user):
+            follup_status = ActivityStatus(user=user, activity=activity)
+            follup_status.save()
+            logger.info('Followup survey added for user %s' % user.id)

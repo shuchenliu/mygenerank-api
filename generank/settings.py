@@ -1,6 +1,7 @@
 """ Django settings for generank project. """
 
 import os, sys
+from datetime import timedelta
 
 env = os.environ.get('ENVIRONMENT', 'dev').lower()
 USE_SSL = (os.environ.get('USE_SSL', '').lower() == 'true')
@@ -254,6 +255,17 @@ except KeyError:
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+# Celery Periodic Tasks
+
+CELERYBEAT_SCHEDULE = {
+    'add-new-activity-status-for-follow-up-survey': {
+        'task': 'generank.api.tasks.send_followup_survey_to_users',
+        'schedule': timedelta(days=1),
+    },
+}
+
+CELERY_TIMEZONE = 'UTC'
 
 # Fabric settings
 
