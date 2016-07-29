@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -70,6 +71,7 @@ class RiskScore(models.Model):
         on_delete=models.CASCADE)
     calculated = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
+    created_on = models.DateTimeField(default=datetime.now)
 
     class Meta:
         unique_together = ('user', 'condition', 'population')
