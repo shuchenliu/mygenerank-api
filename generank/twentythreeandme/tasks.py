@@ -1,9 +1,13 @@
+import os,sys
 import requests
 from celery import shared_task
 
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
-
+from django.conf import settings
+sys.path.append(settings.PIPELINE_DIRECTORY)
+from conversion.convert_ttm_to_vcf import convert
+from django.core.files.base import ContentFile
 
 @shared_task
 def twentythreeandme_delayed_import_task(token, api_userid, profileid):
@@ -44,20 +48,27 @@ def twentythreeandme_genotype_import_task(profile,token):
     ''' Given a profile object and a bearer token, this function will download
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format. '''
-    
+
     try:
         genotype_data = get_genotype_data(token,profile)
         genotype = Genotype.from_json(genotype_data,profile)
         genotype.save()
+        convert_genotype_task.delay(genotype)
+
     except requests.exceptions.Timeout:
         twentythreeandme_genotype_import_task.delay(profile,token, countdown=2)
-
 
 @shared_task
 def convert_genotype_task(genotype):
     """ Given a genotype, this function converts the genotype data file from the
     23 and Me format to a VCF format """
-    pass
+
+    raw_data = genotype.genotype_file.read().decode('ascii')
+    vcf_data = convert(raw_data)
+    profile  = genotype.profile
+    genotype.converted_file.save(name = str(profile.id)+'_genotype.vcf',
+                content = ContentFile(vcf_data) )
+    genotype.save()
 
 @shared_task
 def submit_calculations_task(user_id, profile_id):
