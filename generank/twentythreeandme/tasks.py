@@ -1,11 +1,12 @@
-import os,sys
+import os
+import sys
 import requests
 from celery import shared_task
 
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
 from django.conf import settings
-sys.path.append(settings.PIPELINE_DIRECTORY)
+sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from conversion.convert_ttm_to_vcf import convert
 from django.core.files.base import ContentFile
 

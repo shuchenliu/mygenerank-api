@@ -275,4 +275,3 @@ CELERY_TIMEZONE = 'UTC'
 # Fabric settings
 
 REMOTE_HOSTS =  ['fabric@137.131.231.252']
-PIPELINE_DIRECTORY = '/media/bhuvan/DATADRIVE1/grs/gene-pc-pipeline'
