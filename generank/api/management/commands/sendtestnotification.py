@@ -1,7 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import User, APNSDevice
+from push_notifications.models import APNSDevice
+
+from generank.api.models import User
 
 
 class Command(BaseCommand):
@@ -14,10 +16,10 @@ class Command(BaseCommand):
         user_id = options['user_id']
 
         try:
-            user = User.object.get(id=user_id)
+            user = User.objects.get(id=user_id)
             device = APNSDevice.objects.get(user=user)
         except ObjectDoesNotExist:
             self.stdout.write(self.style.FAILURE('Could not send notification.'))
-        devices.send_message('This is a test notification.')
+        device.send_message('This is a test notification.')
         self.stdout.write(self.style.SUCCESS(
             'Notification sent sent to %s' % id))

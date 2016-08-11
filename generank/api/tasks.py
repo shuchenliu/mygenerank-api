@@ -35,7 +35,7 @@ def send_risk_score_notification(user_id, condition_name):
     logger.debug('tasks.send_risk_score_notification')
     try:
         device = APNSDevice.objects.get(user__id=user_id)
-        device.send("Your risk score for {condition} is available.".format(
+        device.send_message("Your risk score for {condition} is available.".format(
             condition=condition_name))
         logger.info('Notification sent to user for new risk score: '
             'User <%s> | Condition <%s>' % (user_id, condition_name))
