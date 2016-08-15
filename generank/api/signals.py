@@ -35,6 +35,13 @@ def send_nofitication_for_new_risk_score(sender, instance, created, **kwargs):
         tasks.send_risk_score_notification.delay(instance.user.id,
             instance.condition.name)
 
+@receiver(post_save, sender=RiskScore)
+def send_nofitication_for_post_cad_survey(sender, instance, created, **kwargs):
+    """ Whenever a new risk score is created for a given user, send them
+    a notification for the post CAD result survey.
+    """
+    if created:
+        tasks.send_post_cad_survey_to_users.delay(instance.user.id)
 
 @receiver(post_save, sender=Activity)
 def send_notification_for_new_activity(sender, instance, created, **kwargs):

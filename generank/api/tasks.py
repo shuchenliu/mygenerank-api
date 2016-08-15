@@ -67,11 +67,24 @@ def create_statuses_for_existing_users(activity_id):
 def create_statuses_for_new_user(user_id):
     logger.debug('tasks.create_statuses_for_new_user')
     user = User.objects.get(id=user_id)
-    for activity in Activity.objects.all():
+    activities = [Activity.objects.get(study_task_identifier='PhenotypeSurveyTask'),
+            Activity.objects.get(study_task_identifier='TwentyThreeAndMeLoginTask')]
+
+    for activity in activities:
         status = ActivityStatus(user=user, activity=activity)
         status.save()
     logger.info('New statuses created for new user: %s' % user_id)
 
+@shared_task
+def send_post_cad_survey_to_users(user_id):
+    """ On completion of the Risk Score calculation add the Post CAD survey
+    status for the user. """
+    logger.debug('tasks.send_post_cad_survey_to_users')
+    user = User.objects.get(id=user_id)
+    activity = Activity.objects.get(study_task_identifier='PostCADResultsSurveyTask')
+    status = ActivityStatus(user=user, activity=activity)
+    status.save()
+    logger.info('Post CAD survey status created for user: %s' % user_id)
 
 @shared_task
 def send_followup_survey_to_users():
@@ -79,7 +92,7 @@ def send_followup_survey_to_users():
     add a new status for them to complete the followup survey.
     """
     logger.debug('tasks.send_followup_survey_to_users')
-    activity = Activity.objects.get(identifier='CADFollowUpSurveyTask')
+    activity = Activity.objects.get(study_task_identifier='CADFollowUpSurveyTask')
 
     six_months_delta = timedelta(weeks=24)
     date_limit = (date.today() - six_months_delta).strftime("%Y-%m-%d")
