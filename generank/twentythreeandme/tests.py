@@ -14,7 +14,8 @@ def mock_gets(data,*args, **kwargs):
     return temp_f
 
 class mock_function(object):
-
+    ''' A decorator which helps in mocking a function such that the
+    requests.get call returns the data supplied. '''
     def __init__(self,data):
         self.data = data
 
