@@ -13,6 +13,17 @@ class mock_response(object):
     def __init__(self,text):
         self.text = text
 
+def test_get():
+    """ Tests the get() function in the api_client. """
+
+    tdata = '{"test":"test123"}'
+    requests.get = MagicMock(return_value=mock_response(tdata))
+    url = ''
+    token = '8c6fdf907e59f829e0da298d3e4a39be'
+    response = api_client.get(url,token)
+
+    response['test'].should.equal('test123')
+
 def test_user_import():
     """ Tests the get_user_info() function in the api_client. """
 
