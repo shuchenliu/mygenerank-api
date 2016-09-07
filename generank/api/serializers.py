@@ -61,7 +61,9 @@ class PopulationSerializer(serializers.HyperlinkedModelSerializer):
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Condition
-        fields = ('url', 'name', 'overview', 'description')
+        fields = ('url', 'name', 'overview', 'description',
+        'risk_explanation', 'multiple_scores_explanation',
+        'supporting_evidence')
         extra_kwargs = {'url': {'view_name': 'api:condition-detail'}}
 
 
