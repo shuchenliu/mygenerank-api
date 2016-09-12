@@ -70,18 +70,19 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
-    @detail_route(methods=['GET'], permission_classes=[])
+    @detail_route(methods=['GET'], permission_classes=[], renderer_classes=(TemplateHTMLRenderer,))
     def register(self, request, pk):
         code = request.query_params.get('code', None)
         try:
             user = User.objects.get(id=pk, registration_code=code)
             user.registered = True
             user.save()
-            serializer = UserSerializer(user, context={'request': request})
-            return Response(serializer.data)
+            return Response({}, template_name='confirm_registration.html')
         except ObjectDoesNotExist:
             logger.error('User registration failed: User did not exist.')
-        return Response({'error': 'Invalid Registration Code'})
+
+        return Response({'error': 'Invalid Registration Code'},
+            template_name='confirm_registration.html')
 
 
 class SignatureViewSet(viewsets.ModelViewSet):
