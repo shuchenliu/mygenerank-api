@@ -11,6 +11,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view, renderer_classes, \
     detail_route, permission_classes, authentication_classes
+from rest_framework.renderers import TemplateHTMLRenderer
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
@@ -171,3 +172,9 @@ def import23andme(request):
     logger.info('23andMe Import Started for user %s' % userid)
 
     return response.Response({'status':'all set'}, status=200)
+
+
+@api_view(['GET'])
+@renderer_classes((TemplateHTMLRenderer,))
+def about_page(request):
+    return Response({}, template_name='about.html')

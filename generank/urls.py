@@ -47,6 +47,7 @@ urlpatterns = ([
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/register/', gpc_views.CreateUserView.as_view()),
     url(r'^api/import23andme/', gpc_views.import23andme),
+    url(r'^api/about/', gpc_views.about_page),
 
     # Internal API
     url(r'^twentythreeandme/', include(ttm_router.urls,
