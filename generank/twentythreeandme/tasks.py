@@ -119,7 +119,7 @@ def ancestry_calculation_task(user_id):
     for user in User.objects.all():
         print(user.user_id)
     user = User.objects.get(user_id=user_id)
-    ancestry = steps.grs_step_1(user.profile.genotype.converted_file)
+    ancestry = steps.grs_step_1(user_id, user.profile.genotype.converted_file)
     # TODO: Perform next step.
 
 
