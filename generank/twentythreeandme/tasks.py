@@ -1,4 +1,4 @@
-import os, requests, sys
+import os, requests, sys, subprocess
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -10,6 +10,7 @@ from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
+from analysis import steps
 from conversion.convert_ttm_to_vcf import convert
 
 
@@ -45,7 +46,7 @@ def twentythreeandme_import_task(user_info, token, api_userid, profileid):
 
     # Create a ttm user
     ttm_uobj = User.from_json(user_info, token)
-    ttm_uobj.apiuserid = api_userid
+    ttm_uobj.user_id = api_userid
 
     try:
         ttm_uobj.save()
@@ -63,19 +64,21 @@ def twentythreeandme_import_task(user_info, token, api_userid, profileid):
     # Create a profile object
     profile = Profile.from_json(prof, ttm_uobj)
     profile.save()
-    twentythreeandme_genotype_import_task.delay(profile,token)
+    twentythreeandme_genotype_import_task.delay(profile.id, token)
 
 
 @shared_task
-def twentythreeandme_genotype_import_task(profile,token):
+def twentythreeandme_genotype_import_task(profile_id, token):
     """ Given a profile object and a bearer token, this function will download
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format.
     """
     logger.debug('tasks.twentythreeandme_genotype_import_task')
 
+    profile = Profile.objects.get(id=profile_id)
+
     try:
-        genotype_data = get_genotype_data(token,profile)
+        genotype_data = get_genotype_data(token, profile)
     except requests.exceptions.Timeout:
         logger.warning('An timeout occurred, retrying.')
         twentythreeandme_genotype_import_task.delay(profile,token, countdown=2)
@@ -108,5 +111,16 @@ def convert_genotype_task(genotype):
 
 
 @shared_task
-def submit_calculations_task(user_id, profile_id):
-    pass
+def ancestry_calculation_task(user_id):
+    """ Given an API user id, perform the ancestry calculations on that
+    user's genotype data. """
+    logger.debug('tasks.ancestry_calculation_task')
+
+    for user in User.objects.all():
+        print(user.user_id)
+    user = User.objects.get(user_id=user_id)
+    ancestry = steps.grs_step_1(user.profile.genotype.converted_file)
+    # TODO: Perform next step.
+
+
+

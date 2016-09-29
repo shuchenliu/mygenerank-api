@@ -38,5 +38,5 @@ class Command(BaseCommand):
             self.stdout.write(self.style.FAILURE('File does not exist.'))
             return
 
-        tasks.convert_genotype_task(genotype)
+        tasks.convert_genotype_task.delay(genotype)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))
