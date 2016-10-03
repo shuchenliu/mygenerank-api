@@ -91,15 +91,17 @@ def twentythreeandme_genotype_import_task(profile_id, token):
         logger.error('A genotype for this user already exists.')
         return
 
-    convert_genotype_task.delay(genotype)
+    convert_genotype_task.delay(genotype.id)
 
 
 @shared_task
-def convert_genotype_task(genotype):
+def convert_genotype_task(genotype_id):
     """ Given a genotype, this function converts the genotype data file from the
     23 and Me format to a VCF format.
     """
     logger.debug('tasks.convert_genotype_task')
+
+    genotype = Genotype.objects.get(id=genotype_id)
 
     raw_data = genotype.genotype_file.read().decode('ascii')
     vcf_data = convert(raw_data)
