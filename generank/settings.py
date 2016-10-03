@@ -182,16 +182,16 @@ STATICFILES_DIRS = [
 # File storage options
 
 DATA_URL = '/data/'
-DATA_STORAGE = os.path.join(BASE_DIR, "data")
+DATA_STORAGE = os.environ.get('DATA_STORAGE', os.path.join(BASE_DIR, "data"))
 
 TTM_RAW_URL = '/23andme/raw/'
-TTM_RAW_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'raw')
+TTM_RAW_STORAGE = os.environ.get('TTM_RAW_STORAGE', os.path.join(DATA_STORAGE, '23andme', 'raw'))
 
 TTM_CONVERTED_URL = '/23andme/converted/'
-TTM_CONVERTED_STORAGE = os.path.join(DATA_STORAGE, '23andme', 'converted')
+TTM_CONVERTED_STORAGE = os.environ.get('TTM_CONVERTED_STORAGE', os.path.join(DATA_STORAGE, '23andme', 'converted'))
 
 CONSENT_FILE_URL = '/data/consent/'
-CONSENT_FILE_LOCATION = os.path.join(DATA_STORAGE, 'consent')
+CONSENT_FILE_LOCATION = os.environ.get('CONSENT_FILE_LOCATION', os.path.join(DATA_STORAGE, 'consent'))
 
 # Loaded URLs
 
