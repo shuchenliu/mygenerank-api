@@ -16,6 +16,6 @@ class Command(BaseCommand):
         profile_id = options['profile_id']
         token = options['token']
 
-        tasks.twentythreeandme_delayed_import_task.delay(
+        tasks.twentythreeandme.twentythreeandme_delayed_import_task.delay(
             token, user_id, profile_id)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))

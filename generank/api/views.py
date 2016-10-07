@@ -28,7 +28,7 @@ from .serializers import UserSerializer,\
     ConsentPDFSerializer, SignatureSerializer
 
 from ..twentythreeandme import models as ttm_models
-from ..twentythreeandme.tasks import twentythreeandme_delayed_import_task
+from ..twentythreeandme.tasks.twentythreeandme import twentythreeandme_delayed_import_task
 
 
 logger = logging.getLogger()

@@ -6,9 +6,10 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 
-from .models  import User, Profile, Genotype
-from .api_client import get_user_info, get_genotype_data
+from ..models  import User, Profile, Genotype
+from ..api_client import get_user_info, get_genotype_data
 
+sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from conversion.convert_ttm_to_vcf import convert
 
 
