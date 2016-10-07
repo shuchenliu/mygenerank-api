@@ -65,7 +65,7 @@ def get_ancestry(user_id):
     user's genotype data. """
     logger.debug('tasks.cad.get_ancestry')
     user = User.objects.get(user_id=user_id)
-    return steps.grs_step_1(user_id, user.profile.genotype.converted_file)
+    return steps.grs_step_1(uuid.uuid4().hex, user.profile.genotype.converted_file)
 
 
 @shared_task
