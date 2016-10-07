@@ -1,6 +1,6 @@
-import os, requests, sys, subprocess
+import os, requests, sys
 
-from celery import shared_task
+from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -9,8 +9,6 @@ from django.db.utils import IntegrityError
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
 
-sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
-from analysis import steps
 from conversion.convert_ttm_to_vcf import convert
 
 
@@ -110,19 +108,4 @@ def convert_genotype_task(genotype_id):
     genotype.converted_file.save(name=filename, content=ContentFile(vcf_data))
 
     genotype.save()
-
-
-@shared_task
-def ancestry_calculation_task(user_id):
-    """ Given an API user id, perform the ancestry calculations on that
-    user's genotype data. """
-    logger.debug('tasks.ancestry_calculation_task')
-
-    for user in User.objects.all():
-        print(user.user_id)
-    user = User.objects.get(user_id=user_id)
-    ancestry = steps.grs_step_1(user_id, user.profile.genotype.converted_file)
-    # TODO: Perform next step.
-
-
 

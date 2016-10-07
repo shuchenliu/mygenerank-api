@@ -12,5 +12,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user_id = options['user_id']
 
-        tasks.ancestry_calculation_task.delay(user_id)
+        tasks.get_ancestry.delay(user_id)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))
