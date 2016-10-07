@@ -37,7 +37,7 @@ def _impute_and_get_cad_risk_per_chunk(user_id, chunk, haps_path, haps_data):
 def _get_generic_risk(user_id, chromosome):
     """ Calculate the risk scores for each chunk in a given chromosome. """
     logger.debug('tasks.cad._get_generic_risk')
-    haps_path, haps_data = _get_cad_haplotypes.s(user_id, chunk).get()
+    haps_path, haps_data = _get_cad_haplotypes.s(user_id, chromosome).get()
     return group(
         _impute_and_get_cad_risk_per_chunk(user_id, chunk, haps_path, haps_data)
         for chunk in steps.get_chunks()
