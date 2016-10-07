@@ -258,10 +258,9 @@ except KeyError:
 CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 
-CELERY_ROUTES = {
-    'generank.compute.tasks.convert': {'queue': 'conversion'},
-    'generank.compute.tasks.compute': {'queue': 'computation'}
-}
+CELERY_IMPORTS = [
+    'generank.compute.tasks'
+]
 
 # Celery Periodic Tasks
 
