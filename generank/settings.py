@@ -259,7 +259,7 @@ CELERY_TASK_SERIALIZER = 'uuid_json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 
 CELERY_IMPORTS = [
-    'generank.compute.tasks'
+    'generank.compute.tasks.cad'
 ]
 
 # Celery Periodic Tasks
