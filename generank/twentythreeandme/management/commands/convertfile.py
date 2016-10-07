@@ -38,5 +38,5 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('File does not exist.'))
             return
 
-        tasks.twentythreeandme.convert_genotype_task.delay(genotype.id)
+        tasks.convert_genotype_task.delay(genotype.id)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))

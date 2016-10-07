@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from generank.twentythreeandme import tasks
+from generank.compute import tasks
 
 
 class Command(BaseCommand):

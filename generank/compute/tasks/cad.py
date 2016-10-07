@@ -4,7 +4,7 @@ import os, requests, sys, subprocess, uuid
 from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 
-from .models  import User, Profile, Genotype
+from generank.twentythreeandme.models  import User, Profile, Genotype
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from analysis import steps
