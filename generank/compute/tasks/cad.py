@@ -75,7 +75,7 @@ def get_cad_risk_score(user_id):
     subsequent and dependent steps.
     """
     logger.debug('tasks.cad.get_cad_risk_score')
-    chromosomes = [chunk[0] for chunk in steps.get_chunks()]
+    chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
 
     workflow = chord([
         # Step 1
