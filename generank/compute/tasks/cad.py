@@ -38,11 +38,11 @@ def _get_generic_risk(haps, user_id, chromosome):
     """ Calculate the risk scores for each chunk in a given chromosome. """
     logger.debug('tasks.cad._get_generic_risk')
     haps_path, haps_data = haps
-    return group(
+    return group((
         _impute_and_get_cad_risk_per_chunk.s(user_id, chunk, haps_path, haps_data)
         for chunk in steps.get_chunks()
             if chunk[0] == chr
-    ).get()
+    )).get()
 
 
 @shared_task
