@@ -30,7 +30,8 @@ def _impute_and_get_cad_risk_per_chunk(user_id, chunk, haps_path, haps_data):
     """
     logger.debug('tasks.cad._impute_and_get_cad_risk_per_chunk')
     vcf_filename = None
-    steps.grs_step_3(uuid.uuid4().hex, vcf_filename, haps_path, haps_data, *chunk)
+    steps.grs_step_3(uuid.uuid4().hex, vcf_filename, haps_path, haps_data,
+        PHENOTYPE, *chunk)
 
 
 @shared_task
@@ -41,7 +42,7 @@ def _get_generic_risk(haps, user_id, chromosome):
         _impute_and_get_cad_risk_per_chunk.s(user_id, chunk, *haps)
         for chunk in steps.get_chunks()
             if chunk[0] == chromosome
-    ])
+    ])().get()
 
 
 @shared_task
