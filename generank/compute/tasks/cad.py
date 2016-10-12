@@ -24,13 +24,12 @@ def _get_cad_haplotypes(user_id, chromosome):
 
 
 @shared_task
-def _impute_and_get_cad_risk_per_chunk(user_id, chunk, haps_path, haps_data):
+def _impute_and_get_cad_risk_per_chunk(user_id, chunk, filename, haps_path, haps_data):
     """ Given a user, the chunk of a chromosome and the known haplotypes for that
     chromosome, calculate their risk for that given chunk.
     """
     logger.debug('tasks.cad._impute_and_get_cad_risk_per_chunk')
-    vcf_filename = None
-    steps.grs_step_3(uuid.uuid4().hex, vcf_filename, haps_path, haps_data,
+    steps.grs_step_3(uuid.uuid4().hex, filename, haps_path, haps_data,
         PHENOTYPE, *chunk)
 
 
@@ -52,7 +51,7 @@ def _get_total_cad_risk(ancestry, risk_of_risks, user_id):
     """
     logger.debug('tasks.cad._get_total_cad_risk')
     vcf_filename = None
-    ancestry_path, ancestry_contents = ancestry
+    filename, ancestry_path, ancestry_contents = ancestry
     risks = [risk for chr_risks in risk_of_risks for risk in chr_risks]
     return steps.grs_step_4(uuid.uuid4().hex, vcf_filename, ancestry_path, ancestry_contents,
         risks, user_id)
