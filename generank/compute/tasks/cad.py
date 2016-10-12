@@ -41,7 +41,7 @@ def _get_generic_risk(haps, user_id, chromosome):
         _impute_and_get_cad_risk_per_chunk.s(user_id, chunk, *haps)
         for chunk in steps.get_chunks()
             if chunk[0] == chromosome
-    ])().get()
+    ]).apply_async().get()
     return results
 
 
