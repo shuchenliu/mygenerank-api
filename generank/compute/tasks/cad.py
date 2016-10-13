@@ -76,7 +76,7 @@ def get_cad_risk_score(user_id):
                 # Steps 3
                 _impute_and_get_cad_risk_per_chunk.s(user_id, chunk)
                 for chunk in steps.get_chunks()
-                    if chunk[0] == chromosome
+                    if chunk[0] == chr
             )
             for chr in chromosomes
         )
