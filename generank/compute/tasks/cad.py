@@ -66,7 +66,7 @@ def get_cad_risk_score(user_id):
     logger.debug('tasks.cad.get_cad_risk_score')
     chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
 
-    workflow = chord([
+    workflow = (group([
         # Step 1
         get_ancestry.s(user_id),
         # Steps 2
@@ -80,4 +80,6 @@ def get_cad_risk_score(user_id):
             for chr in chromosomes
         )
     # Step 4 (once they're done)
-    ])(_get_total_cad_risk.s(user_id))
+    ]) | _get_total_cad_risk.s(user_id))
+
+    workflow()
