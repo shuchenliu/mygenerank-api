@@ -250,7 +250,7 @@ ADMINS = [
 # Celery Settings
 try:
     BROKER_URL = os.environ['BROKER_URL']
-    CELERY_RESULT_BACKEND = os.environ['BROKER_URL']
+    CELERY_RESULT_BACKEND = os.environ['BACKEND_URL']
     CELERYD_PREFETCH_MULTIPLIER=os.environ.get('CELERYD_PREFETCH_MULTIPLIER', 1)
 except KeyError:
     CELERY_ALWAYS_EAGER = True
