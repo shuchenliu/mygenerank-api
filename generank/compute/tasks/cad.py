@@ -81,4 +81,4 @@ def get_cad_risk_score(user_id):
             for chr in chromosomes
         )
     # Step 4 (once they're done)
-    ])(_get_total_cad_risk.s(user_id))
+    ])(_get_total_cad_risk.s(user_id)))
