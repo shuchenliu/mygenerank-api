@@ -33,16 +33,17 @@ def _impute_and_get_cad_risk_per_chunk(haps, user_id, chunk):
 
 
 @shared_task
-def _get_total_cad_risk(ancestry, risk_of_risks, user_id):
+def _get_total_cad_risk(results, user_id):
     """ Given the user's ancestry, and their individual risk per chromosome
     per chunk, calculate their total overall risk.
     """
     logger.debug('tasks.cad._get_total_cad_risk')
-    vcf_filename = None
+    ancestry, risk_of_risks = results
+
     filename, ancestry_path, ancestry_contents = ancestry
     risks = [risk for chr_risks in risk_of_risks for risk in chr_risks]
-    return steps.grs_step_4(uuid.uuid4().hex, vcf_filename, ancestry_path, ancestry_contents,
-        risks, user_id)
+    return steps.grs_step_4(uuid.uuid4().hex, filename, ancestry_path,
+        ancestry_contents, risks, user_id)
 
 
 # Public Tasks
@@ -66,7 +67,7 @@ def get_cad_risk_score(user_id):
     logger.debug('tasks.cad.get_cad_risk_score')
     chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
 
-    workflow = (group([
+    chord(group([
         # Step 1
         get_ancestry.s(user_id),
         # Steps 2
@@ -80,6 +81,4 @@ def get_cad_risk_score(user_id):
             for chr in chromosomes
         )
     # Step 4 (once they're done)
-    ]) | _get_total_cad_risk.s(user_id))
-
-    workflow()
+    ])(_get_total_cad_risk.s(user_id))
