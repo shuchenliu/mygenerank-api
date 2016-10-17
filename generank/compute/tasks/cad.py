@@ -27,9 +27,8 @@ def _get_cad_haplotypes(user_id, chromosome):
 def _dispatch_impute_tasks(haps, user_id, chromosome):
     """ Given a chromosome and it's haplotypes, distribute the imputations over
     each chunk for that chromosome. """
-    tasks = group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
-        for chunk in steps.get_chunks() if chunk[0] == chromosome).delay()
-    return tasks.get()
+    return group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
+        for chunk in steps.get_chunks() if chunk[0] == chromosome)()
 
 
 @shared_task
@@ -47,7 +46,8 @@ def _get_total_cad_risk(results, user_id):
     per chunk, calculate their total overall risk.
     """
     logger.debug('tasks.cad._get_total_cad_risk')
-    ancestry, risk_of_risks = results
+    ancestry, risk_of_risks_result = results
+    risk_of_risks = risk_of_risks_result.join()
 
     filename, ancestry_path, ancestry_contents = ancestry
     risks = [risk for chr_risks in risk_of_risks for risk in chr_risks]
