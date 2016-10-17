@@ -27,8 +27,9 @@ def _get_cad_haplotypes(user_id, chromosome):
 def _dispatch_impute_tasks(haps, user_id, chromosome):
     """ Given a chromosome and it's haplotypes, distribute the imputations over
     each chunk for that chromosome. """
-    return group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
-        for chunk in steps.get_chunks() if chunk[0] == chromosome)()
+    tasks = group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
+        for chunk in steps.get_chunks() if chunk[0] == chromosome).delay()
+    return tasks.get()
 
 
 @shared_task
