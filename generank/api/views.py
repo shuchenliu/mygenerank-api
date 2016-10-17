@@ -45,6 +45,13 @@ class CreateUserView(CreateAPIView):
             logger.error('User creation failed: password did not validate.')
             return Response({ 'message': '\n'.join(e.messages) }, 400)
 
+        try:
+            User.objects.get(username=request.data.get('username'))
+            logger.error('User creation failed: user already exists.')
+            return Response({ 'message': 'User already exists' }, 400)
+        except ObjectDoesNotExist:
+            pass
+
         response = super().create(request, *args, **kwargs)
 
         # Prep to send email.
