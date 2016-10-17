@@ -75,15 +75,18 @@ def get_cad_risk_score(user_id):
     logger.debug('tasks.cad.get_cad_risk_score')
     chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
 
-    workflow = (group([
-        # Step 1
-        get_ancestry.s(user_id),
-        chord(
-            # Steps 2
-            header=group(_get_cad_haplotypes.s(user_id, chr) for chr in chromosomes),
-            # Steps 3
-            body=group(_dispatch_impute_tasks.s(user_id, chr) for chr in chromosomes))
-    # Step 4 (once they're done)
-    ]) | _get_total_cad_risk.s(user_id))
+    step_1 = get_ancestry.s(user_id)
+    steps_2_and_3 = [
+        chord(header=group([_get_cad_haplotypes.s(user_id, chromosome)]),
+              body=_dispatch_impute_tasks.s(user_id, chromosome))
+        for chromosome in chromosomes
+    ]
+    step_4 = _get_total_cad_risk.s(user_id)
 
-    workflow()
+
+    workflow = chord(
+        header=group([step_1, steps_2_and_3]),
+        body=step_4
+    )
+
+    workflow.delay()
