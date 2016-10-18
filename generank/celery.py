@@ -6,8 +6,6 @@ from kombu.serialization import register
 from django.conf import settings
 from anyjson import loads as json_loads, dumps as json_dumps
 
-from .utils import task_addons
-
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'generank.settings')
 
