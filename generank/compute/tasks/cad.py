@@ -5,7 +5,6 @@ from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 
 from generank.twentythreeandme.models  import User, Profile, Genotype
-from generank.utils.task_addons import dynamic_task
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from analysis import steps
