@@ -5,6 +5,7 @@ from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 
 from generank.twentythreeandme.models  import User, Profile, Genotype
+from generank.utils.task_addons import dynamic_task
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from analysis import steps
@@ -23,13 +24,12 @@ def _get_cad_haplotypes(user_id, chromosome):
         user_id, PHENOTYPE, chromosome)
 
 
-@shared_task
+@dynamic_task
 def _dispatch_impute_tasks(haps, user_id, chromosome):
-    """ Given a chromosome and it's haplotypes, distribute the imputations over
+    """ Given a chromosome and it's haplotypes, return the imputation tasks over
     each chunk for that chromosome. """
-    tasks = group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
-        for chunk in steps.get_chunks() if chunk[0] == chromosome)()
-    return tasks.join()
+    return group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
+        for chunk in steps.get_chunks() if chunk[0] == chromosome)
 
 
 @shared_task
