@@ -15,21 +15,20 @@ PHENOTYPE = 'cad_160808'
 
 
 @shared_task
-def _get_cad_haplotypes(user_id, chromosome):
+def _get_cad_haplotypes(user_id, chunk):
     """ Given a chromosome, determine the known haplotypes inside it. """
     logger.debug('tasks.cad._get_cad_haplotypes')
     user = User.objects.get(user_id=user_id)
     return steps.grs_step_2(uuid.uuid4().hex, user.profile.genotype.converted_file,
-        user_id, PHENOTYPE, chromosome)
+        user_id, PHENOTYPE, chunk[0])
 
 
-@shared_task(bind=True)
-def _dispatch_impute_tasks(self, haps, user_id, chromosome):
-    """ Given a chromosome and it's haplotypes, return the imputation tasks over
-    each chunk for that chromosome. """
-    self.replace(group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
-        for chunk in steps.get_chunks() if chunk[0] == chromosome))
-    print(self)
+#@shared_task(bind=True)
+#def _dispatch_impute_tasks(self, haps, user_id, chromosome):
+#    """ Given a chromosome and it's haplotypes, return the imputation tasks over
+#    each chunk for that chromosome. """
+#    self.replace(group(_impute_and_get_cad_risk_per_chunk.s(haps, user_id, chunk)
+#        for chunk in steps.get_chunks() if chunk[0] == chromosome))
 
 
 @shared_task
@@ -75,12 +74,12 @@ def get_cad_risk_score(user_id):
     subsequent and dependent steps.
     """
     logger.debug('tasks.cad.get_cad_risk_score')
-    chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
+    #chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
 
     step_1 = get_ancestry.s(user_id)
     steps_2_and_3 = [
-        _get_cad_haplotypes.s(user_id, chromosome) | _dispatch_impute_tasks.s(user_id, chromosome)
-        for chromosome in chromosomes
+        _get_cad_haplotypes.s(user_id, chunk) | _impute_and_get_cad_risk_per_chunk.s(user_id, chunk)
+        for chunk in steps.get_chunks()
     ]
     step_4 = _get_total_cad_risk.s(user_id)
 
