@@ -63,7 +63,7 @@ def twentythreeandme_import_task(user_info, token, api_userid, profileid):
     # Create a profile object
     profile = Profile.from_json(prof, ttm_uobj)
     profile.save()
-    twentythreeandme_genotype_import_task.delay(profile.id, token)
+    twentythreeandme_genotype_import_task.delay(profile.id.hex, token)
 
 
 @shared_task
@@ -90,7 +90,7 @@ def twentythreeandme_genotype_import_task(profile_id, token):
         logger.error('A genotype for this user already exists.')
         return
 
-    convert_genotype_task.delay(genotype.id)
+    convert_genotype_task.delay(genotype.id.hex)
 
 
 @shared_task
