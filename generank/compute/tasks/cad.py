@@ -4,7 +4,8 @@ import os, requests, sys, subprocess, uuid
 from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 
-from generank.api  import models
+from generank.api import models
+from generank.api.tasks import send_risk_score_notification, send_post_cad_survey_to_users
 from generank.twentythreeandme.models  import User, Profile, Genotype
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
@@ -38,8 +39,7 @@ def _get_cad_haplotypes(user_id, chromosome):
 @shared_task
 def _impute_and_get_cad_risk_per_chunk(haps, user_id, chunk):
     """ Given a user, the chunk of a chromosome and the known haplotypes for that
-    chromosome, calculate their risk for that given chunk.
-    """
+    chromosome, calculate their risk for that given chunk. """
     logger.debug('tasks.cad._impute_and_get_cad_risk_per_chunk')
     return steps.grs_step_3(uuid.uuid4().hex, *haps, PHENOTYPE, *chunk)
 
@@ -47,8 +47,7 @@ def _impute_and_get_cad_risk_per_chunk(haps, user_id, chunk):
 @shared_task
 def _get_total_cad_risk(results, user_id):
     """ Given the user's ancestry, and their individual risk per chromosome
-    per chunk, calculate their total overall risk.
-    """
+    per chunk, calculate their total overall risk. """
     logger.debug('tasks.cad._get_total_cad_risk')
     ancestry, *risk_of_risks = results
     filename, ancestry_path, ancestry_contents = ancestry
@@ -72,6 +71,15 @@ def _store_results(results, user_id):
         risk_score.save()
 
 
+@shared_task
+def _send_cad_notification(user_id):
+    """ Send a Risk Score Notification for the CAD condition.
+    Uses the API method for sending notifications. """
+    logger.debug('tasks.cad._send_cad_notification')
+    cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
+    send_risk_score_notification(user_id, cad.name)
+
+
 # Public Tasks
 
 
@@ -88,21 +96,21 @@ def get_ancestry(user_id):
 def get_cad_risk_score(user_id):
     """ Given an API user id, perform the grs risk score calculations.
     This is the high level pipeline invocation method used to submit all
-    subsequent and dependent steps.
-    """
+    subsequent and dependent steps. """
     logger.debug('tasks.cad.get_cad_risk_score')
-    #chromosomes = list(set([chunk[0] for chunk in steps.get_chunks()]))
-
     step_1 = get_ancestry.s(user_id)
     steps_2_and_3 = [
         _get_cad_haplotypes.s(user_id, chunk[0]) | _impute_and_get_cad_risk_per_chunk.s(user_id, chunk)
         for chunk in steps.get_chunks()
     ]
     step_4 = _get_total_cad_risk.s(user_id)
+    notify_user = (
+        _send_cad_notification.si(user_id) | send_post_cad_survey_to_users.si(user_id)
+    )
 
     workflow = chord(
         header=group([step_1, *steps_2_and_3]),
         body=step_4
-    ) | _store_results.s(user_id)
+    ) | _store_results.s(user_id) | notify_user
 
     workflow.delay()
