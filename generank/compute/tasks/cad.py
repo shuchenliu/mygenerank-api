@@ -4,6 +4,7 @@ import os, requests, sys, subprocess, uuid
 from celery import shared_task, chord, group
 from celery.utils.log import get_task_logger
 
+from generank.api  import models
 from generank.twentythreeandme.models  import User, Profile, Genotype
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
@@ -52,6 +53,19 @@ def _get_total_cad_risk(results, user_id):
         ancestry_contents, risk_of_risks, user_id, PHENOTYPE)
 
 
+@shared_task
+def _store_results(results, user_id):
+    """ Given the results of a user's CAD risk score, store the data. """
+    logger.debug('tasks.cad._store_results')
+    path, score = results
+    user = models.User.objects.get(id=user_id)
+    cad = models.Conditon.objects.filter(name__iexact='coronary artery disease')[0]
+    custom_population_panel = models.Population.objects.filter(name_iexact='custom')[0]
+    risk_score = models.RiskScore(user=user, condition=cad, featured=True,
+        population=custom_population_panel, calculated=True)
+    risk_score.save()
+
+
 # Public Tasks
 
 
@@ -83,6 +97,6 @@ def get_cad_risk_score(user_id):
     workflow = chord(
         header=group([step_1, *steps_2_and_3]),
         body=step_4
-    )
+    ) | _store_results.s(user_id)
 
     workflow.delay()
