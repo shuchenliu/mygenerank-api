@@ -15,12 +15,12 @@ PHENOTYPE = 'cad_160808'
 
 
 @shared_task
-def _get_cad_haplotypes(user_id, chunk):
+def _get_cad_haplotypes(user_id, chromosome):
     """ Given a chromosome, determine the known haplotypes inside it. """
     logger.debug('tasks.cad._get_cad_haplotypes')
     user = User.objects.get(user_id=user_id)
     return steps.grs_step_2(uuid.uuid4().hex, user.profile.genotype.converted_file,
-        user_id, PHENOTYPE, chunk[0])
+        user_id, PHENOTYPE, chromosome)
 
 
 #@shared_task(bind=True)
@@ -52,7 +52,7 @@ def _get_total_cad_risk(results, user_id):
     filename, ancestry_path, ancestry_contents = ancestry
     risks = [risk for chr_risks in risk_of_risks for risk in chr_risks]
     return steps.grs_step_4(uuid.uuid4().hex, filename, ancestry_path,
-        ancestry_contents, risks, user_id)
+        ancestry_contents, risks, user_id, PHENOTYPE)
 
 
 # Public Tasks
@@ -78,7 +78,7 @@ def get_cad_risk_score(user_id):
 
     step_1 = get_ancestry.s(user_id)
     steps_2_and_3 = [
-        _get_cad_haplotypes.s(user_id, chunk) | _impute_and_get_cad_risk_per_chunk.s(user_id, chunk)
+        _get_cad_haplotypes.s(user_id, chunk[0]) | _impute_and_get_cad_risk_per_chunk.s(user_id, chunk)
         for chunk in steps.get_chunks()
     ]
     step_4 = _get_total_cad_risk.s(user_id)
