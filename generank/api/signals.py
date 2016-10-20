@@ -14,7 +14,7 @@ from .models import User, Activity, ActivityStatus, RiskScore
 def create_related_models_for_user(sender, instance, created, **kwargs):
     """ Whenever a user is created, also create any related models. """
     if created:
-        tasks.create_statuses_for_new_user.delay(instance.id)
+        tasks.create_statuses_for_new_user.delay(str(instance.id))
 
 
 @receiver(post_save, sender=Activity)
@@ -23,7 +23,7 @@ def create_statuses_for_existing_users(sender, instance, created, **kwargs):
     all existing users.
     """
     if created:
-        tasks.create_statuses_for_existing_users.delay(instance.id)
+        tasks.create_statuses_for_existing_users.delay(str(instance.id))
 
 
 @receiver(post_save, sender=RiskScore)
@@ -32,7 +32,7 @@ def send_nofitication_for_new_risk_score(sender, instance, created, **kwargs):
     a notification to let them know.
     """
     if created:
-        tasks.send_risk_score_notification.delay(instance.user.id,
+        tasks.send_risk_score_notification.delay(str(instance.user.id),
             instance.condition.name)
 
 @receiver(post_save, sender=RiskScore)
@@ -41,7 +41,7 @@ def send_nofitication_for_post_cad_survey(sender, instance, created, **kwargs):
     a notification for the post CAD result survey.
     """
     if created:
-        tasks.send_post_cad_survey_to_users.delay(instance.user.id)
+        tasks.send_post_cad_survey_to_users.delay(str(instance.user.id))
 
 @receiver(post_save, sender=Activity)
 def send_notification_for_new_activity(sender, instance, created, **kwargs):
@@ -49,4 +49,4 @@ def send_notification_for_new_activity(sender, instance, created, **kwargs):
     all existing users.
     """
     if created:
-        tasks.send_activity_notification.delay(instance.id)
+        tasks.send_activity_notification.delay(str(instance.id))
