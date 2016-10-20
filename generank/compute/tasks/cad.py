@@ -59,7 +59,7 @@ def _store_results(results, user_id):
     logger.debug('tasks.cad._store_results')
     path, score = results
     user = models.User.objects.get(id=user_id)
-    cad = models.Conditon.objects.filter(name__iexact='coronary artery disease')[0]
+    cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
     custom_population_panel = models.Population.objects.filter(name_iexact='custom')[0]
     risk_score = models.RiskScore(user=user, condition=cad, featured=True,
         population=custom_population_panel, calculated=True)
