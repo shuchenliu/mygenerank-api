@@ -13,6 +13,9 @@ from analysis import steps
 
 logger = get_task_logger(__name__)
 PHENOTYPE = 'cad_160808'
+SCORE_RESULTS_ORDER = [
+    'custom', 'africans', 'native americans', 'east asians', 'europeans', 'south asians'
+]
 
 
 @shared_task
@@ -57,13 +60,16 @@ def _get_total_cad_risk(results, user_id):
 def _store_results(results, user_id):
     """ Given the results of a user's CAD risk score, store the data. """
     logger.debug('tasks.cad._store_results')
-    path, score = results
+    path, scores = results
     user = models.User.objects.get(id=user_id)
     cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
-    custom_population_panel = models.Population.objects.filter(name__iexact='custom')[0]
-    risk_score = models.RiskScore(user=user, condition=cad, featured=True,
-        population=custom_population_panel, calculated=True, value=score)
-    risk_score.save()
+
+    for population_name, score in zip(SCORE_RESULTS_ORDER, scores.split('\n')):
+        featured = True if population_name == 'custom' else False
+        population = models.Population.objects.filter(name__iexact=population_name)[0]
+        risk_score = models.RiskScore(user=user, condition=cad, featured=featured,
+            population=population, calculated=True, value=float(score))
+        risk_score.save()
 
 
 # Public Tasks
