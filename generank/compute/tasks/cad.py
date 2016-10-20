@@ -60,7 +60,7 @@ def _store_results(results, user_id):
     path, score = results
     user = models.User.objects.get(id=user_id)
     cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
-    custom_population_panel = models.Population.objects.filter(name_iexact='custom')[0]
+    custom_population_panel = models.Population.objects.filter(name__iexact='custom')[0]
     risk_score = models.RiskScore(user=user, condition=cad, featured=True,
         population=custom_population_panel, calculated=True)
     risk_score.save()
