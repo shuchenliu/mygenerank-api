@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', None)
 
 DEBUG = (env != 'prod')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '.generank.scripps.edu').split(':')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '.scripps.edu').split(':')
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
