@@ -22,6 +22,7 @@ if DEBUG:
 else:
     CORS_ORIGIN_WHITELIST = (
         'generank.scripps.edu',
+        'stsi01.scripps.edu',
     )
 
 # Application definition
