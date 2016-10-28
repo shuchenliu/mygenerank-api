@@ -10,12 +10,14 @@ class Command(BaseCommand):
         parser.add_argument('user_id', type=str)
         parser.add_argument('profile_id', type=str)
         parser.add_argument('token', type=str)
+        parser.add_argument('run_after', type=bool)
 
     def handle(self, *args, **options):
         user_id = options['user_id']
         profile_id = options['profile_id']
         token = options['token']
+        run_after = options['run_after']
 
-        tasks.twentythreeandme.twentythreeandme_delayed_import_task.delay(
-            token, user_id, profile_id)
+        tasks.twentythreeandme.import_account.delay(
+            token, user_id, profile_id, run_after=run_after)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))

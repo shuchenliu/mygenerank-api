@@ -6,8 +6,11 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 
+from generank import compute
+
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
+
 
 sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from conversion.convert_ttm_to_vcf import convert
@@ -17,89 +20,58 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def twentythreeandme_delayed_import_task(token, api_userid, profileid):
+def _import_user(token, api_userid):
     """ Given a token and a api_user and a 23andMe profile_id,
-    it fetches user data for that profile from 23andMe and starts
-    the task to create a 23andMe User/Profile.
+    it fetches user data for that profile from 23andMe and saves the user.
+    :returns user_info: A dict of the 23andMe User/Profile information.
     """
     logger.debug('tasks.twentythreeandme_delayed_import_task')
+    user_info = get_user_info(token)
+    ttm_uobj = User.from_json(user_info, token)
+    ttm_uobj.user_id = api_userid
+    ttm_uobj.save()
 
-    try:
-        user_info = get_user_info(token)
-    except requests.exceptions.Timeout:
-        logger.warning('An timeout occurred, retrying.')
-        twentythreeandme_delayed_import_task.delay(token, api_userid,
-            profileid, countdown=2)
-        return
-
-    twentythreeandme_import_task.delay(user_info, token, api_userid, profileid)
+    return user_info
 
 
 @shared_task
-def twentythreeandme_import_task(user_info, token, api_userid, profileid):
+def _import_profile(user_info, token, profileid):
     """ Given a token and a user info JSON object this will create a 23andMe
     User. It will also create a Profile object and spawn a job to import the
     genotype data.
     """
     logger.debug('tasks.twentythreeandme_import_task')
 
-    # Create a ttm user
-    ttm_uobj = User.from_json(user_info, token)
-    ttm_uobj.user_id = api_userid
+    prof = [prof for prof in user_info['profiles']
+        if prof['id'] == profileid][0]
 
-    try:
-        ttm_uobj.save()
-    except IntegrityError:
-        logger.error('A user with this id already exists.')
-        return
-
-    try:
-        prof = [prof for prof in user_info['profiles']
-            if prof['id'] == profileid][0]
-    except IndexError:
-        logger.error('No retrieved profile matches {}'.format(profileid))
-        return
-
-    # Create a profile object
     profile = Profile.from_json(prof, ttm_uobj)
     profile.save()
-    twentythreeandme_genotype_import_task.delay(profile.id.hex, token)
+
+    return str(profile.id)
 
 
 @shared_task
-def twentythreeandme_genotype_import_task(profile_id, token):
-    """ Given a profile object and a bearer token, this function will download
+def _import_genotype(token, profile_id):
+    """ Given the id of a profile model and a bearer token, this function will download
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format.
     """
     logger.debug('tasks.twentythreeandme_genotype_import_task')
-
     profile = Profile.objects.get(id=profile_id)
-
-    try:
-        genotype_data = get_genotype_data(token, profile)
-    except requests.exceptions.Timeout:
-        logger.warning('An timeout occurred, retrying.')
-        twentythreeandme_genotype_import_task.delay(profile,token, countdown=2)
-
+    genotype_data = get_genotype_data(token, profile)
     genotype = Genotype.from_json(genotype_data, profile)
+    genotype.save()
 
-    try:
-        genotype.save()
-    except IntegrityError:
-        logger.error('A genotype for this user already exists.')
-        return
-
-    convert_genotype_task.delay(genotype.id.hex)
+    return str(genotype.id)
 
 
 @shared_task
-def convert_genotype_task(genotype_id):
+def _convert_genotype(genotype_id):
     """ Given a genotype, this function converts the genotype data file from the
     23 and Me format to a VCF format.
     """
     logger.debug('tasks.convert_genotype_task')
-
     genotype = Genotype.objects.get(id=genotype_id)
 
     raw_data = genotype.genotype_file.read().decode('ascii')
@@ -109,4 +81,26 @@ def convert_genotype_task(genotype_id):
     genotype.converted_file.save(name=filename, content=ContentFile(vcf_data))
 
     genotype.save()
+
+
+# Public Tasks
+
+@shared_task
+def import_account(token, api_user_id, profile_id, run_after=True):
+    """ Import a given user's account details using the OAuth token
+    and save the profile under the given API User ID.
+
+    By default, this workflow initiates the computation for all
+    risk scores once complete. """
+    workflow = (
+        _import_user.s(token, api_userid) |
+        _import_profile.s(token, profile_id) |
+        _import_genotype.si(token, profile_id) |
+        _convert_genotype.s() |
+    )
+
+    if run_after:
+        workflow = workflow | compute.tasks.run_all.si(api_user_id)
+
+    workflow.delay()
 

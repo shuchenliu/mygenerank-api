@@ -28,7 +28,7 @@ from .serializers import UserSerializer,\
     ConsentPDFSerializer, SignatureSerializer
 
 from ..twentythreeandme import models as ttm_models
-from ..twentythreeandme.tasks import twentythreeandme_delayed_import_task
+from ..twentythreeandme.tasks import import_account
 
 
 logger = logging.getLogger()
@@ -176,8 +176,7 @@ def import23andme(request):
         return response.Response({'status': 'missing parameter'}, status=400)
 
     # Start the delayed task to set the user
-    twentythreeandme_delayed_import_task.delay(token, userid, profileid)
-    logger.info('23andMe Import Started for user %s' % userid)
+    import_account.delay(token, userid, profileid)
 
     return response.Response({'status':'all set'}, status=200)
 
