@@ -270,6 +270,7 @@ CELERY_IMPORTS = [
 
 # Celery Periodic Tasks
 
+FOLLOWUP_TIME = 1 if DEBUG else int(os.environ.get('FOLLOWUP_TIME', 180))
 CELERYBEAT_SCHEDULE = {
     'add-new-activity-status-for-follow-up-survey': {
         'task': 'generank.api.tasks.send_followup_survey_to_users',
