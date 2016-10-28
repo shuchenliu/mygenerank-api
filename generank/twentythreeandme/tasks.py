@@ -96,7 +96,7 @@ def import_account(token, api_user_id, profile_id, run_after=True):
         _import_user.s(token, api_userid) |
         _import_profile.s(token, profile_id) |
         _import_genotype.si(token, profile_id) |
-        _convert_genotype.s() |
+        _convert_genotype.s()
     )
 
     if run_after:
