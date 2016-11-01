@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 
 from rest_framework.authtoken import views
 from rest_framework import routers
@@ -37,6 +38,8 @@ ttm_router.register(r'genotypes', ttm_views.GenotypeViewSet)
 
 
 urlpatterns = ([
+    url('^$', RedirectView.as_view(url='api/about/', permanent=False)),
+
     # Public API
     url(r'^api/', include(
             api_router.urls,
