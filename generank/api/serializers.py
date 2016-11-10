@@ -35,7 +35,7 @@ class SignatureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Signature
         fields = ('url', 'date_signed', 'consent_pdf', 'consent_signed')
-        extra_kwargs = {'url': {'view_name': 'api:signature-detail'}}
+        extra_kwargs = {'url': {'view_name': 'api:signatures-detail'}}
 
 
 class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
@@ -47,7 +47,7 @@ class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ConsentPDF
-        fields = ('url', 'consent_pdf', 'user', 'signature', 'name')
+        fields = ('url', 'consent_pdf', 'user', 'name')
         extra_kwargs = {
             'signature': {'read_only': True},
             'url': {'view_name': 'api:consentpdf-detail'}

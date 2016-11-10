@@ -37,7 +37,7 @@ class Signature(models.Model):
     date_signed = models.DateField()
 
     def __str__(self):
-        return '<Signature: %s %s>' % (self.user.email, self.consent_signed)
+        return '<Signature: %s %s>' % (self.consent_pdf.user.email, self.consent_signed)
 
 
 class Condition(models.Model):
