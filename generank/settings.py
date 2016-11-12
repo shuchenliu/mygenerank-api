@@ -120,6 +120,10 @@ if USE_SSL:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
 
+if not DEBUG and USE_SSL:
+    # See notes at https://docs.djangoproject.com/en/1.10/ref/settings/
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
