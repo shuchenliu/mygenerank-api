@@ -20,7 +20,7 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def _import_user(token, api_userid):
+def _import_user(token, api_user_id):
     """ Given a token and a api_user and a 23andMe profile_id,
     it fetches user data for that profile from 23andMe and saves the user.
     :returns user_info: A dict of the 23andMe User/Profile information.
@@ -28,14 +28,14 @@ def _import_user(token, api_userid):
     logger.debug('tasks.twentythreeandme_delayed_import_task')
     user_info = get_user_info(token)
     ttm_uobj = User.from_json(user_info, token)
-    ttm_uobj.user_id = api_userid
+    ttm_uobj.user_id = api_user_id
     ttm_uobj.save()
 
     return user_info
 
 
 @shared_task
-def _import_profile(user_info, token, profileid):
+def _import_profile(user_info, token, api_user_id, profileid):
     """ Given a token and a user info JSON object this will create a 23andMe
     User. It will also create a Profile object and spawn a job to import the
     genotype data.
@@ -45,6 +45,7 @@ def _import_profile(user_info, token, profileid):
     prof = [prof for prof in user_info['profiles']
         if prof['id'] == profileid][0]
 
+    ttm_uobj = User.objects.get(user_id=api_user_id)
     profile = Profile.from_json(prof, ttm_uobj)
     profile.save()
 
@@ -94,7 +95,7 @@ def import_account(token, api_user_id, profile_id, run_after=True):
     risk scores once complete. """
     workflow = (
         _import_user.s(token, api_user_id) |
-        _import_profile.s(token, profile_id) |
+        _import_profile.s(token, api_user_id, profile_id) |
         _import_genotype.si(token, profile_id) |
         _convert_genotype.s()
     )
