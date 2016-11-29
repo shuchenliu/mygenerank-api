@@ -59,7 +59,7 @@ def _import_genotype(token, profile_id):
     spawns a job to convert the raw file into the VCF format.
     """
     logger.debug('tasks.twentythreeandme_genotype_import_task')
-    profile = Profile.objects.get(id=profile_id)
+    profile = Profile.objects.get(profile_id=profile_id)
     genotype_data = get_genotype_data(token, profile)
     genotype = Genotype.from_json(genotype_data, profile)
     genotype.save()
