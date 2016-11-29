@@ -4,6 +4,7 @@ from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
+from django.contrib.auth import views as auth_views
 
 from rest_framework.authtoken import views
 from rest_framework import routers
@@ -38,7 +39,7 @@ ttm_router.register(r'genotypes', ttm_views.GenotypeViewSet)
 
 
 urlpatterns = ([
-    url('^$', RedirectView.as_view(url='api/about/', permanent=False)),
+    url('^$', RedirectView.as_view(url='about/', permanent=False)),
 
     # Public API
     url(r'^api/', include(
@@ -50,7 +51,9 @@ urlpatterns = ([
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/register/', gpc_views.CreateUserView.as_view()),
     url(r'^api/import23andme/', gpc_views.import23andme),
-    url(r'^api/about/', gpc_views.about_page),
+
+    url(r'^about/', gpc_views.about_page),
+    url('^', include('django.contrib.auth.urls')),
 
     # Internal API
     url(r'^twentythreeandme/', include(ttm_router.urls,
