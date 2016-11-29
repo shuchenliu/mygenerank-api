@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 
-from generank import compute
+from generank.compute import tasks as compute_tasks
 
 from .models  import User, Profile, Genotype
 from .api_client import get_user_info, get_genotype_data
@@ -100,7 +100,7 @@ def import_account(token, api_user_id, profile_id, run_after=True):
     )
 
     if run_after:
-        workflow = workflow | compute.tasks.run_all.si(api_user_id)
+        workflow = workflow | compute_tasks.run_all.si(api_user_id)
 
     workflow.delay()
 
