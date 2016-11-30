@@ -101,7 +101,7 @@ def import_account(token, api_user_id, profile_id, run_after=True):
     )
 
     if run_after:
-        workflow = workflow | compute_tasks.run_all.si(api_user_id)
+        workflow |= compute_tasks.run_all.si(api_user_id)
 
     workflow.delay()
 

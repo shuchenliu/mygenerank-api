@@ -20,7 +20,7 @@ class User(models.Model):
     ## API user properties
     apiuserid = models.UUIDField(blank=True, editable=False, null = True)
 
-    resource_url = 'https://api.23andme.com/1/demo/user/'
+    resource_url = 'https://api.23andme.com/1/user/'
     def __str__(self):
         return '<TwentyThreeAndMe: User: %s>' % self.email
 
@@ -41,7 +41,7 @@ class Profile(models.Model):
     profile_id = models.CharField(max_length=100)
     genotyped = models.BooleanField(blank=True)
 
-    resource_url = 'https://api.23andme.com/1/demo/user/{}/'
+    resource_url = 'https://api.23andme.com/1/user/{}/'
 
     @property
     def has_imported(self):
@@ -74,7 +74,7 @@ class Genotype(models.Model):
     genotype_file = models.FileField(storage=fs_raw)
     converted_file = models.FileField(storage=fs_con)
 
-    resource_url = 'https://api.23andme.com/1/demo/genomes/{profile_id}/'
+    resource_url = 'https://api.23andme.com/1/genomes/{profile_id}/'
 
     @property
     def genotype_file_url(self):

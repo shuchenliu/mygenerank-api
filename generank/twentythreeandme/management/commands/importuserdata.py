@@ -18,6 +18,6 @@ class Command(BaseCommand):
         token = options['token']
         run_after = options['run_after']
 
-        tasks.twentythreeandme.import_account.delay(
+        tasks.import_account.delay(
             token, user_id, profile_id, run_after=run_after)
         self.stdout.write(self.style.SUCCESS('Tasks dispatched'))
