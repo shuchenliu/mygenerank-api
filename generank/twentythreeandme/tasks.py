@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError
 
 from generank.compute import tasks as compute_tasks
 
-from .models  import User, Profile, Genotype
+from .models  import User, Profile, Genotype, APIToken
 from .api_client import get_user_info, get_genotype_data
 
 
@@ -26,10 +26,14 @@ def _import_user(token, api_user_id):
     :returns user_info: A dict of the 23andMe User/Profile information.
     """
     logger.debug('tasks.twentythreeandme_delayed_import_task')
-    user_info = get_user_info(token)
-    ttm_uobj = User.from_json(user_info, token)
-    ttm_uobj.user_id = api_user_id
-    ttm_uobj.save()
+    user_info = get_user_info(token['access_token'])
+
+    user = User.from_json(user_info, token)
+    user.user_id = api_user_id
+    user.save()
+
+    token = APIToken.from_json(token, user)
+    token.save()
 
     return user_info
 
@@ -45,8 +49,8 @@ def _import_profile(user_info, token, api_user_id, profileid):
     prof = [prof for prof in user_info['profiles']
         if prof['id'] == profileid][0]
 
-    ttm_uobj = User.objects.get(user_id=api_user_id)
-    profile = Profile.from_json(prof, ttm_uobj)
+    user = User.objects.get(user_id=api_user_id)
+    profile = Profile.from_json(prof, user)
     profile.save()
 
     return str(profile.id)
@@ -95,8 +99,8 @@ def import_account(token, api_user_id, profile_id, run_after=True):
     risk scores once complete. """
     workflow = (
         _import_user.s(token, api_user_id) |
-        _import_profile.s(token, api_user_id, profile_id) |
-        _import_genotype.si(token, profile_id) |
+        _import_profile.s(token['access_token'], api_user_id, profile_id) |
+        _import_genotype.si(token['access_token'], profile_id) |
         _convert_genotype.s()
     )
 

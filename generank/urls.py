@@ -50,12 +50,12 @@ urlpatterns = ([
     ),
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/register/', gpc_views.CreateUserView.as_view()),
-    url(r'^api/import23andme/', gpc_views.import23andme),
 
     url(r'^about/', gpc_views.about_page),
     url('^', include('django.contrib.auth.urls')),
 
-    # Internal API
+    # Twenty Three and Me Integrations
+    url(r'^twentythreeandme/import/', ttm_views.import_data),
     url(r'^twentythreeandme/', include(ttm_router.urls,
         namespace="twentythreeandme", app_name='twentythreeandme')),
 

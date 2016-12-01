@@ -1,10 +1,15 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, request, response, renderers
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import detail_route
+from rest_framework.decorators import api_view, renderer_classes, \
+    detail_route, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
-from .models import Profile, User, Genotype
+from .models import Profile, User, Genotype, APIToken
+from .tasks import import_account
+
 from .serializers import UserSerializer,\
     ProfileSerializer, GenotypeSerializer
 
@@ -28,3 +33,16 @@ class GenotypeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = Genotype.objects.all().order_by('-profile')
     serializer_class = GenotypeSerializer
+
+
+@api_view(['POST'])
+@authentication_classes([OAuth2Authentication])
+@permission_classes([IsAuthenticated])
+def import_data(request):
+    token = request.data['token']
+    user_id = request.data['user']
+    profile_id = request.data['profile']
+
+    import_account.delay(token, user_id, profile_id)
+
+    return response.Response({'status':'all set'}, status=200)

@@ -21,4 +21,4 @@ def grs_step_3(id, vcf_filename, pre_haps_filepath, pre_haps_data, phenotype,
 
 def grs_step_4(id, vcf_filename, ancestry_path, ancestry_contents, grs_paths_and_contents,
         user_id, phenotype, shell=False, timeout=180, check=True):
-    return 'WOO a risk score!'
+    return '/path/to/score', '0.0001\n0.02\n0.1\n0.0003\n0.32\n0.78'

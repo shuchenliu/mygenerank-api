@@ -9,18 +9,15 @@ from django.core.files.base import ContentFile
 
 class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    user_id = models.CharField(max_length=100, blank=True, editable = False,
-                                unique = True)
+    user_id = models.CharField(max_length=100, blank=True, editable = False, unique = True)
     profile_id = models.CharField(max_length=100, blank=True, editable = False)
-    token = models.CharField(max_length=100, blank=True,
-                                 verbose_name = 'Bearer Token')
     email = models.EmailField(blank=True, editable = False)
 
     ## API user properties
     apiuserid = models.UUIDField(blank=True, editable=False, null = True)
 
     resource_url = 'https://api.23andme.com/1/user/'
+
     def __str__(self):
         return '<TwentyThreeAndMe: User: %s>' % self.email
 
@@ -28,10 +25,25 @@ class User(models.Model):
     def from_json(data, token):
         uobj = User()
         uobj.user_id = data['id']
-        uobj.email = data['email']
-        uobj.token = token
+        uobj.email = data.get('email', None)
 
         return uobj
+
+class APIToken(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    access_token = models.CharField(max_length=100)
+    token_type = models.CharField(max_length=100)
+    expires_in = models.IntegerField()
+    refresh_token = models.CharField(max_length=100)
+    scope = models.CharField(max_length=150)
+
+    def __str__(self):
+        return '<TwentyThreeAndMe: Token: %s>' % self.id
+
+    @staticmethod
+    def from_json(data, user):
+        return APIToken(user=user, **data)
 
 
 class Profile(models.Model):

@@ -50,7 +50,6 @@ def send_risk_score_notification(user_id, condition_name):
             'User <%s> | Condition <%s>' % (user_id, condition_name))
     except ObjectDoesNotExist as e:
         logger.warning("Device for user %s does not exist." % user_id)
-        raise e
 
 
 @shared_task

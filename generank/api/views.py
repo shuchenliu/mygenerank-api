@@ -27,9 +27,6 @@ from .serializers import UserSerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer, \
     ConsentPDFSerializer, SignatureSerializer
 
-from ..twentythreeandme import models as ttm_models
-from ..twentythreeandme.tasks import import_account
-
 
 logger = logging.getLogger()
 
@@ -162,23 +159,6 @@ class ActivityStatusViewSet(viewsets.ModelViewSet):
     serializer_class = ActivityStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'activity__id', 'activity__name', 'question_identifier']
-
-
-@api_view(['POST'])
-@authentication_classes([OAuth2Authentication])
-@permission_classes([IsAuthenticated])
-def import23andme(request):
-    token = request.data.get('token', None)
-    userid = request.data.get('user', None)
-    profileid = request.data.get('profile', None)
-
-    if not (token and userid and profileid):
-        return response.Response({'status': 'missing parameter'}, status=400)
-
-    # Start the delayed task to set the user
-    import_account.delay(token, userid, profileid)
-
-    return response.Response({'status':'all set'}, status=200)
 
 
 @api_view(['GET'])
