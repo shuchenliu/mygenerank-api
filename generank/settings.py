@@ -28,8 +28,8 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -216,7 +216,16 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD  = os.environ.get('EMAIL_HOST_PASSWORD ', None)
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 REGISTER_EMAIL_SUBJECT = 'Register your Account with MyGeneRank'
+
+# 23andMe Settings
+
+TTM_CLIENT_ID = os.environ['TTM_CLIENT_ID']
+TTM_CLIENT_SECRET = os.environ['TTM_CLIENT_SECRET']
+TTM_GRANT_TYPE = os.environ['TTM_GRANT_TYPE']
+TTM_REDIRECT_URI = os.environ['TTM_REDIRECT_URI']
+TTM_SCOPE = os.environ['TTM_SCOPE']
 
 # Logging
 

@@ -52,7 +52,7 @@ urlpatterns = ([
     url(r'^api/register/', gpc_views.CreateUserView.as_view()),
 
     url(r'^about/', gpc_views.about_page),
-    url('^', include('django.contrib.auth.urls')),
+    url('^account/', include('django.contrib.auth.urls')),
 
     # Twenty Three and Me Integrations
     url(r'^twentythreeandme/import/', ttm_views.import_data),

@@ -2,6 +2,8 @@
 import json
 import requests
 
+from django.conf import settings
+
 from .models import User, Genotype
 
 def get(url, token):
@@ -36,12 +38,12 @@ def get_token(auth_code):
 
     url = "https://api.23andme.com/token/"
     post_data = {
-     'client_id': 'ba0ef0f0ca8afd0adf3cebe350beb7ee',
-     'client_secret': '0e3863da484c3d167b5a4b65b663de9b',
-     'grant_type': 'authorization_code',
+     'client_id': settings.TTM_CLIENT_ID,
+     'client_secret': settings.TTM_CLIENT_SECRET,
+     'grant_type': settings.TTM_GRANT_TYPE,
      'code': auth_code,
-     'redirect_uri': 'http://localhost:8000/auth_code',
-     'scope': 'genomes basic names haplogroups ancestry family_tree analyses'
+     'redirect_uri': settings.TTM_REDIRECT_URL,
+     'scope': settings.TTM_SCOPE
     }
 
     response = requests.post(url, data=post_data, timeout=2)
