@@ -28,8 +28,8 @@ def _import_user(token, api_user_id):
     logger.debug('tasks.twentythreeandme_delayed_import_task')
     user_info = get_user_info(token['access_token'])
 
-    user = User.from_json(user_info, token)
-    user.user_id = api_user_id
+    user = User.from_json(user_info)
+    user.api_user_id = api_user_id
     user.save()
 
     token = APIToken.from_json(token, user)
@@ -45,11 +45,10 @@ def _import_profile(user_info, token, api_user_id, profileid):
     genotype data.
     """
     logger.debug('tasks.twentythreeandme_import_task')
-
     prof = [prof for prof in user_info['profiles']
         if prof['id'] == profileid][0]
 
-    user = User.objects.get(user_id=api_user_id)
+    user = User.objects.get(api_user_id=api_user_id)
     profile = Profile.from_json(prof, user)
     profile.save()
 

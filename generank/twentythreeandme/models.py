@@ -11,23 +11,20 @@ class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.CharField(max_length=100, blank=True, editable = False, unique = True)
     profile_id = models.CharField(max_length=100, blank=True, editable = False)
-    email = models.EmailField(blank=True, editable = False)
+    email = models.EmailField(null=True, blank=True, editable=True)
 
     ## API user properties
-    apiuserid = models.UUIDField(blank=True, editable=False, null = True)
+    api_user_id = models.UUIDField(blank=True, editable=False, null = True)
 
     resource_url = 'https://api.23andme.com/1/user/'
 
     def __str__(self):
-        return '<TwentyThreeAndMe: User: %s>' % self.email
+        return '<TwentyThreeAndMe: User: %s>' % self.user_id
 
     @staticmethod
-    def from_json(data, token):
-        uobj = User()
-        uobj.user_id = data['id']
-        uobj.email = data.get('email', None)
+    def from_json(data):
+        return User(user_id=data['id'], email=data.get('email', None))
 
-        return uobj
 
 class APIToken(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,6 +40,7 @@ class APIToken(models.Model):
 
     @staticmethod
     def from_json(data, user):
+        print(data)
         return APIToken(user=user, **data)
 
 

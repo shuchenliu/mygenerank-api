@@ -23,7 +23,7 @@ SCORE_RESULTS_ORDER = [
 def _get_cad_haplotypes(user_id, chromosome):
     """ Given a chromosome, determine the known haplotypes inside it. """
     logger.debug('tasks.cad._get_cad_haplotypes')
-    user = User.objects.get(user_id=user_id)
+    user = User.objects.get(api_user_id=user_id)
     return steps.grs_step_2(uuid.uuid4().hex, user.profile.genotype.converted_file,
         user_id, PHENOTYPE, chromosome)
 
@@ -88,7 +88,7 @@ def get_ancestry(user_id):
     """ Given an API user id, perform the ancestry calculations on that
     user's genotype data. """
     logger.debug('tasks.cad.get_ancestry')
-    user = User.objects.get(user_id=user_id)
+    user = User.objects.get(api_user_id=user_id)
     return steps.grs_step_1(uuid.uuid4().hex, user.profile.genotype.converted_file)
 
 
