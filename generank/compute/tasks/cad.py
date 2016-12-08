@@ -51,7 +51,7 @@ def _get_total_cad_risk(results, user_id):
     logger.debug('tasks.cad._get_total_cad_risk')
 
     # A hack to filter out the ancestry record. Celery doesn't guarantee order.
-    ancestry = [result for result in results if 'ancestry' in result[1]]
+    ancestry = [result for result in results if 'ancestry' in result[1]][0]
     risk_of_risks = [result for result in results if 'ancestry' not in result[1]]
 
     filename, ancestry_path, ancestry_contents = ancestry
