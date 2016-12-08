@@ -49,7 +49,11 @@ def _get_total_cad_risk(results, user_id):
     """ Given the user's ancestry, and their individual risk per chromosome
     per chunk, calculate their total overall risk. """
     logger.debug('tasks.cad._get_total_cad_risk')
-    ancestry, *risk_of_risks = results
+
+    # A hack to filter out the ancestry record. Celery doesn't guarantee order.
+    ancestry = [result for result in results if 'ancestry' in result[1]]
+    risk_of_risks = [result for result in results if 'ancestry' not in result[1]]
+
     filename, ancestry_path, ancestry_contents = ancestry
     return steps.grs_step_4(uuid.uuid4().hex, filename, ancestry_path,
         ancestry_contents, risk_of_risks, user_id, PHENOTYPE)
