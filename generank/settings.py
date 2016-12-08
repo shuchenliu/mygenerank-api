@@ -278,6 +278,7 @@ except KeyError:
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=15)
 
 CELERY_IMPORTS = [
     'generank.compute.tasks.cad'
