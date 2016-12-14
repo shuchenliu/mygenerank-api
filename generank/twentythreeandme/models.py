@@ -9,12 +9,12 @@ from django.core.files.base import ContentFile
 
 class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user_id = models.CharField(max_length=100, blank=True, editable = False, unique = True)
+    user_id = models.CharField(max_length=100, blank=True, editable=False)
     profile_id = models.CharField(max_length=100, blank=True, editable = False)
     email = models.EmailField(null=True, blank=True, editable=True)
 
     ## API user properties
-    api_user_id = models.UUIDField(blank=True, editable=False, null = True)
+    api_user_id = models.UUIDField(blank=True, editable=False, null = True, unique=True)
 
     resource_url = 'https://api.23andme.com/1/user/'
 
