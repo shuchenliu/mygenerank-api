@@ -56,13 +56,13 @@ def _import_profile(user_info, token, api_user_id, profileid):
 
 
 @shared_task
-def _import_genotype(token, profile_id):
+def _import_genotype(token, api_user_id, profile_id):
     """ Given the id of a profile model and a bearer token, this function will download
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format.
     """
     logger.debug('tasks.twentythreeandme_genotype_import_task')
-    profile = Profile.objects.get(profile_id=profile_id)
+    profile = Profile.objects.get(profile_id=profile_id, user__api_user_id=api_user_id)
     genotype_data = get_genotype_data(token, profile)
     genotype = Genotype.from_json(genotype_data, profile)
     genotype.save()
@@ -99,7 +99,7 @@ def import_account(token, api_user_id, profile_id, run_after=True):
     workflow = (
         _import_user.s(token, api_user_id) |
         _import_profile.s(token['access_token'], api_user_id, profile_id) |
-        _import_genotype.si(token['access_token'], profile_id) |
+        _import_genotype.si(token['access_token'], api_user_id, profile_id) |
         _convert_genotype.s()
     )
 

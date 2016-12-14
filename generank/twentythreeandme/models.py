@@ -99,5 +99,5 @@ class Genotype(models.Model):
         genotype = Genotype()
         genotype.profile = profile
         genotype.genotype_file.save(name = str(profile.id)+'_genotype.raw',
-                    content = ContentFile(genotype_data) )
+                    content = ContentFile(genotype_data))
         return genotype
