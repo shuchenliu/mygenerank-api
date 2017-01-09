@@ -1,13 +1,15 @@
 import logging
+from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets, request, response, renderers
+from rest_framework import viewsets, request, response, renderers, mixins
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view, renderer_classes, \
     detail_route, permission_classes, authentication_classes
@@ -66,11 +68,11 @@ class CreateUserView(CreateAPIView):
         }, 201)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.filter(is_active=True).order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
@@ -87,6 +89,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({'error': 'Invalid Registration Code'},
             template_name='confirm_registration.html')
+
+    def destroy(self, request, pk, *args, **kwargs):
+        user = get_object_or_404(self.queryset, pk=pk)
+        user.is_active = False
+        user.username += " __inactive__ ( %s )" % str(datetime.now())
+        user.save()
+        return Response(None, 204)
 
 
 class SignatureViewSet(viewsets.ModelViewSet):
