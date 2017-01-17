@@ -57,7 +57,7 @@ def send_activity_notification(activity_id):
     logger.debug('tasks.send_activity_notification')
     activity = Activity.objects.get(id=activity_id)
     # TODO: refactor to use mass_send
-    devices = APNSDevice.objects.filter(active=True)
+    devices = APNSDevice.objects.filter(active=True, user__is_active=True)
     devices.send_message('A new activity is ready for you!')
     logger.info('New mass activity notification sent to all users.')
 
@@ -69,7 +69,7 @@ def send_activity_notification(activity_id):
 def create_statuses_for_existing_users(activity_id):
     logger.debug('tasks.create_statuses_for_existing_users')
     activity = Activity.objects.get(id=activity_id)
-    for user in User.objects.all():
+    for user in User.objects.filter(is_active=True):
         status = ActivityStatus(user=user, activity=activity)
         status.save()
     logger.info('New statuses created for existing users.')
@@ -79,6 +79,8 @@ def create_statuses_for_existing_users(activity_id):
 def create_statuses_for_new_user(user_id):
     logger.debug('tasks.create_statuses_for_new_user')
     user = User.objects.get(id=user_id)
+    if not user.is_active:
+        return
     activities = [
         Activity.objects.get(study_task_identifier=settings.PHENOTYPE_SURVEY_ID),
         Activity.objects.get(study_task_identifier=settings.GENOTYPE_AUTH_SURVEY_ID)
@@ -97,6 +99,8 @@ def send_post_cad_survey_to_users(user_id):
     """
     logger.debug('tasks.send_post_cad_survey_to_users')
     user = User.objects.get(id=user_id)
+    if not user.is_active:
+        return
     activity = Activity.objects.get(study_task_identifier=settings.POST_CAD_RESULTS_SURVEY_ID)
     status = ActivityStatus(user=user, activity=activity)
     status.save()
@@ -114,7 +118,7 @@ def send_followup_survey_to_users():
     six_months_delta = timedelta(weeks=24)
     date_limit = (date.today() - six_months_delta).strftime("%Y-%m-%d")
 
-    for user in User.objects.all():
+    for user in User.objects.filter(is_active=True):
         risk_score_is_old_enough = len(RiskScore.objects.filter(
             created_on__lte=date_limit, user=user)) > 0
         user_doesnt_already_have_status = len(ActivityStatus.objects.filter(
