@@ -1,5 +1,4 @@
-import logging
-from datetime import datetime
+import logging, uuid
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
@@ -93,7 +92,7 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Updat
     def destroy(self, request, pk, *args, **kwargs):
         user = get_object_or_404(self.queryset, pk=pk)
         user.is_active = False
-        user.username += " __inactive__ ( %s )" % str(datetime.now())
+        user.username = '_inactive_%s' % str(uuid.uuid4().hex)[:20]
         user.save()
         return Response(None, 204)
 
