@@ -48,6 +48,7 @@ class Condition(models.Model):
     risk_explanation = models.CharField(max_length=5024, blank=True)
     multiple_scores_explanation = models.CharField(max_length=5024, blank=True)
     supporting_evidence = models.CharField(max_length=5024, blank=True)
+    follow_up_activity_identifier = models.CharField(max_length=150, blank=True)
 
     def __str__(self):
         return '<API: Condition: %s>' % self.name
@@ -89,6 +90,7 @@ class Activity(models.Model):
     name = models.CharField(max_length=100, blank=True)
     subtitle = models.CharField(max_length=100, blank=True)
     study_task_identifier = models.CharField(max_length=100, blank=True)
+    type = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return '<API: Activity: %s>' % (self.name)

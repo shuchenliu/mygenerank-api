@@ -66,7 +66,7 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
         model = Condition
         fields = ('url', 'name', 'overview', 'description',
         'risk_explanation', 'multiple_scores_explanation',
-        'supporting_evidence')
+        'supporting_evidence', 'follow_up_activity_identifier')
         extra_kwargs = {'url': {'view_name': 'api:condition-detail'}}
 
 
@@ -98,7 +98,7 @@ class RiskScoreSerializer(serializers.HyperlinkedModelSerializer):
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Activity
-        fields = ('url', 'name', 'subtitle', 'study_task_identifier')
+        fields = ('url', 'name', 'subtitle', 'study_task_identifier', 'type')
         extra_kwargs = {'url': {'view_name': 'api:activity-detail'}}
 
 
