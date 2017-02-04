@@ -307,16 +307,12 @@ CELERYBEAT_SCHEDULE = {
 CELERY_DEFAULT_EXCHANGE = 'default'
 
 CELERY_ROUTES = {
-    'compute.*': 'computation',
+    'compute.*': 'compute',
     'api.*': 'api',
     'twentythreeandme.*': 'twentythreeandme',
 }
 
 CELERY_TIMEZONE = 'UTC'
-
-# Fabric settings
-
-REMOTE_HOSTS =  ['fabric@137.131.231.252']
 
 # Survey Tasks
 

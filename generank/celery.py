@@ -14,14 +14,6 @@ app = Celery('generank')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-app.conf.task_default_queue = 'default'
-app.conf.task_queues = (
-    Queue('default', settings.CELERY_DEFAULT_EXCHANGE, routing_key='default'),
-    Queue('api', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.api'),
-    Queue('compute', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.computation'),
-    Queue('twentythreeandme', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.twentythreeandme'),
-)
-
 
 @app.task(bind=True)
 def debug_task(self):
