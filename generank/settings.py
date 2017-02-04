@@ -3,6 +3,8 @@
 import os, sys
 from datetime import timedelta
 
+from celery import app
+
 env = os.environ.get('ENVIRONMENT', 'dev').lower()
 USE_SSL = (os.environ.get('USE_SSL', '').lower() == 'true')
 
@@ -55,6 +57,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': (
@@ -98,6 +101,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.static',
+                'django.template.context_processors.media',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -293,6 +298,18 @@ CELERYBEAT_SCHEDULE = {
         'task': 'generank.api.tasks.send_followup_survey_to_users',
         'schedule': timedelta(days=1),
     },
+    'send-daily-report-to-admins': {
+        'task': 'generank.api.tasks.send_daily_report_to_admins',
+        'schedule': timedelta(days=1),
+    },
+}
+
+CELERY_DEFAULT_EXCHANGE = 'default'
+
+CELERY_ROUTES = {
+    'compute.*': 'computation',
+    'api.*': 'api',
+    'twentythreeandme.*': 'twentythreeandme',
 }
 
 CELERY_TIMEZONE = 'UTC'

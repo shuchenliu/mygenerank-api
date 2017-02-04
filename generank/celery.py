@@ -2,6 +2,7 @@ import os
 from uuid import UUID
 
 from celery import Celery
+from kombu import Queue
 from kombu.serialization import register
 from django.conf import settings
 from anyjson import loads as json_loads, dumps as json_dumps
@@ -12,6 +13,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'generank.settings')
 app = Celery('generank')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+app.conf.task_default_queue = 'default'
+app.conf.task_queues = (
+    Queue('default', settings.CELERY_DEFAULT_EXCHANGE, routing_key='default'),
+    Queue('api', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.api'),
+    Queue('compute', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.computation'),
+    Queue('twentythreeandme', settings.CELERY_DEFAULT_EXCHANGE, routing_key='user.twentythreeandme'),
+)
 
 
 @app.task(bind=True)
