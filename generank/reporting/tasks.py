@@ -110,6 +110,8 @@ def plot_users():
     plt.title('User Growth')
 
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    _, labels = plt.xticks()
+    plt.setp(labels, rotation=45)
 
     buf = BytesIO()
     plt.savefig(buf,format='png',bbox_inches='tight')
