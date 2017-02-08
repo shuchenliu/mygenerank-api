@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'generank.api',
     'generank.twentythreeandme',
     'generank.compute',
+    'generank.reporting',
 ]
 
 if DEBUG:
