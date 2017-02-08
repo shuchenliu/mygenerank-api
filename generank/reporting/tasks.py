@@ -129,11 +129,16 @@ def plot_risk_scores():
 
     w,h = 8,3*num_condtions
     fig, axes_arr = plt.subplots(num_condtions, sharex=True,figsize=(w,h))
+
     for condition in conditions:
 
         plot_num = conditions.index(condition)
         risk_scores = get_risk_scores(condition)
-        current_axis = axes_arr[plot_num]
+        try:
+            current_axis = axes_arr[plot_num]
+        except TypeError:
+            # If there's only 1 it's not a list.
+            current_axis = axes_arr
 
         # Plotting
         current_axis.plot(risk_scores,'o',color='steelblue', label = 'Risk Score')
