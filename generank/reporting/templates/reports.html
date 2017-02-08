@@ -1,121 +1,77 @@
 {% load staticfiles %}
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>About MyGeneRank</title>
-
-    <link href="{% static 'css/bootstrap-theme.min.css' %}" rel="stylesheet"
-                  type='text/css'>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"
-                  type='text/css'>
-    <link href="{% static 'css/style.css' %}" rel="stylesheet"
-                  type='text/css'>
-  </head>
-  <body>
-        <div class="container-fluid">
-      	<div class="row">
-      		<div class="col-md-9">
-      			<h1>
-              MyGeneRank Study Reports<br></br>
-            </h1>
-      		</div>
-      		<div class="col-md-3">
-          </div>
-      	</div>
-      	<div class="row">
-      		<div class="col-md-4">
-            <h3>Usage Statistics<br></br></h3>
-      			<table class="table">
-      				<thead>
-      					<tr>
-      						<th>
-      							#
-      						</th>
-      						<th>
-      							Metric
-      						</th>
-      						<th>
-      							Value
-      						</th>
-      					</tr>
-      				</thead>
-      				<tbody>
-      					<tr class="info">
-      						<td>
-      							1
-      						</td>
-      						<td>
-      							Total Users
-      						</td>
-      						<td>
-      							{{num_users}}
-      						</td>
-      					</tr>
-      					<tr class="active">
-      						<td>
-      							2
-      						</td>
-      						<td>
-      							New users in the past 24 hours
-      						</td>
-      						<td>
-      							{{num_recent_users}}
-      						</td>
-
-      					</tr>
-      					<tr class="info">
-      						<td>
-      							3
-      						</td>
-      						<td>
-      							Users who have imported their data
-      						</td>
-      						<td>
-                    {{perc_import}}%
-      						</td>
-
-      					</tr>
-      					<tr class="active">
-      						<td>
-      							4
-      						</td>
-      						<td>
-      							Users who have completed follow ups
-      						</td>
-      						<td>
-                    {{perc_follow}}%
-      						</td>
-
-      					</tr>
-      					<tr class="info">
-      						<td>
-      							5
-      						</td>
-      						<td>
-      						  Users who have received their score
-      						</td>
-      						<td>
-      							{{perc_risk_score_complete}}%
-      						</td>
-
-      					</tr>
-      				</tbody>
-      			</table>
-      		</div>
-          <div class="col-md-1"></div>
-      		<div class="col-md-7">
-            <img alt="User Growth Graph" src="data:image/png;base64, {{user_growth_graph}}" />
-      		  <br></br><br></br>
-            <img alt="Risk Score Graph" src="data:image/png;base64, {{risk_score_graph}}" />
-      		</div>
-      	</div>
-      </div>
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-  </body>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>About MyGeneRank</title>
+	<link href="{% static 'css/bootstrap-theme.min.css' %}" rel="stylesheet" type='text/css'>
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type='text/css'>
+	<link href="{% static 'css/style.css' %}" rel="stylesheet" type='text/css'>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="h1">
+        <img src="{% static 'images/STSI_logo_square_large.png' %}" class="img-responsive img-rounded pull-left" width="50px" style="margin-right:20px;">
+				MyGeneRank Study Reports<br />
+				<small>A collection of reports for admins only. For questions or suggestions for this report, contact: <a href="mailto: bschrade@scripps.edu">bschrade@scripps.edu</a>.</small>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h3>
+				Usage Statistics
+			</h3>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th> # </th>
+						<th> Metric </th>
+						<th> Value </th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="info">
+						<td> 1 </td>
+						<td> Total Users </td>
+						<td> {{num_users}} </td>
+					</tr>
+					<tr class="active">
+						<td> 2 </td>
+						<td> New users in the past 24 hours </td>
+						<td> {{num_recent_users}} </td>
+					</tr>
+					<tr class="info">
+						<td> 3 </td>
+						<td> Users who have imported their data </td>
+						<td> {{perc_import}}% </td>
+					</tr>
+					<tr class="active">
+						<td> 4 </td>
+						<td> Users who have completed follow ups </td>
+						<td> {{perc_follow}}% </td>
+					</tr>
+					<tr class="info">
+						<td> 5 </td>
+						<td> Users who have received their score </td>
+						<td> {{perc_risk_score_complete}}% </td>
+					</tr>
+				</tbody>
+			</table>
+			<img alt="User Growth Graph" src="data:image/png;base64, {{user_growth_graph}}" width="100%" />
+		</div>
+		<div class="col-md-6">
+			<img alt="Risk Score Graph" src="data:image/png;base64, {{risk_score_graph}}" width="100%" />
+		</div>
+	</div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}">
+</script>
+<script src="{% static 'js/bootstrap.min.js' %}">
+</script>
+</body>
 </html>
