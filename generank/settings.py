@@ -308,9 +308,9 @@ CELERYBEAT_SCHEDULE = {
 CELERY_DEFAULT_EXCHANGE = 'default'
 
 CELERY_ROUTES = {
-    'compute.*': 'compute',
-    'api.*': 'api',
-    'twentythreeandme.*': 'twentythreeandme',
+    'genrank.compute.tasks.*': { 'queue': 'compute' },
+    'genrank.api.tasks.*': { 'queue': 'api' },
+    'genrank.twentythreeandme.tasks.*': { 'queue': 'twentythreeandme' },
 }
 
 CELERY_TIMEZONE = 'UTC'
