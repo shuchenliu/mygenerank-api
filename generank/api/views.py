@@ -202,7 +202,7 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             return Response(None, status=404)
         last = queryset[0]
         return Response({
-            'collected_date': last.collected_date,
+            'collected_date': last.collected_date.strftime('%Y-%m-%dT%H:%M:%S'),
             'identifier': last.identifier
         }, status=200)
 
