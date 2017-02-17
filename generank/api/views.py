@@ -169,11 +169,11 @@ class ActivityStatusViewSet(viewsets.ModelViewSet):
     search_fields = ['user__id', 'activity__id', 'activity__name', 'question_identifier']
 
 
-class HealthSampleViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows health samples to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
-    queryset = HealthSample.objects.all().order_by('-identifier')
+    queryset = HealthSample.objects.all().order_by('-collected_date')
     serializer_class = HealthSampleSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'identifier', 'start_date', 'end_date']
@@ -191,8 +191,20 @@ class HealthSampleViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, view
         serializer = self.get_serializer(data=data, many=is_many)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
+        return Response({}, status=201)
+
+    def get(self, request, *args, **kwargs):
+        """ A simple API that returns the date of the last health sample that
+        has been uploaded for the given user.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        if len(queryset) == 0:
+            return Response(None, status=404)
+        last = queryset[0]
+        return Response({
+            'collected_date': last.collected_date,
+            'identifier': last.identifier
+        }, status=200)
 
 
 @api_view(['GET'])

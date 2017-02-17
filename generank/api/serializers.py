@@ -151,7 +151,6 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HealthSample
         fields = ('url', 'user', 'identifier', 'value', 'units', 'end_date', 'start_date')
-        extra_kwargs = {'url': {'view_name': 'api:healthsample-detail'}}
 
 
 
