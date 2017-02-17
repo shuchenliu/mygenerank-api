@@ -20,13 +20,13 @@ from rest_condition import And, Or
 
 from . import filters
 from .models import User, Activity, ActivityStatus, ActivityAnswer, \
-    Condition, RiskScore, Population, ConsentPDF, Signature
+    Condition, RiskScore, Population, ConsentPDF, Signature, HealthSample
 from .tasks import send_registration_email_to_user
 from .permissions import IsRegistered
 from .serializers import UserSerializer,\
     ActivityAnswerSerializer, RiskScoreSerializer, ActivitySerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer, \
-    ConsentPDFSerializer, SignatureSerializer
+    ConsentPDFSerializer, SignatureSerializer, HealthSampleSerializer
 
 
 logger = logging.getLogger()
@@ -98,7 +98,7 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Updat
 
 
 class SignatureViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows signatures to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = Signature.objects.all().order_by('-user')
@@ -107,7 +107,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
 
 
 class ConsentPDFViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows consent pdfs to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = ConsentPDF.objects.all().order_by('-user')
@@ -116,7 +116,7 @@ class ConsentPDFViewSet(viewsets.ModelViewSet):
 
 
 class ActivityAnswerViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows activity answers to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = ActivityAnswer.objects.all().order_by('-user')
@@ -134,7 +134,7 @@ class ConditionViewSet(viewsets.ModelViewSet):
 
 
 class PopulationViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows populations to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = Population.objects.all().order_by('-name')
@@ -142,7 +142,7 @@ class PopulationViewSet(viewsets.ModelViewSet):
 
 
 class RiskScoreViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows risk scores to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = RiskScore.objects.all().order_by('-user')
@@ -152,7 +152,7 @@ class RiskScoreViewSet(viewsets.ModelViewSet):
 
 
 class ActivityViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows activities to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = Activity.objects.all().order_by('-name')
@@ -160,13 +160,39 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
 
 class ActivityStatusViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
+    """ API endpoint that allows activity statuses to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
     queryset = ActivityStatus.objects.all().order_by('-user')
     serializer_class = ActivityStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'activity__id', 'activity__name', 'question_identifier']
+
+
+class HealthSampleViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    """ API endpoint that allows health samples to be viewed or edited. """
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [IsAuthenticated]
+    queryset = HealthSample.objects.all().order_by('-identifier')
+    serializer_class = HealthSampleSerializer
+    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+    search_fields = ['user__id', 'identifier', 'start_date', 'end_date']
+
+    def create(self, request, *args, **kwargs):
+        """ Override allows for bulk upload due to heavy volume of requests.
+        source: http://stackoverflow.com/questions/37329771/django-rest-bulk-post-post-array-of-json-objects#37332640
+        """
+        try:
+            data = request.data['objects']
+        except KeyError:
+            data = request.data
+
+        is_many = True if isinstance(data, list) else False
+        serializer = self.get_serializer(data=data, many=is_many)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
 
 @api_view(['GET'])

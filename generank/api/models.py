@@ -1,11 +1,10 @@
 import uuid
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.files.storage import FileSystemStorage
-
+from django.utils import timezone
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -75,7 +74,7 @@ class RiskScore(models.Model):
         on_delete=models.CASCADE)
     calculated = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
-    created_on = models.DateTimeField(default=datetime.now)
+    created_on = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('user', 'condition', 'population')
@@ -123,3 +122,23 @@ class ActivityAnswer(models.Model):
 
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.email, self.question_identifier)
+
+
+class HealthSample(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, related_name='health_samples',
+        on_delete=models.CASCADE, blank=True)
+    identifier = models.CharField(max_length=100, blank=True)
+    value = models.FloatField(max_length=100, blank=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    collected_date = models.DateTimeField(default=timezone.now)
+    units = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'identifier', 'value', 'start_date', 'end_date', 'units')
+
+    def __str__(self):
+        return '<API: HealthSample: %s %s>' % (self.identifier, self.value)
+
+

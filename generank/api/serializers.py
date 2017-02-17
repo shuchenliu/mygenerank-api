@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from .models import Population, User, RiskScore, Activity, \
-    Condition, ActivityAnswer, ActivityStatus, Signature, ConsentPDF
+    Condition, ActivityAnswer, ActivityStatus, Signature, \
+    ConsentPDF, HealthSample
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -136,6 +137,21 @@ class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
         model = ActivityAnswer
         fields = ('url', 'user', 'question_identifier', 'value', 'activity')
         extra_kwargs = {'url': {'view_name': 'api:activityanswer-detail'}}
+
+
+class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+            view_name='api:user-detail',
+            many=False,
+            queryset=User.objects.all()
+        )
+    start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
+    end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
+
+    class Meta:
+        model = HealthSample
+        fields = ('url', 'user', 'identifier', 'value', 'units', 'end_date', 'start_date')
+        extra_kwargs = {'url': {'view_name': 'api:healthsample-detail'}}
 
 
 
