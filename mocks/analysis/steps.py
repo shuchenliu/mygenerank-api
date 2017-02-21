@@ -6,7 +6,7 @@ def get_chunks():
 
 
 def grs_step_1(user_id, vcf_file, shell=False, timeout=5, check=True):
-    return ('some id 1', 'some/path', '0.01 0.02 0.03 0.03 0.3\n')
+    return ('some id 1', 'some/ancestry/path', '0.01 0.02 0.03 0.03 0.3\n')
 
 
 def grs_step_2(id, vcf_file, user_id, phenotype, chromosome, shell=False,

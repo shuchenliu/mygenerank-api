@@ -55,15 +55,15 @@ def _get_total_cad_risk(results, user_id):
     risk_of_risks = [result for result in results if 'ancestry' not in result[1]]
 
     filename, ancestry_path, ancestry_contents = ancestry
-    return steps.grs_step_4(uuid.uuid4().hex, filename, ancestry_path,
-        ancestry_contents, risk_of_risks, user_id, PHENOTYPE)
+    return (ancestry_contents, *steps.grs_step_4(uuid.uuid4().hex, filename,
+        ancestry_path, ancestry_contents, risk_of_risks, user_id, PHENOTYPE))
 
 
 @shared_task
 def _store_results(results, user_id):
     """ Given the results of a user's CAD risk score, store the data. """
     logger.debug('tasks.cad._store_results')
-    path, scores = results
+    ancestries, path, scores = results
     user = models.User.objects.get(id=user_id)
     cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
 
@@ -73,6 +73,12 @@ def _store_results(results, user_id):
         risk_score = models.RiskScore(user=user, condition=cad, featured=featured,
             population=population, calculated=True, value=float(score))
         risk_score.save()
+
+    for population_name, per_ancestry in zip(SCORE_RESULTS_ORDER, ancestries.split()):
+        population = models.Population.objects.filter(name__iexact=population_name)[0]
+        ancestry = models.Ancestry(user=user, population=population, value=float(per_ancestry))
+        ancestry.save()
+
 
 
 @shared_task

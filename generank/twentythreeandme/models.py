@@ -16,7 +16,7 @@ class User(models.Model):
     ## API user properties
     api_user_id = models.UUIDField(blank=True, editable=False, null = True, unique=True)
 
-    resource_url = 'https://api.23andme.com/1/user/'
+    resource_url = 'https://api.23andme.com/1/demo/user/'
 
     def __str__(self):
         return '<TwentyThreeAndMe: User: %s>' % self.user_id

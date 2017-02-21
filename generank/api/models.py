@@ -84,6 +84,21 @@ class RiskScore(models.Model):
             self.population)
 
 
+class Ancestry(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    value = models.FloatField(max_length=100, blank=True, default=-1.0)
+    user = models.ForeignKey(User, related_name='ancestry',
+        on_delete=models.CASCADE)
+    population = models.ForeignKey(Population, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'population')
+
+    def __str__(self):
+        return '<API: Ancestry: %s %s %s>' % (self.user.email, self.population.name,
+            self.value)
+
+
 class Activity(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True)
