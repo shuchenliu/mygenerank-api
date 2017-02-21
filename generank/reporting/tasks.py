@@ -143,15 +143,9 @@ def plot_risk_scores():
             current_axis = axes_arr
 
         # Plotting
-        current_axis.plot(risk_scores,'o',color='steelblue', label = 'Risk Score')
+        current_axis.hist(risk_scores, bins=20, normed=True)
         current_axis.set_title(condition.name)
-        current_axis.set_ylabel('Percentile')
-        current_axis.set_ylim(0, 100)
-        # Remove the x axis ticks
-        current_axis.tick_params(axis='x', which='both', bottom='off',
-        top='off',labelbottom='off')
-
-        current_axis.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        current_axis.set_ylabel('Frequency')
 
     plt.suptitle('Last 200 Risk Score Distribution')
     plt.subplots_adjust(top=0.85)
