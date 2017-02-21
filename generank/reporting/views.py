@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.admin.views.decorators import staff_member_required
 
 from rest_framework import viewsets, request, response, renderers
 from rest_framework.permissions import IsAdminUser
@@ -10,8 +11,8 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from generank.reporting.tasks import *
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
 @renderer_classes((TemplateHTMLRenderer,))
+@staff_member_required
 def report(request):
     ''' This returns all the report page for MyGeneRank '''
 
