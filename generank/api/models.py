@@ -12,7 +12,7 @@ class User(AbstractUser):
     registration_code = models.UUIDField(default=uuid.uuid4)
 
     def __str__(self):
-        return '<API: User: %s>' % self.email
+        return '<API: User: %s>' % self.username
 
 
 class ConsentPDF(models.Model):
@@ -26,7 +26,7 @@ class ConsentPDF(models.Model):
     name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return '<Consent: %s %s>' % (self.user.email, self.consent_pdf)
+        return '<Consent: %s %s>' % (self.user.username, self.consent_pdf)
 
 
 class Signature(models.Model):
@@ -36,7 +36,7 @@ class Signature(models.Model):
     date_signed = models.DateField()
 
     def __str__(self):
-        return '<Signature: %s %s>' % (self.consent_pdf.user.email, self.consent_signed)
+        return '<Signature: %s %s>' % (self.consent_pdf.user.username, self.consent_signed)
 
 
 class Condition(models.Model):
@@ -80,7 +80,7 @@ class RiskScore(models.Model):
         unique_together = ('user', 'condition', 'population')
 
     def __str__(self):
-        return '<API: RiskScore: %s %s %s>' % (self.user.email, self.condition,
+        return '<API: RiskScore: %s %s %s>' % (self.user.username, self.condition,
             self.population)
 
 
@@ -122,7 +122,7 @@ class ActivityStatus(models.Model):
         unique_together = ('user', 'activity')
 
     def __str__(self):
-        return '<API: ActivityStatus: %s %s>' % (self.user.email,
+        return '<API: ActivityStatus: %s %s>' % (self.user.username,
             self.activity.study_task_identifier)
 
 
@@ -136,7 +136,7 @@ class ActivityAnswer(models.Model):
         on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        return '<API: ActivityAnswer: %s %s>' % (self.user.email, self.question_identifier)
+        return '<API: ActivityAnswer: %s %s>' % (self.user.username, self.question_identifier)
 
 
 class HealthSample(models.Model):
