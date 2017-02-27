@@ -19,7 +19,7 @@ class User(models.Model):
     resource_url = 'https://api.23andme.com/1/user/'
 
     def __str__(self):
-        return '<TwentyThreeAndMe: User: %s>' % self.user_id
+        return '<TwentyThreeAndMe: User: %s>' % self.api_user_id
 
     @staticmethod
     def from_json(data):
