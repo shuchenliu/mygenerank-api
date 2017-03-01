@@ -19,14 +19,15 @@ from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
 from rest_condition import And, Or
 
 from . import filters
-from .models import User, Activity, ActivityStatus, ActivityAnswer, \
+from .models import User, Activity, ActivityStatus, ActivityScore, ActivityAnswer, \
     Condition, RiskScore, Population, ConsentPDF, Signature, HealthSample
 from .tasks import send_registration_email_to_user
 from .permissions import IsRegistered
 from .serializers import UserSerializer,\
     ActivityAnswerSerializer, RiskScoreSerializer, ActivitySerializer,\
     ConditionSerializer, ActivityStatusSerializer, PopulationSerializer, \
-    ConsentPDFSerializer, SignatureSerializer, HealthSampleSerializer
+    ConsentPDFSerializer, SignatureSerializer, HealthSampleSerializer, \
+    ActivityScoreSerializer
 
 
 logger = logging.getLogger()
@@ -205,6 +206,16 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             'end_date': last.end_date.strftime('%Y-%m-%dT%H:%M:%S'),
             'identifier': last.identifier
         }, status=200)
+
+
+class ActivityScoreViewSet(viewsets.ModelViewSet):
+    """ API endpoint that allows activity statuses to be viewed or edited. """
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [IsAuthenticated]
+    queryset = ActivityScore.objects.all().order_by('-user')
+    serializer_class = ActivityScoreSerializer
+    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+    search_fields = ['user__id']
 
 
 @api_view(['GET'])

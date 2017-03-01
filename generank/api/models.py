@@ -157,3 +157,12 @@ class HealthSample(models.Model):
         return '<API: HealthSample: %s %s>' % (self.identifier, self.value)
 
 
+class ActivityScore(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, related_name='activity_score',
+        on_delete=models.CASCADE, blank=True)
+    value = models.FloatField(max_length=100, blank=True)
+    last_updated = models.DateTimeField()
+
+    def __str__(self):
+        return '<API: ActivityScore: %s %s>' % (self.user.username, self.value)
