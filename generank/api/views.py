@@ -173,7 +173,7 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows health samples to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
-    queryset = HealthSample.objects.all().order_by('-collected_date')
+    queryset = HealthSample.objects.all().order_by('-end_date')
     serializer_class = HealthSampleSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'identifier', 'start_date', 'end_date']
@@ -202,7 +202,7 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             return Response(None, status=404)
         last = queryset[0]
         return Response({
-            'collected_date': last.collected_date.strftime('%Y-%m-%dT%H:%M:%S'),
+            'end_date': last.end_date.strftime('%Y-%m-%dT%H:%M:%S'),
             'identifier': last.identifier
         }, status=200)
 
