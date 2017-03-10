@@ -135,6 +135,9 @@ class ActivityAnswer(models.Model):
     user = models.ForeignKey(User, related_name='activity_answers',
         on_delete=models.CASCADE, blank=True)
 
+    class Meta:
+        unique_together = ('user', 'question_identifier', 'activity')
+
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.username, self.question_identifier)
 
@@ -159,10 +162,12 @@ class HealthSample(models.Model):
 
 class ActivityScore(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='activity_score',
+    user = models.ForeignKey(User, related_name='activity_score',
         on_delete=models.CASCADE, blank=True)
     value = models.FloatField(max_length=100, blank=True)
-    last_updated = models.DateTimeField()
+    delta = models.FloatField(max_length=100, blank=True, null=True)
+    rank = models.IntegerField(blank=True, null=True)
+    created_on = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '<API: ActivityScore: %s %s>' % (self.user.username, self.value)

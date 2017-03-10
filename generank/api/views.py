@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, request, response, renderers, mixins
+from rest_framework.views import APIView
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -116,7 +117,7 @@ class ConsentPDFViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
 
-class ActivityAnswerViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class ActivityAnswerViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows activity answers to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]
@@ -208,12 +209,12 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         }, status=200)
 
 
-class ActivityScoreViewSet(viewsets.ModelViewSet):
+class ActivityScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows activity statuses to be viewed or edited. """
+    queryset = ActivityScore.objects.all().order_by('-created_on')
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAuthenticated]
-    queryset = ActivityScore.objects.all().order_by('-user')
     serializer_class = ActivityScoreSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id']
 

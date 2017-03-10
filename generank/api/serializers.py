@@ -160,11 +160,12 @@ class ActivityScoreSerializer(serializers.HyperlinkedModelSerializer):
             many=False,
             queryset=User.objects.all()
         )
-    last_updated = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
+    created_on = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
 
     class Meta:
         model = ActivityScore
-        fields = ('url', 'user', 'value', 'last_updated')
+        fields = ('url', 'user', 'delta', 'value', 'rank', 'created_on')
+        extra_kwargs = {'url': {'view_name': 'api:activityscore-detail'}}
 
 
 
