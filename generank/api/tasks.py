@@ -43,8 +43,8 @@ def send_registration_email_to_user(registration_url, registration_code, user_em
 def send_risk_score_notification(user_id, condition_name):
     logger.debug('tasks.send_risk_score_notification')
     try:
-        device = APNSDevice.objects.get(user__id=user_id)
-        device.send_message("Your risk score for {condition} is available.".format(
+        devices = APNSDevice.objects.filter(active=True, user__is_active=True, user__id=user_id)
+        devices.send_message("Your risk score for {condition} is available.".format(
             condition=condition_name))
         logger.info('Notification sent to user for new risk score: '
             'User <%s> | Condition <%s>' % (user_id, condition_name))
