@@ -90,6 +90,7 @@ class Ancestry(models.Model):
     user = models.ForeignKey(User, related_name='ancestry',
         on_delete=models.CASCADE)
     population = models.ForeignKey(Population, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('user', 'population')
@@ -117,6 +118,7 @@ class ActivityStatus(models.Model):
     activity = models.ForeignKey(Activity, related_name='activity_statuses',
         on_delete=models.CASCADE)
     complete = models.BooleanField(default=False)
+    created_on = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('user', 'activity')
@@ -134,6 +136,7 @@ class ActivityAnswer(models.Model):
         on_delete=models.CASCADE, blank=True)
     user = models.ForeignKey(User, related_name='activity_answers',
         on_delete=models.CASCADE, blank=True)
+    created_on = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.username, self.question_identifier)

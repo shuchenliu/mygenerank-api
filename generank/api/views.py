@@ -115,7 +115,7 @@ class ConsentPDFViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
 
-class ActivityAnswerViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class ActivityAnswerViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows activity answers to be viewed or edited. """
     authentication_classes = [OAuth2Authentication]
     permission_classes = [IsAuthenticated]

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.core.files.base import ContentFile
+from django.utils import timezone
 #import logging
 
 
@@ -12,6 +13,7 @@ class User(models.Model):
     user_id = models.CharField(max_length=100, blank=True, editable=False)
     profile_id = models.CharField(max_length=100, blank=True, editable = False)
     email = models.EmailField(null=True, blank=True, editable=True)
+    created_on = models.DateTimeField(default=timezone.now)
 
     ## API user properties
     api_user_id = models.UUIDField(blank=True, editable=False, null = True, unique=True)
@@ -50,6 +52,7 @@ class Profile(models.Model):
          blank=True, null=True)
     profile_id = models.CharField(max_length=100)
     genotyped = models.BooleanField(blank=True)
+    created_on = models.DateTimeField(default=timezone.now)
 
     resource_url = 'https://api.23andme.com/1/user/{}/'
 
@@ -83,6 +86,7 @@ class Genotype(models.Model):
         base_url=settings.TTM_CONVERTED_URL)
     genotype_file = models.FileField(storage=fs_raw)
     converted_file = models.FileField(storage=fs_con)
+    created_on = models.DateTimeField(default=timezone.now)
 
     resource_url = 'https://api.23andme.com/1/genomes/{profile_id}/'
 
