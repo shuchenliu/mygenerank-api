@@ -69,9 +69,10 @@ def send_activity_notification(activity_id):
 def create_statuses_for_existing_users(activity_id):
     logger.debug('tasks.create_statuses_for_existing_users')
     activity = Activity.objects.get(id=activity_id)
-    for user in User.objects.filter(is_active=True):
-        status = ActivityStatus(user=user, activity=activity)
-        status.save()
+    if activity.is_tracked_serverside:
+        for user in User.objects.filter(is_active=True):
+            status = ActivityStatus(user=user, activity=activity)
+            status.save()
     logger.info('New statuses created for existing users.')
 
 
@@ -87,8 +88,9 @@ def create_statuses_for_new_user(user_id):
     ]
 
     for activity in activities:
-        status = ActivityStatus(user=user, activity=activity)
-        status.save()
+        if activity.is_tracked_serverside:
+            status = ActivityStatus(user=user, activity=activity)
+            status.save()
     logger.info('New statuses created for new user: %s' % user_id)
 
 

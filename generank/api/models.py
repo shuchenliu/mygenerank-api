@@ -106,6 +106,7 @@ class Activity(models.Model):
     subtitle = models.CharField(max_length=100, blank=True)
     study_task_identifier = models.CharField(max_length=100, blank=True)
     type = models.CharField(max_length=100, blank=True)
+    is_tracked_serverside = models.BooleanField(default=True)
 
     def __str__(self):
         return '<API: Activity: %s>' % (self.name)
@@ -121,7 +122,7 @@ class ActivityStatus(models.Model):
     created_on = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('user', 'activity')
+        unique_together = ('user', 'activity', 'created_on')
 
     def __str__(self):
         return '<API: ActivityStatus: %s %s>' % (self.user.username,
