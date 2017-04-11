@@ -1,0 +1,51 @@
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.reverse import reverse
+from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
+
+from ..models import Activity, ActivityAnswer, ActivityStatus, User
+
+
+class ActivitySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Activity
+        fields = ('url', 'name', 'subtitle', 'study_task_identifier', 'type')
+        extra_kwargs = {'url': {'view_name': 'api:activity-detail'}}
+
+
+class ActivityStatusSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+            view_name='api:user-detail',
+            many=False,
+            queryset=User.objects.all()
+        )
+    activity = serializers.HyperlinkedRelatedField(
+            view_name='api:activity-detail',
+            many=False,
+            queryset=Activity.objects.all()
+        )
+
+    class Meta:
+        model = ActivityStatus
+        fields = ('url', 'user', 'activity', 'complete')
+        extra_kwargs = {'url': {'view_name': 'api:activitystatus-detail'}}
+
+
+class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+            view_name='api:user-detail',
+            many=False,
+            queryset=User.objects.all()
+        )
+    activity = serializers.HyperlinkedRelatedField(
+            view_name='api:activity-detail',
+            many=False,
+            queryset=Activity.objects.all()
+        )
+
+    class Meta:
+        model = ActivityAnswer
+        fields = ('url', 'user', 'question_identifier', 'value', 'activity')
+        extra_kwargs = {'url': {'view_name': 'api:activityanswer-detail'}}
+
