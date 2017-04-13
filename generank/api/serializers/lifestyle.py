@@ -28,7 +28,7 @@ class LifestyleMetricSeriesSerializer(serializers.HyperlinkedModelSerializer):
             many=True,
             queryset=Condition.objects.all()
         )
-    values = LifestyleMetricScoreSerializer(many=True)
+    values = serializers.SerializerMethodField()
     personal_best = serializers.SerializerMethodField()
     goals = LifestyleMetricGoalSerializer(many=True)
 
@@ -44,6 +44,11 @@ class LifestyleMetricSeriesSerializer(serializers.HyperlinkedModelSerializer):
             return None
 
         serializer = LifestyleMetricScoreSerializer(instance=personal_best)
+        return serializer.data
+
+    def get_values(self, series):
+        scores = LifestyleMetricScore.objects.filter(series=series).order_by('-created_on')[:10]
+        serializer = LifestyleMetricScoreSerializer(scores, many=True)
         return serializer.data
 
 
