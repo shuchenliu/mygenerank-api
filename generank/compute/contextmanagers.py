@@ -7,9 +7,12 @@ from generank.compute.models import TaskStatus
 class record():
     """ A simple context manager decorator that records the statuses of tasks. """
 
-    def __init__(self, identifier, user_id):
-        user = User.objects.get(id=user_id)
-        self.task_status = TaskStatus(identifier=identifier, user=user)
+    def __init__(self, identifier, user_id=None):
+        if user_id is not None:
+            user = User.objects.get(id=user_id)
+            self.task_status = TaskStatus(identifier=identifier, user=user)
+        else:
+            self.task_status = TaskStatus(identifier=identifier)
 
     def __enter__(self):
         self.task_status.start_date = timezone.now()

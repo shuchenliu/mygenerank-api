@@ -38,8 +38,10 @@ class LifestyleMetricSeriesSerializer(serializers.HyperlinkedModelSerializer):
 
 
     def get_personal_best(self, series):
+        user = self.context['request'].user
         try:
-            personal_best = LifestyleMetricScore.objects.get(series=series, is_personal_best=True)
+            personal_best = LifestyleMetricScore.objects.get(series=series,
+                user=user, is_personal_best=True)
         except ObjectDoesNotExist:
             return None
 
@@ -47,7 +49,8 @@ class LifestyleMetricSeriesSerializer(serializers.HyperlinkedModelSerializer):
         return serializer.data
 
     def get_values(self, series):
-        scores = LifestyleMetricScore.objects.filter(series=series).order_by('-created_on')[:10]
+        user = self.context['request'].user
+        scores = LifestyleMetricScore.objects.filter(series=series, user=user).order_by('-created_on')[:10]
         serializer = LifestyleMetricScoreSerializer(scores, many=True)
         return serializer.data
 

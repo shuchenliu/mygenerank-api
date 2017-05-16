@@ -26,6 +26,7 @@ class LifestyleMetricSeries(models.Model):
     conditions = models.ManyToManyField(Condition, blank=True)
     metric = models.ManyToManyField(LifestyleMetric, blank=True, related_name='series')
     name = models.CharField(max_length=100, blank=True, null=True)
+    units = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return '<API: LifestyleMetricSeries: %s>' % (self.name,)

@@ -68,3 +68,31 @@ class Ancestry(models.Model):
     def __str__(self):
         return '<API: Ancestry: %s %s %s>' % (self.user.email, self.population.name,
             self.value)
+
+
+class RiskReductor(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, blank=True)
+    identifier = models.CharField(unique=True, max_length=100, blank=True)
+    value = models.FloatField(max_length=100, blank=True, null=True, default=-1.0)
+    active = models.BooleanField(default=False)
+    condition = models.ForeignKey(Condition, related_name='reductors',
+        on_delete=models.CASCADE)
+    created_on = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '<API: RiskReductor: %s %s>' % (self.name, self.identifier)
+
+
+class RiskReductorOption(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, blank=True)
+    identifier = models.CharField(unique=True, max_length=100, blank=True)
+    value = models.FloatField(max_length=100, blank=True, default=-1.0)
+    reductor = models.ForeignKey(RiskReductor, related_name='options',
+        on_delete=models.CASCADE)
+    created_on = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '<API: RiskReductorOption: %s %s>' % (self.name, self.identifier)
+

@@ -14,3 +14,4 @@ class LifestyleMetricStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     authentication_classes = [OAuth2Authentication, IsAuthenticated]
     queryset = LifestyleMetricStatus.objects.all().order_by('-metric')
     serializer_class = LifestyleMetricStatusSerializer
+

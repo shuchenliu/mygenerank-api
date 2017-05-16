@@ -35,3 +35,5 @@ class RiskScoreViewSet(viewsets.ModelViewSet):
     serializer_class = RiskScoreSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id','name', 'condition__id', 'condition__name']
+
+

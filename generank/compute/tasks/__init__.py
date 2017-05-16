@@ -9,6 +9,7 @@ To add a new score calculation workflow:
 from celery import shared_task
 
 from .cad import get_cad_risk_score
+from .lifestyle import update_user_metrics
 
 
 @shared_task

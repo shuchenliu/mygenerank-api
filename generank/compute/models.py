@@ -10,12 +10,13 @@ class TaskStatus(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(api.User, related_name='task_statuses',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE, null=True, blank=True)
     identifier = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=100, blank=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
     def __str__(self):
+        username = self.user.username if self.user is not None else 'system'
         return '<Compute TaskStatus: %s %s -- %s' % (self.identifier,
-            self.user.username, self.status)
+            username, self.status)
