@@ -4,6 +4,7 @@ from celery import shared_task, chord, group
 from django.conf import settings
 
 from generank.api import models
+from generank.compute.contextmanagers import record
 from .metrics import active_time
 
 
