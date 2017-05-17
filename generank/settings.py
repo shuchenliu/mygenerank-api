@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
     'push_notifications',
-    'django_celery_beat',
 
     'generank.api',
     'generank.twentythreeandme',
@@ -294,6 +293,20 @@ CELERY_IMPORTS = [
 # Celery Periodic Tasks
 
 FOLLOWUP_TIME = 1 if DEBUG else int(os.environ.get('FOLLOWUP_TIME', 180))
+CELERYBEAT_SCHEDULE = {
+    'add-new-activity-status-for-follow-up-survey': {
+        'task': 'generank.api.tasks.send_followup_survey_to_users',
+        'schedule': timedelta(days=1),
+    },
+    'send-daily-report-to-admins': {
+        'task': 'generank.api.tasks.send_daily_report_to_admins',
+        'schedule': timedelta(days=1),
+    },
+    'update-user-metrics': {
+        'task': 'generank.compute.tasks.lifestyle.update_user_metrics',
+        'schedule': timedelta(minutes=5)
+    }
+}
 
 CELERY_DEFAULT_EXCHANGE = 'default'
 
