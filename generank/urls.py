@@ -15,7 +15,7 @@ from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
 from .api import views as gpc_views
 from .twentythreeandme import views as ttm_views
 from .api import signals
-from .reporting import views as report_views
+
 
 api_router = routers.DefaultRouter()
 api_router.register(r'users', gpc_views.UserViewSet)
@@ -62,7 +62,6 @@ urlpatterns = ([
 
     # Admin
     url(r'^admin/', admin.site.urls),
-    url(r'^admin/reports/', report_views.report)
 
 ] + static(settings.CONSENT_FILE_URL, document_root=settings.CONSENT_FILE_LOCATION)
     + static(settings.TTM_RAW_URL, document_root=settings.TTM_RAW_STORAGE)
