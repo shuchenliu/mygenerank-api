@@ -297,11 +297,15 @@ FOLLOWUP_TIME = 1 if DEBUG else int(os.environ.get('FOLLOWUP_TIME', 180))
 CELERYBEAT_SCHEDULE = {
     'add-new-activity-status-for-follow-up-survey': {
         'task': 'generank.api.tasks.send_followup_survey_to_users',
-        'schedule': timedelta(minutes=5),
+        'schedule': timedelta(days=1),
     },
     'send-daily-report-to-admins': {
         'task': 'generank.api.tasks.send_daily_report_to_admins',
         'schedule': timedelta(days=1),
+    },
+    'update-user-metrics': {
+        'task': 'generank.compute.tasks.lifestyle.update_user_metrics',
+        'schedule': timedelta(minutes=5)
     },
 }
 
