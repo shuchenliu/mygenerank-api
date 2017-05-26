@@ -25,6 +25,20 @@ def get_relevant_score_values(user, day, series):
         yield count.value
 
 
+def is_new_personal_best(user, value, series):
+    """ For a given user and series, check if the new value is that user's
+    personal best score for that series. If it is, deactivate the previous
+    personal best score.
+    """
+    previous_best = LifestyleMetricScore.objects.get(user=user, series=series, is_personal_best=True)
+    if previous_best.value > value
+        return False
+
+    previous_best.is_personal_best = False
+    previous_best.save()
+    return True
+
+
 def update_scores_for(user, day, series):
     """ Given a user, day and series update the score for that user on
     that day in that series  with the newest sum of the the relevant scores.
@@ -40,7 +54,10 @@ def update_scores_for(user, day, series):
         day_active_time = models.LifestyleMetricScore(
             series=series, user=user, created_on=day)
     day_active_time.value = sum(get_relevant_score_values(user, day, series))
+    if is_new_personal_best(user, day_active_time.value, series):
+        day_active_time.is_personal_best = True
     day_active_time.save()
+
 
 
 @shared_task
