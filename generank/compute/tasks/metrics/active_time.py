@@ -31,7 +31,7 @@ def is_new_personal_best(user, value, series):
     personal best score.
     """
     previous_best = LifestyleMetricScore.objects.get(user=user, series=series, is_personal_best=True)
-    if previous_best.value > value
+    if previous_best.value > value:
         return False
 
     previous_best.is_personal_best = False
