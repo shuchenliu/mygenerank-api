@@ -1,7 +1,10 @@
 """ Tasks related to computing the values for a user's Lifestyle Metrics.  """
 
+from datetime import timedelta
+
 from celery import shared_task, chord, group
 from django.conf import settings
+from django.utils import timezone
 
 from generank.api import models
 from generank.compute.contextmanagers import record
@@ -23,7 +26,7 @@ def _find_metric_statuses_to_update():
     need to be updated.
     """
     with record('tasks.lifestyle._find_metric_statuses_to_update'):
-        one_day_old = (date.today() - timedelta(days=1))
+        one_day_old = (timezone.now() - timedelta(days=1))
         expired_statuses = models.LifestyleMetricStatus.objects.filter(
             last_updated__lte=one_day_old
         )
