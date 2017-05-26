@@ -30,7 +30,8 @@ def is_new_personal_best(user, value, series):
     personal best score for that series. If it is, deactivate the previous
     personal best score.
     """
-    previous_best = LifestyleMetricScore.objects.get(user=user, series=series, is_personal_best=True)
+    previous_best = models.LifestyleMetricScore.objects.get(user=user,
+        series=series, is_personal_best=True)
     if previous_best.value > value:
         return False
 
