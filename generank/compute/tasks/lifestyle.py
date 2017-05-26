@@ -5,6 +5,7 @@ from django.conf import settings
 
 from generank.api import models
 from generank.compute.contextmanagers import record
+from generank.compute.tasks.util import dmap
 from .metrics import active_time
 
 
@@ -43,19 +44,13 @@ def _dispatch_series_value_update(metric_status_id):
 
 
 @shared_task
-def dmap(it, callback):
-    callback = subtask(callback)
-    return group(callback.clone([arg,]) for arg in it)()
-
-
-@shared_task
 def update_user_metrics():
     """ Find all of the user metrics that need to be updated
     and dispatch individual jobs to do so.
     """
     with record('tasks.lifestyle.update_user_metrics'):
         workflow = (
-            _find_metric_statuses_to_update.s() | _dmap.s(
+            _find_metric_statuses_to_update.s() | dmap.s(
                 _dispatch_series_value_update.s()
             )
         )
