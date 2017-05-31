@@ -60,7 +60,6 @@ def update_scores_for(user, day, series):
     day_active_time.save()
 
 
-
 @shared_task
 def update_active_time_status(status_id):
     status = models.LifestyleMetricStatus.objects.get(id=status_id)

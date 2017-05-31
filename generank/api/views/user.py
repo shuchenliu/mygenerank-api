@@ -2,7 +2,7 @@ import logging, uuid
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from rest_framework import viewsets, request, mixins
 from rest_framework import filters as django_filters
