@@ -10,6 +10,7 @@ from celery import shared_task
 
 from .cad import get_cad_risk_score
 from .lifestyle import update_user_metrics
+from .news_feed import update_news_feed
 
 
 @shared_task

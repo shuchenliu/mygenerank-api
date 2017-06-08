@@ -29,6 +29,7 @@ api_router.register(r'signatures', gpc_views.SignatureViewSet)
 api_router.register(r'consent-forms', gpc_views.ConsentPDFViewSet)
 api_router.register(r'health-samples', gpc_views.HealthSampleViewSet)
 api_router.register(r'lifestyle', gpc_views.LifestyleMetricStatusViewSet)
+api_router.register(r'newsfeed', gpc_views.ItemViewSet)
 
 api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
 api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
