@@ -306,6 +306,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'generank.compute.tasks.lifestyle.update_user_metrics',
         'schedule': timedelta(minutes=5)
     }
+    'update-news-feed': {
+        'task': 'generank.compute.tasks.newsfeed.update_news_feed',
+        'schedule': timedelta(hours=1)
+    }
 }
 
 CELERY_DEFAULT_EXCHANGE = 'default'
