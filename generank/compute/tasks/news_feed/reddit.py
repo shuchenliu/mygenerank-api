@@ -60,8 +60,6 @@ def _save_opengraph_data_for_url(url):
 
 @shared_task
 def update_news_feed_from_reddit():
-    client_id, client_secret, username, password = get_reddit_credentials()
-
     get_urls_from_reddit = _get_urls_from_recent_reddits.si(
         settings.REDDIT_CLIENT_ID,
         settings.REDDIT_CLIENT_SECRET,
