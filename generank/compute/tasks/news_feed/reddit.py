@@ -50,7 +50,7 @@ def _save_opengraph_data_for_url(url):
         link=og.url,
         description=og.description,
         image=getattr(og, 'image', None),
-        source=Item.SOURCES['reddit']
+        source=models.Item.SOURCES['reddit']
     )
     item.save()
 
