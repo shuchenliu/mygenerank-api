@@ -47,7 +47,7 @@ def _save_opengraph_data_for_url(url):
     og = OpenGraph(url=url)
     item = models.Item(
         title=og.title,
-        link=og.url,
+        link=url,
         description=og.description,
         image=getattr(og, 'image', None),
         source=models.Item.SOURCES['reddit']
