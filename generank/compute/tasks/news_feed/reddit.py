@@ -21,7 +21,7 @@ SUBREDDITS = (
 def _fetch_from_reddit(client_id, client_secret, username, password):
     reddit = praw.Reddit(
         client_id=client_id,
-        client_secret=client_id,
+        client_secret=client_secret,
         user_agent='MyGeneRank Client',
         username=username,
         password=password
