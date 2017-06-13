@@ -232,6 +232,13 @@ TTM_GRANT_TYPE = os.environ['TTM_GRANT_TYPE']
 TTM_REDIRECT_URI = os.environ['TTM_REDIRECT_URI']
 TTM_SCOPE = os.environ['TTM_SCOPE']
 
+# Reddit Credentials
+
+REDDIT_CLIENT_ID = os.environ['REDDIT_CLIENT_ID']
+REDDIT_CLIENT_SECRET = os.environ['REDDIT_CLIENT_SECRET']
+REDDIT_USERNAME = os.environ['REDDIT_USERNAME']
+REDDIT_PASSWORD = os.environ['REDDIT_PASSWORD']
+
 # Logging
 
 LOGGING = {
@@ -329,3 +336,4 @@ GENOTYPE_AUTH_SURVEY_ID = "TwentyThreeAndMeLoginTask"
 POST_CAD_RESULTS_SURVEY_ID = "PostCADResultsSurveyTask"
 POST_CAD_6MO_SURVEY_ID = "CADFollowUpSurveyTask"
 STEP_COUNT_ACTIVITY_IDENTIFIER = "HKQuantityTypeIdentifierStepCount"
+
