@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
+from generank.compute.contextmanagers import record
 from generank.api import models
 
 
@@ -62,11 +63,12 @@ def update_scores_for(user, day, series):
 
 @shared_task
 def update_active_time_status(status_id):
-    status = models.LifestyleMetricStatus.objects.get(id=status_id)
-    today = timezone.now()
-    yesterday = today - timedelta(days=1)
-    for day in [yesterday, today]:
-        update_scores_for(status.user, day, status.metric.series.first())
-    status.last_updated = timezone.now()
-    status.save()
+    with record('tasks.metrics.update_active_time_status'):
+        status = models.LifestyleMetricStatus.objects.get(id=status_id)
+        today = timezone.now()
+        yesterday = today - timedelta(days=1)
+        for day in [yesterday, today]:
+            update_scores_for(status.user, day, status.metric.series.first())
+        status.last_updated = timezone.now()
+        status.save()
 

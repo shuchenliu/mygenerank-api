@@ -10,6 +10,7 @@ import praw
 from opengraph import OpenGraph
 
 from generank.compute.tasks.util import dmap
+from generank.compute.contextmanagers import record
 from generank.api import models
 
 
@@ -36,23 +37,25 @@ def _fetch_from_reddit(client_id, client_secret, username, password):
 
 @shared_task
 def _get_urls_from_recent_reddits(client_id, client_secret, username, password):
-    return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)]
+    with record('tasks.reddit._get_urls_from_recent_reddits'):
+        return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)]
 
 
 @shared_task
 def _save_opengraph_data_for_url(url):
-    if models.Item.objects.filter(link=url).exists():
-        return
+    with record('tasks.reddit._save_opengraph_data_for_url'):
+        if models.Item.objects.filter(link=url).exists():
+            return
 
-    og = OpenGraph(url=url)
-    item = models.Item(
-        title=og.title,
-        link=url,
-        description=og.description,
-        image=getattr(og, 'image', None),
-        source=models.Item.SOURCES['reddit']
-    )
-    item.save()
+        og = OpenGraph(url=url)
+        item = models.Item(
+            title=og.title,
+            link=url,
+            description=og.description,
+            image=getattr(og, 'image', None),
+            source=models.Item.SOURCES['reddit']
+        )
+        item.save()
 
 
 # Public Methods
@@ -60,16 +63,17 @@ def _save_opengraph_data_for_url(url):
 
 @shared_task
 def update_news_feed_from_reddit():
-    get_urls_from_reddit = _get_urls_from_recent_reddits.si(
-        settings.REDDIT_CLIENT_ID,
-        settings.REDDIT_CLIENT_SECRET,
-        settings.REDDIT_USERNAME,
-        settings.REDDIT_PASSWORD
-    )
-
-    workflow = (
-        get_urls_from_reddit | dmap.s(
-            _save_opengraph_data_for_url.s()
+    with record('tasks.reddit.update_news_feed_from_reddit'):
+        get_urls_from_reddit = _get_urls_from_recent_reddits.si(
+            settings.REDDIT_CLIENT_ID,
+            settings.REDDIT_CLIENT_SECRET,
+            settings.REDDIT_USERNAME,
+            settings.REDDIT_PASSWORD
         )
-    )
-    workflow.delay()
+
+        workflow = (
+            get_urls_from_reddit | dmap.s(
+                _save_opengraph_data_for_url.s()
+            )
+        )
+        workflow.delay()
