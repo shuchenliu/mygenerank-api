@@ -333,7 +333,15 @@ CELERY_TIMEZONE = 'UTC'
 
 PHENOTYPE_SURVEY_ID = "PhenotypeSurveyTask"
 GENOTYPE_AUTH_SURVEY_ID = "TwentyThreeAndMeLoginTask"
+HEALTHKIT_AUTH_SURVEY_ID = "HealthKitTask"
 POST_CAD_RESULTS_SURVEY_ID = "PostCADResultsSurveyTask"
 POST_CAD_6MO_SURVEY_ID = "CADFollowUpSurveyTask"
 STEP_COUNT_ACTIVITY_IDENTIFIER = "HKQuantityTypeIdentifierStepCount"
+
+# Which tasks are available to new users by default.
+DEFAULT_STUDY_IDS = [
+    PHENOTYPE_SURVEY_ID,
+    GENOTYPE_AUTH_SURVEY_ID,
+    HEALTHKIT_AUTH_SURVEY_ID,
+]
 

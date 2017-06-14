@@ -78,8 +78,8 @@ def create_statuses_for_new_user(user_id):
         if not user.is_active:
             return
         activities = [
-            Activity.objects.get(study_task_identifier=settings.PHENOTYPE_SURVEY_ID),
-            Activity.objects.get(study_task_identifier=settings.GENOTYPE_AUTH_SURVEY_ID)
+            Activity.objects.get(study_task_identifier=study_id)
+            for study_id in settings.DEFAULT_STUDY_IDS
         ]
 
         for activity in activities:
