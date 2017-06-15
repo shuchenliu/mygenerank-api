@@ -36,9 +36,9 @@ def _fetch_from_reddit(client_id, client_secret, username, password):
 
 
 @shared_task
-def _get_urls_from_recent_reddits(client_id, client_secret, username, password):
+def _get_urls_from_recent_reddits(client_id, client_secret, username, password, n=1):
     with record('tasks.reddit._get_urls_from_recent_reddits'):
-        return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)]
+        return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)][0:n]
 
 
 @shared_task
