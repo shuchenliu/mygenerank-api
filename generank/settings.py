@@ -315,7 +315,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'update-news-feed': {
         'task': 'generank.compute.tasks.news_feed.update_news_feed',
-        'schedule': timedelta(hours=1)
+        'schedule': timedelta(days=1)
     },
 }
 
