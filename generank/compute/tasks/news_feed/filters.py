@@ -23,6 +23,6 @@ def is_duplicate_of_existing(url, urls=[]):
     """
     return (
         any([True for _url in urls if url == _url or url in _url]) or
-        models.Item.objects.filter(url__iexact=url).exists()
+        models.Item.objects.filter(link__iexact=url).exists()
     )
 
