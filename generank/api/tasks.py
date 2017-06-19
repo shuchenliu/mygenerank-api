@@ -28,7 +28,6 @@ def send_registration_email_to_user(registration_url, registration_code, user_em
             'url': registration_url,
             'code': registration_code
         })
-        logger.info('Sending email to new user: %s' % user_email)
         send_mail(settings.REGISTER_EMAIL_SUBJECT, '', settings.EMAIL_HOST_USER,
             [user_email], fail_silently=False, html_message=html)
 
@@ -39,14 +38,9 @@ def send_registration_email_to_user(registration_url, registration_code, user_em
 @shared_task
 def send_risk_score_notification(user_id, condition_name):
     with record('tasks.api.send_risk_score_notification', user_id):
-        try:
-            devices = APNSDevice.objects.filter(active=True, user__is_active=True, user__id=user_id)
-            devices.send_message("Your risk score for {condition} is available.".format(
-                condition=condition_name))
-            logger.info('Notification sent to user for new risk score: '
-                'User <%s> | Condition <%s>' % (user_id, condition_name))
-        except ObjectDoesNotExist as e:
-            logger.warning("Device for user %s does not exist." % user_id)
+        devices = APNSDevice.objects.filter(active=True, user__is_active=True, user__id=user_id)
+        devices.send_message("Your risk score for {condition} is available.".format(
+            condition=condition_name))
 
 
 @shared_task
