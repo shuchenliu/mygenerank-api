@@ -25,6 +25,7 @@ else:
     CORS_ORIGIN_WHITELIST = (
         'generank.scripps.edu',
         'stsi01.scripps.edu',
+        'mygenerank.com',
     )
 
 # Application definition
