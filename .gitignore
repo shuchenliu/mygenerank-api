@@ -6,3 +6,4 @@ data/
 *.sh
 __pycache__
 *.sqlite*
+.idea

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+    <!-- make sure this is in the final or it won't run -->
+  <link href="{% static 'css/newsimagecropper.css' %}" rel="stylesheet"
+                  type='text/css'>
+
+      <div class="page-header">
+        <h1>Newsfeed</h1>
+            <p>Stay up to date with the latest news in genetics and health.</p>
+      </div>
+
+        <div class="row">
+            {% for article in featured %}
+
+          <div class="col-sm-6">
+            <div class="card">
+                  <img class="card-img-top thumb-post" src="{{article.image}}" alt="feature image" height="300" width="100%">
+              <div class="card-block">
+                  <a href="{{ article.link }}" target="_blank">
+                <h3 class="card-title">{{ article.title }}</h3>
+                  </a>
+                <p class="card-text">{{ article.description }}</p>
+              </div>
+            </div>
+          </div>
+
+            {% endfor %}
+        </div>
+
+
+        {% for article in remaining %}
+        <div class="card">
+
+          <div class="card-block">
+              <a href= "{{ article.link }}" target="_blank">
+            <h4 class="card-title">{{ article.title }}</h4>
+              </a>
+            <p class="card-text">{{ article.description }}</p>
+          </div>
+
+        </div>
+        {% endfor %}
+
+{% endblock %}
