@@ -1,46 +1,51 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+
+{% block head %}
+  <link href="{% static 'css/newsimagecropper.css' %}" rel="stylesheet" type='text/css'>
+
+{% endblock %}
+
 {% block content %}
-
-    <!-- make sure this is in the final or it won't run -->
-  <link href="{% static 'css/newsimagecropper.css' %}" rel="stylesheet"
-                  type='text/css'>
-
-      <div class="page-header">
-        <h1>Newsfeed</h1>
+<section class="about" id="team">
+ <div class="container text-center">
+  <div class="row">
+    <div class="col-md-12">
+     <div class="page-header">
+        <h1>Featured News</h1>
             <p>Stay up to date with the latest news in genetics and health.</p>
       </div>
-
-        <div class="row">
-            {% for article in featured %}
-
-          <div class="col-sm-6">
-            <div class="card">
-                  <img class="card-img-top thumb-post" src="{{article.image}}" alt="feature image" height="300" width="100%">
-              <div class="card-block">
-                  <a href="{{ article.link }}" target="_blank">
-                <h3 class="card-title">{{ article.title }}</h3>
-                  </a>
-                <p class="card-text">{{ article.description }}</p>
-              </div>
+      <div class="row">
+          {% for article in featured %}
+        <div class="col-sm-6">
+          <div class="card">
+                <img class="card-img-top thumb-post" src="{{article.image}}" alt="feature image" height="300" width="100%">
+            <div class="card-block">
+                <a href="{{ article.link }}" target="_blank">
+              <h3 class="card-title">{{ article.title }}</h3>
+                </a>
+              <p class="card-text">{{ article.description }}</p>
             </div>
           </div>
-
-            {% endfor %}
         </div>
+          {% endfor %}
+      </div>
+      <div class="container text-left">
+       {% for article in remaining %}
+       <div class="card">
 
+         <div class="card-block">
+             <a href= "{{ article.link }}" target="_blank">
+           <h4 class="card-title">{{ article.title }}</h4>
+             </a>
+           <p class="card-text">{{ article.description }}</p>
+         </div>
 
-        {% for article in remaining %}
-        <div class="card">
-
-          <div class="card-block">
-              <a href= "{{ article.link }}" target="_blank">
-            <h4 class="card-title">{{ article.title }}</h4>
-              </a>
-            <p class="card-text">{{ article.description }}</p>
-          </div>
-
-        </div>
-        {% endfor %}
-
+       </div>
+       {% endfor %}
+       </div>
+     </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
