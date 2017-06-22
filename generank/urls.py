@@ -12,6 +12,7 @@ from rest_framework import routers
 from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
     GCMDeviceAuthorizedViewSet
 
+from .website import views as web_views
 from .api import views as gpc_views
 from .twentythreeandme import views as ttm_views
 from .api import signals
@@ -41,7 +42,14 @@ ttm_router.register(r'genotypes', ttm_views.GenotypeViewSet)
 
 
 urlpatterns = ([
-    url('^$', RedirectView.as_view(url='about/', permanent=False)),
+    url(r'^$', web_views.home_view),
+    url(r'^team/$', web_views.team_view),
+    url(r'^contact/$', web_views.contact_view),
+    url(r'^news/$', web_views.newsfeed.NewsFeedView.as_view()),
+
+#     Accounts/Registration
+#     url(r'^accounts/',
+#         include('rest_framework.urls', namespace='rest_framework')),
 
     # Public API
     url(r'^api/', include(
@@ -53,7 +61,6 @@ urlpatterns = ([
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/register/', gpc_views.CreateUserView.as_view()),
 
-    url(r'^about/', gpc_views.about_page),
     url('^', include('django.contrib.auth.urls')),
 
     # Twenty Three and Me Integrations
