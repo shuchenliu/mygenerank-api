@@ -28,5 +28,6 @@ def team_view(request):
 @renderer_classes((TemplateHTMLRenderer,))
 def contact_view(request):
     return Response({
-        'title': 'MyGeneRank | Contact Us'
+        'title': 'MyGeneRank | Contact Us',
+        'sticky': True
     }, template_name='contact.html')

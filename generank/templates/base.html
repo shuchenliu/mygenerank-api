@@ -42,7 +42,11 @@
 
     {% endblock %}
 
+    {% if sticky %}
+    <footer class="site-footer fixed-bottom">
+    {% else %}
     <footer class="site-footer">
+    {% endif %}
       <div class="bottom">
         <div class="container">
           <div class="row">
