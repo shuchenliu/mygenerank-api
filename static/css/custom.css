@@ -1,3 +1,7 @@
 .text-bright {
   color: white;
 }
+
+.navbar-brand img {
+  margin-bottom:5px;
+}
