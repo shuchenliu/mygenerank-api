@@ -10,9 +10,11 @@ from . import newsfeed
 @renderer_classes((TemplateHTMLRenderer,))
 def home_view(request):
     users_count = models.User.objects.all().count()
+    markers_count = 58
     return Response({
         'title': 'MyGeneRank | Unlock your genetic risk',
-        'users': users_count
+        'users': users_count,
+        'markers': markers_count
     }, template_name='home.html')
 
 
