@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 
 from push_notifications.models import APNSDevice
 
@@ -105,7 +106,7 @@ def send_followup_survey_to_users():
         activity = Activity.objects.get(study_task_identifier=settings.POST_CAD_6MO_SURVEY_ID)
 
         six_months_delta = timedelta(weeks=24)
-        date_limit = (date.today() - six_months_delta).strftime("%Y-%m-%d")
+        date_limit = (timezone.now() - six_months_delta).strftime("%Y-%m-%d")
 
         for user in User.objects.filter(is_active=True):
             risk_score_is_old_enough = len(RiskScore.objects.filter(
