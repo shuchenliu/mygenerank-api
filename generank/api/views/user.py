@@ -29,6 +29,7 @@ logger = logging.getLogger()
 
 
 class CreateUserView(CreateAPIView):
+    exclude_from_schema = True
     serializer_class = UserSerializer
     model = User
 
@@ -71,7 +72,7 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Updat
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
-    @detail_route(methods=['GET'], permission_classes=[], renderer_classes=(TemplateHTMLRenderer,))
+    @detail_route(methods=['GET'], permission_classes=[], renderer_classes=(TemplateHTMLRenderer,), exclude_from_schema = True)
     def register(self, request, pk):
         code = request.query_params.get('code', None)
         try:
@@ -100,6 +101,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
     queryset = Signature.objects.all().order_by('-user')
     serializer_class = SignatureSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+    exclude_from_schema = True
 
 
 class ConsentPDFViewSet(viewsets.ModelViewSet):
@@ -109,3 +111,4 @@ class ConsentPDFViewSet(viewsets.ModelViewSet):
     queryset = ConsentPDF.objects.all().order_by('-user')
     serializer_class = ConsentPDFSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+    exclude_from_schema = True
