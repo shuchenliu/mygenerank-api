@@ -4,5 +4,3 @@ from .health_sample import HealthSampleViewSet
 from .lifestyle import LifestyleMetricStatusViewSet
 from .news_feed import ItemViewSet
 from .user import UserViewSet, CreateUserView, ConsentPDFViewSet, SignatureViewSet
-
-
