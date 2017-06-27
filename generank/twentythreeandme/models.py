@@ -8,6 +8,16 @@ from django.utils import timezone
 #import logging
 
 
+class Settings(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    grant_type = models.CharField(max_length=100)
+    response_type = models.CharField(max_length=10)
+    client_id = models.CharField(max_length=500)
+    client_secret = models.CharField(max_length=500)
+    redirct_uri = models.URLField()
+    scope = models.CharField(max_length=150)
+
+
 class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.CharField(max_length=100, blank=True, editable=False)

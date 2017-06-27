@@ -7,11 +7,18 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
-from .models import Profile, User, Genotype, APIToken
+from .models import Profile, User, Genotype, APIToken, Settings
 from .tasks import import_account
 
 from .serializers import UserSerializer,\
-    ProfileSerializer, GenotypeSerializer
+    ProfileSerializer, GenotypeSerializer, SettingsSerializer
+
+
+class SettingsViewSet(viewsets.ModelViewSet):
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [IsAdminUser]
+    queryset = Settings.objects.all()
+    serializer_class = SettingsSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

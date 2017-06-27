@@ -38,6 +38,8 @@ ttm_router = routers.DefaultRouter()
 ttm_router.register(r'users', ttm_views.UserViewSet)
 ttm_router.register(r'profiles', ttm_views.ProfileViewSet)
 ttm_router.register(r'genotypes', ttm_views.GenotypeViewSet)
+ttm_router.register(r'settings', ttm_views.SettingsViewSet)
+
 
 
 urlpatterns = ([
