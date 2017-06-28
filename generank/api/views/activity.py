@@ -1,11 +1,10 @@
-import logging
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework import filters as django_filters
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes, authentication_classes
 
@@ -16,20 +15,40 @@ from ..models import User, Activity, ActivityStatus, ActivityAnswer
 from ..serializers import ActivityAnswerSerializer, ActivitySerializer, \
     ActivityStatusSerializer
 
-logger = logging.getLogger()
 
+class ActivityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """ Activities are a task that the user must complete during the study.
+    These could be things like asnwering surveys or authorizing data use.
 
-class ActivityViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows activities to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    Activities have no user ownership. For a list of the activities that a
+    given user must complete or has completed, see ActivityStatus.
+
+    list:
+    This endpoint will list all of the activites currently available
+    during the study.
+
+    retrieve:
+    Fetch a single instance of a given activity by {id}.
+    """
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Activity.objects.all().order_by('-name')
     serializer_class = ActivitySerializer
 
 
-class ActivityAnswerViewSet(viewsets.ModelViewSet):
-    """ API endpoint that allows activity answers to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+class ActivityAnswerViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """ Activity Answers contain the information about an activity regarding a
+    given user and whether or not the user has completed the activity.
+
+    list:
+    This endpoint will list all of the statuses that the user has or should
+    complete. If a status for an activity is not present, then the user should
+    not complete this activity.
+
+    retrieve:
+    Fetch a single instance of a given status by {id}.
+    """
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = ActivityAnswer.objects.all().order_by('-user')
     serializer_class = ActivityAnswerSerializer
@@ -37,9 +56,9 @@ class ActivityAnswerViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
 
-class ActivityStatusViewSet(viewsets.ModelViewSet):
+class ActivityStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows activity statuses to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = ActivityStatus.objects.all().order_by('-user')
     serializer_class = ActivityStatusSerializer

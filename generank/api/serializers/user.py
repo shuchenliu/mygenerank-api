@@ -15,7 +15,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'username', 'password')
         extra_kwargs = {
             'password': {'write_only': True},
-            'url': {'view_name': 'api:user-detail'}
+            'url': {'view_name': 'user-detail'}
         }
 
     def create(self, validated_data):
@@ -29,7 +29,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class SignatureSerializer(serializers.HyperlinkedModelSerializer):
     consent_pdf = serializers.HyperlinkedRelatedField(
-            view_name='api:consentpdf-detail',
+            view_name='consentpdf-detail',
             many=False,
             queryset=ConsentPDF.objects.all()
         )
@@ -37,7 +37,6 @@ class SignatureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Signature
         fields = ('url', 'date_signed', 'consent_pdf', 'consent_signed')
-        extra_kwargs = {'url': {'view_name': 'api:signatures-detail'}}
 
 
 class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
@@ -52,5 +51,5 @@ class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'consent_pdf', 'user', 'name')
         extra_kwargs = {
             'signature': {'read_only': True},
-            'url': {'view_name': 'api:consentpdf-detail'}
+            'url': {'view_name': 'consentpdf-detail'}
         }

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'oauth2_provider',
+    'rest_framework_swagger',
     'push_notifications',
 
     'generank.api',
@@ -66,6 +67,10 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
     )
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {},
 }
 
 if not DEBUG:

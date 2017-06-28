@@ -15,7 +15,7 @@ class HealthSampleIdentifierSerializer(serializers.HyperlinkedModelSerializer):
 
 class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )
@@ -27,7 +27,7 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HealthSample
         fields = ('url', 'user', 'identifier', 'value', 'units', 'end_date', 'start_date', 'collected_date')
-        extra_kwargs = {'url': {'view_name': 'api:healthsample-detail'}}
+        extra_kwargs = {'url': {'view_name': 'healthsample-detail'}}
 
     def create(self, validated_data):
         try:

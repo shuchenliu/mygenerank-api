@@ -6,8 +6,8 @@ from . import views
 
 urlpatterns = [
 #     Accounts/Registration
-#     url(r'^accounts/',
-#         include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^accounts/',
+        include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^$', views.home_view),
     url(r'^team/$', views.team_view),

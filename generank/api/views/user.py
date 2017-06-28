@@ -1,4 +1,4 @@
-import logging, uuid
+import uuid
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.password_validation import validate_password
@@ -9,9 +9,10 @@ from rest_framework import viewsets, request, mixins
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, api_view
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.authentication import SessionAuthentication
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
@@ -23,9 +24,6 @@ from ..tasks import send_registration_email_to_user
 from ..permissions import IsRegistered
 from ..serializers import UserSerializer, ConsentPDFSerializer, \
     SignatureSerializer
-
-
-logger = logging.getLogger()
 
 
 class CreateUserView(CreateAPIView):
@@ -64,9 +62,9 @@ class CreateUserView(CreateAPIView):
         }, 201)
 
 
-class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows users to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = User.objects.filter(is_active=True).order_by('-date_joined')
     serializer_class = UserSerializer
@@ -86,6 +84,15 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Updat
         return Response({'error': 'Invalid Registration Code'},
             template_name='confirm_registration.html')
 
+
+class DestroyUserViewSet(viewsets.GenericViewSet):
+    """ API endpoint that allows users to be viewed or edited. """
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.filter(is_active=True).order_by('-date_joined')
+    serializer_class = UserSerializer
+    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
+
     def destroy(self, request, pk, *args, **kwargs):
         user = get_object_or_404(self.queryset, pk=pk)
         user.is_active = False
@@ -96,7 +103,7 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Updat
 
 class SignatureViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows signatures to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Signature.objects.all().order_by('-user')
     serializer_class = SignatureSerializer
@@ -106,7 +113,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
 
 class ConsentPDFViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows consent pdfs to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = ConsentPDF.objects.all().order_by('-user')
     serializer_class = ConsentPDFSerializer

@@ -32,7 +32,6 @@ class PopulationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Population
         fields = ('url', 'name',)
-        extra_kwargs = {'url': {'view_name': 'api:population-detail'}}
 
 
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,7 +42,6 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name', 'overview', 'description',
         'risk_explanation', 'multiple_scores_explanation',
         'supporting_evidence', 'follow_up_activity_identifier', 'reductors')
-        extra_kwargs = {'url': {'view_name': 'api:condition-detail'}}
 
     def get_reductors(self, condition):
         serializer = RiskReductorSerializer(condition.reductors, many=True)
@@ -52,18 +50,18 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
 
 class RiskScoreSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )
     condition = serializers.HyperlinkedRelatedField(
-            view_name='api:condition-detail',
+            view_name='condition-detail',
             many=False,
             queryset=Condition.objects.all()
         )
 
     population = serializers.HyperlinkedRelatedField(
-            view_name='api:population-detail',
+            view_name='population-detail',
             many=False,
             queryset=Population.objects.all()
         )
@@ -72,4 +70,3 @@ class RiskScoreSerializer(serializers.HyperlinkedModelSerializer):
         model = RiskScore
         fields = ('url', 'user', 'name', 'value', 'description',
             'condition', 'population', 'calculated', 'featured')
-        extra_kwargs = {'url': {'view_name': 'api:riskscore-detail'}}

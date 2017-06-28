@@ -7,6 +7,7 @@ from django.views.generic.base import RedirectView
 
 from rest_framework.authtoken import views
 from rest_framework import routers, schemas, renderers
+from rest_framework_swagger.views import get_swagger_view
 
 from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, \
     GCMDeviceAuthorizedViewSet
@@ -28,29 +29,34 @@ api_router.register(r'consent-forms', views.ConsentPDFViewSet)
 api_router.register(r'health-samples', views.HealthSampleViewSet)
 api_router.register(r'lifestyle', views.LifestyleMetricStatusViewSet)
 api_router.register(r'newsfeed', views.ItemViewSet)
-api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
-api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
+
+private_api_router = routers.DefaultRouter()
+private_api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
+private_api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
 
 
 public_api = [
     url(r'^api/', include(
             api_router.urls,
-            namespace='api',
-            app_name='generank'
         )
     ),
     url(r'^api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
 
-schema_view = schemas.get_schema_view(
+schema_view = schema_view = get_swagger_view(
     title='MyGeneRank Public API',
-    description='This document described the public interface to MyGeneRank. Except \
-where otherwise noted, an authenticated user account is required to access all endpoints.',
+    #description='This document described the public interface to MyGeneRank. Except \
+#where otherwise noted, an authenticated user account is required to access all endpoints.',
     patterns=public_api,
-    renderer_classes=[renderers.CoreJSONRenderer, renderers.BrowsableAPIRenderer]
+    urlconf='api.urls',
 )
 
 urlpatterns = [
     url(r'^api/register/', views.CreateUserView.as_view()),
     url(r'^api/schema/', schema_view),
+
+    url(r'^api/', include(
+            private_api_router.urls,
+        )
+    ),
 ] + public_api

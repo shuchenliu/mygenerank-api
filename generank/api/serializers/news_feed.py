@@ -11,4 +11,3 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Item
         fields = ('link', 'title', 'description', 'image', 'created_on')
-        extra_kwargs = {'url': {'view_name': 'api:item-detail'}}
