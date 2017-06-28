@@ -29,10 +29,8 @@ api_router.register(r'consent-forms', views.ConsentPDFViewSet)
 api_router.register(r'health-samples', views.HealthSampleViewSet)
 api_router.register(r'lifestyle', views.LifestyleMetricStatusViewSet)
 api_router.register(r'newsfeed', views.ItemViewSet)
-
-private_api_router = routers.DefaultRouter()
-private_api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
-private_api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
+api_router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
+api_router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
 
 
 public_api = [
@@ -51,12 +49,7 @@ schema_view = schema_view = get_swagger_view(
     urlconf='api.urls',
 )
 
-urlpatterns = [
+urlpatterns = public_api + [
     url(r'^api/register/', views.CreateUserView.as_view()),
     url(r'^api/schema/', schema_view),
-
-    url(r'^api/', include(
-            private_api_router.urls,
-        )
-    ),
-] + public_api
+]

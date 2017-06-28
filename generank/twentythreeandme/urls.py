@@ -25,4 +25,5 @@ urlpatterns = [
             app_name='ttm_router'
         )
     ),
+    url(r'^twentythreeandme/import/', views.import_data),
 ]

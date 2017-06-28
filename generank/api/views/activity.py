@@ -56,7 +56,7 @@ class ActivityAnswerViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mi
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
 
-class ActivityStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ActivityStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows activity statuses to be viewed or edited. """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
