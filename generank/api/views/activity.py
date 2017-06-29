@@ -37,16 +37,19 @@ class ActivityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
 
 
 class ActivityAnswerViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """ Activity Answers contain the information about an activity regarding a
-    given user and whether or not the user has completed the activity.
+    """ Every activity has 1 or more answers associated with it based on the
+    number and type of questions asked.
 
     list:
-    This endpoint will list all of the statuses that the user has or should
-    complete. If a status for an activity is not present, then the user should
-    not complete this activity.
+    Retrieve a list of all of the answers to questions the user has answered.
 
     retrieve:
-    Fetch a single instance of a given status by {id}.
+    Fetch a given answer by its {id}.
+
+    create:
+    Add a new answer to a question in a given activity. The activity question
+    identifier can be any identifier to a given question. Identifiers are not
+    enforced, using one from the list of utilized identifiers is encouraged.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
@@ -57,7 +60,21 @@ class ActivityAnswerViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mi
 
 
 class ActivityStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    """ API endpoint that allows activity statuses to be viewed or edited. """
+    """ Activity Answers contain the information about an activity regarding a
+    given user and whether or not the user has completed the activity.
+
+    list:
+    This endpoint will list all of the statuses that the user has or should
+    complete. If a status for an activity is not present, then the user should
+    not complete this activity.
+
+    retrieve:
+    Fetch a single instance of a given status by {id}.
+
+    update:
+    Once a given activity is complete a user's status for that activity should
+    be updated to reflect the completion.
+    """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = ActivityStatus.objects.all().order_by('-user')

@@ -41,7 +41,7 @@ class SignatureSerializer(serializers.HyperlinkedModelSerializer):
 
 class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )

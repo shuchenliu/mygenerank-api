@@ -32,12 +32,12 @@ class ActivityStatusSerializer(serializers.HyperlinkedModelSerializer):
 
 class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )
     activity = serializers.HyperlinkedRelatedField(
-            view_name='api:activity-detail',
+            view_name='activity-detail',
             many=False,
             queryset=Activity.objects.all()
         )

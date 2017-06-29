@@ -9,7 +9,12 @@ from ..serializers import ItemSerializer
 
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ API endpoint that allows activities to be viewed or edited. """
+    """ A newsfeed that allows the user to keep up to date on recent news
+    in the medical field.
+
+    list:
+    Get the user's newsfeed.
+    """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Item.objects.all().order_by('-created_on')

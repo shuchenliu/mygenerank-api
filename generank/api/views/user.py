@@ -105,7 +105,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows signatures to be viewed or edited. """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = Signature.objects.all().order_by('-user')
+    queryset = Signature.objects.all().order_by('-consent_pdf')
     serializer_class = SignatureSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     exclude_from_schema = True
