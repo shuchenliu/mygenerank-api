@@ -4,6 +4,7 @@ billiard==3.3.0.23
 celery==3.1.23
 cov-core==1.15.0
 coverage==4.0.3
+coreapi==2.3.1
 defusedxml==0.4.1
 Django==1.9.5
 django-allauth==0.25.2
