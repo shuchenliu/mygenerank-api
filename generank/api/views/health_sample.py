@@ -2,6 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
 from .. import filters
@@ -11,7 +12,7 @@ from ..serializers import HealthSampleSerializer
 
 class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows health samples to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = HealthSample.objects.all().order_by('-end_date')
     serializer_class = HealthSampleSerializer

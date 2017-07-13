@@ -24,7 +24,7 @@ class LifestyleMetricGoalSerializer(serializers.HyperlinkedModelSerializer):
 
 class LifestyleMetricSeriesSerializer(serializers.HyperlinkedModelSerializer):
     conditions = serializers.HyperlinkedRelatedField(
-            view_name='api:condition-detail',
+            view_name='condition-detail',
             many=True,
             queryset=Condition.objects.all()
         )
@@ -70,4 +70,3 @@ class LifestyleMetricStatusSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LifestyleMetricStatus
         fields = ('url', 'metric', 'last_updated')
-        extra_kwargs = {'url': {'view_name': 'api:lifestylemetricstatus-detail'}}

@@ -1,0 +1,12 @@
+.text-bright {
+  color: white;
+}
+
+.navbar-brand img {
+  margin-bottom:5px;
+}
+
+
+.block h2 {
+  text-transform: none !important;
+}

@@ -10,6 +10,8 @@ class NewsFeedView(generic.TemplateView):
 
     #passes multiple objects to request for use in newsfeed
     def get(self, request):
-        return render(request, "roughnewsfeed.html",
-                      {'featured': news_feed.Item.objects.all().order_by('-created_on')[:2],
-                       'remaining': news_feed.Item.objects.all().order_by('-created_on')[2:10]})
+        return render(request, "roughnewsfeed.html", {
+            'featured': news_feed.Item.objects.all().order_by('-created_on')[:2],
+            'remaining': news_feed.Item.objects.all().order_by('-created_on')[2:10],
+            'title': 'MyGeneRank | News',
+        })

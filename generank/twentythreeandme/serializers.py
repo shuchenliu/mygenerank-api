@@ -6,7 +6,7 @@ class SettingsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Settings
-        fields = ('grant_type', 'response_type', 'client_id', 'client_secret','redirct_uri','scope')
+        fields = ('grant_type', 'response_type', 'client_id', 'client_secret','redirect_uri','scope')
         extra_kwargs = {'url': {'view_name': 'twentythreeandme:settings'}}
 
 

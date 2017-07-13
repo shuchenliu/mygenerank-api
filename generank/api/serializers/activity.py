@@ -11,17 +11,16 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Activity
         fields = ('url', 'name', 'subtitle', 'study_task_identifier', 'type')
-        extra_kwargs = {'url': {'view_name': 'api:activity-detail'}}
 
 
 class ActivityStatusSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )
     activity = serializers.HyperlinkedRelatedField(
-            view_name='api:activity-detail',
+            view_name='activity-detail',
             many=False,
             queryset=Activity.objects.all()
         )
@@ -29,17 +28,16 @@ class ActivityStatusSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ActivityStatus
         fields = ('url', 'user', 'activity', 'complete')
-        extra_kwargs = {'url': {'view_name': 'api:activitystatus-detail'}}
 
 
 class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-            view_name='api:user-detail',
+            view_name='user-detail',
             many=False,
             queryset=User.objects.all()
         )
     activity = serializers.HyperlinkedRelatedField(
-            view_name='api:activity-detail',
+            view_name='activity-detail',
             many=False,
             queryset=Activity.objects.all()
         )
@@ -47,5 +45,4 @@ class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ActivityAnswer
         fields = ('url', 'user', 'question_identifier', 'value', 'activity')
-        extra_kwargs = {'url': {'view_name': 'api:activityanswer-detail'}}
 

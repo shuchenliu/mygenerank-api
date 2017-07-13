@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<section class="hero">
+<div class="container text-center">
+
+  <div class="col-md-12">
+    <h1>
+      MyGeneRank<br />
+      <small>unlock your genetic risk</small>
+    </h1>
+
+    <p class="tagline">
+      A research study by the Scripps Translational Science Institute
+    </p>
+    <a class="btn btn-full" href="#about">Learn More</a>
+<!--
+    <a class="btn btn-ghost" href="#about">Sign Up/Login</a>
+ -->
+  </div>
+</div>
+</section>
+
+<section class="features" id="features">
+  <div class="container text-center">
+    <h2 class="text-center">
+      Joining is Easy
+    </h2>
+    <div class="row text-muted">
+      <div class="feature-col col-md-4 col-lg-3 col-sm-6 container">
+        <img src="{% static 'img/iphone-screenshot-eligibility.png' %}" width="200" />
+        <div>1. Sign up</div>
+      </div>
+      <div class="feature-col col-md-4 col-lg-3 col-sm-6 container">
+        <img src="{% static 'img/screenshot-iphone-import-23andMe.png' %}" width="200" />
+        <div>2. Contribute your data</div>
+      </div>
+      <div class="feature-col col-md-4 col-lg-3 col-sm-6 container">
+        <img src="{% static 'img/iphone-screenshot-survey.png' %}" width="200" />
+        <div>3. Periodically answer surveys</div>
+      </div>
+      <div class="feature-col col-md-4 col-lg-3 col-sm-6 container">
+        <img src="{% static 'img/iphone-screenshot-risk-dashboard.png' %}" width="200" />
+        <div>4. Get your risk scores</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="text-center">
+      Features
+    </h2>
+    <div class="row">
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-search"></span>
+            </div>
+          </div>
+          <div>
+            <h3>
+              Learn Your Genetic Risk
+            </h3>
+
+            <p>
+              Get to know your estimated genetic risk for various conditions. We've optimized our pipeline to get you your results quickly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-cloud-upload"></span>
+            </div>
+          </div>
+          <div>
+            <h3>
+              Get More from Your Data
+            </h3>
+
+            <p>
+              If you've used 23andMe, then you're ready to use MyGeneRank! Support for more services is coming soon.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-bicycle"></span>
+            </div>
+          </div>
+          <div>
+            <h3>
+              Change Your Risk
+            </h3>
+
+            <p>
+              Behavior can offset genetic risk, and we provide the tools to set lifestyle goals.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-flask"></span>
+            </div>
+          </div>
+
+          <div>
+            <h3>
+              Contribute to Science
+            </h3>
+            <p>
+              By participating you contribute to the cutting edge of genetics and medical technology.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-newspaper-o"></span>
+            </div>
+          </div>
+          <div>
+            <h3>
+              Stay up to Date
+            </h3>
+            <p>
+              We pull together health and genetics news in one place so you can keep up with the newest advances.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-col col-lg-4 col-sm-6">
+        <div class="card card-block text-center">
+          <div>
+            <div class="feature-icon">
+              <span class="fa fa-cogs"></span>
+            </div>
+          </div>
+          <div>
+            <h3>
+              More to Come
+            </h3>
+            <p>
+              We're working to expand to other conditions as new scientific discoveries are made. Get notified when they're available.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-9 col-sm-12 text-lg-left text-center">
+        <h2>
+          Sign up for the beta now!
+        </h2>
+        <p>
+          MyGeneRank is available for testing on iOS! Sign up today, and discover your genetic risk.
+        </p>
+      </div>
+
+      <div class="col-lg-3 col-sm-12 text-lg-right text-center">
+        <a class="btn btn-ghost" href="//www.stsiweb.org/translational-research/genomic-medicine/mygenerank/">Sign up for the beta</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="privacy">
+  <div class="text-left hidden-md-down">
+    <div class="container">
+      <h2 class="text-center">
+            Privacy and Security
+      </h2>
+      <div class="row">
+        <div class="col-sm-7">
+          <div class="row" style="padding-top:30px;">
+            <div class="feature-col col-lg-4">
+              <div class="card card-block text-center">
+                <div>
+                  <div class="feature-icon">
+                    <span class="fa fa-lock"></span>
+                  </div>
+                </div>
+                <div>
+                  <h3>
+                    Deidentified
+                  </h3>
+                  <p>
+                    Names and contact info are removed from all study data.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="feature-col col-lg-4">
+              <div class="card card-block text-center">
+                <div>
+                  <div class="feature-icon">
+                    <span class="fa fa-lock"></span>
+                  </div>
+                </div>
+                <div>
+                  <h3>
+                    Secure
+                  </h3>
+                  <p>
+                    We use industry standard encryption to keep your data safe,
+                    both in transit and on our servers.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="feature-col col-lg-4">
+              <div class="card card-block text-center">
+                <div>
+                  <div class="feature-icon">
+                    <span class="fa fa-key"></span>
+                  </div>
+                </div>
+                <div>
+                  <h3>
+                    Private
+                  </h3>
+                  <p>
+                    A passcode and optional fingerprint lockscreen protects the data
+                    on your phone.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <img  width="100%" class="pull-right" style="padding-bottom:0px; padding-top:0px;"
+            src="{% static 'img/iphone-screenshot-laying-down-lockscreen-big-1-clear.png' %}" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="block block-dark text-left hidden-lg-up">
+    <div class="container">
+      <h2 class="text-center">
+        Privacy and Security
+      </h2>
+      <div class="row">
+        <div class="col-sm-12">
+          <p>
+            We've worked hard to make our systems secure and we do our best to make sure that
+            others can't access your data without your consent.
+          </p>
+          <div class="row" style="padding-top:20px;">
+            <div class="feature-col col-sm-6">
+              <div class="card card-block text-center">
+                <div>
+                  <div class="feature-icon">
+                    <span class="fa fa-lock"></span>
+                  </div>
+                </div>
+                <div>
+                  <h3>
+                    Secure
+                  </h3>
+                  <p>
+                    We use industry standard encryption to keep your data safe,
+                    both in transit and on our servers.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="feature-col col-sm-6">
+              <div class="card card-block text-center">
+                <div>
+                  <div class="feature-icon">
+                    <span class="fa fa-key"></span>
+                  </div>
+                </div>
+                <div>
+                  <h3>
+                    Private
+                  </h3>
+                  <p>
+                    A fingerprint and passcode lockscreen protects the data
+                    on your phone.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="about" style="padding-top:0px;">
+  <div class="container">
+    <h2 class="text-center">
+      About the Study
+    </h2>
+    <div class="row">
+      <div class="col-sm-8 col-xs-6" style="padding-top:0px;">
+        <p>The goal of this study is to determine how your genetic risk influences health decisions and other things that can be controlled in life. Our first genetic risk score is calculated for coronary artery disease (CAD).</p>
+        <p>CAD ultimately leads to heart attacks, heart failure and sometimes sudden cardiac death and is the main reason heart disease remains as the number one cause of death worldwide. Other researchers have shown that this genetic risk score can be used to identify people with low, intermediate, and high risk for coronary heart disease. It has also been shown that the use of statins (cholesterol lowering drugs) provides greater benefit and protection against heart attack for people with high genetic risk for coronary artery disease.</p>
+        <p>Many conditions affecting our health are caused by a combination of our
+        environment, our behaviors, and our genes. While we can alter some factors
+        in our lives to reduce our chances of developing different diseases (e.g.,
+        not smoking cigarettes), the contribution from our genetic risk encoded by
+        our DNA remains with us throughout our lives. Scientists are still trying
+        to determine the entirety of genetic factors that influence disease, but
+        for some conditions it has been shown that the factors identified thus
+        far can begin to identify people at high to low genetic risk. Looking across
+        your genome, we can calculate your cumulative genetic risk score – which
+        can be used to rank your genetic risk compared to the other worldwide
+        populations.</p>
+      </div>
+      <div class="col-sm-4 col-xs-6 team text-center">
+        <a href="#"><img alt="" class="team-img rounded-circle" src="https://28mxm3330f2c1i6ecd29sunn-wpengine.netdna-ssl.com/wp-content/uploads/2016/09/Torkamani_headshot.jpg">
+        <div class="card-title-wrap">
+          <span class="card-title">Ali Torkamani</span>
+          <span class="card-text">Director of Genomics</span>
+        </div>
+        </a>
+      </div>
+    </div>
+    <div class="row stats-row justify-content-md-center" style="padding-bottom:60px;">
+    <div class="stats-col text-center col-md-3 col-sm-6">
+      <div class="circle">
+        <span class="stats-no" data-toggle="counter-up">{{ users }}</span> Total Users
+      </div>
+    </div>
+    <div class="stats-col text-center col-md-3 col-sm-6">
+      <div class="circle">
+        <span class="stats-no"><span data-toggle="counter-up">{{ markers }}</span></span>
+        Genetic Risk Markers
+      </div>
+    </div>
+  </div>
+    <div class="container text-center">
+      <h2>Eligibility</h2>
+      <p>To join this study, you must meet the following criteria</p>
+      <div class="text-left row justify-content-center">
+        <div class="col-xs-6">
+          <ul>
+            <li>Be 18 years of age or older</li>
+            <li>Must have access to your genetic data from 23andMe</li>
+            <li>Allow us to access to your genetic data</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

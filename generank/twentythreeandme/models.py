@@ -14,7 +14,7 @@ class Settings(models.Model):
     response_type = models.CharField(max_length=10)
     client_id = models.CharField(max_length=500)
     client_secret = models.CharField(max_length=500)
-    redirct_uri = models.URLField()
+    redirect_uri = models.URLField()
     scope = models.CharField(max_length=150)
 
 
