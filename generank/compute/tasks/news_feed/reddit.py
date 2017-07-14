@@ -32,7 +32,7 @@ def _fetch_from_reddit(client_id, client_secret, username, password):
     reddit.read_only = True
 
     for subreddit, query in SUBREDDITS:
-        results = reddit.subreddit(subreddit).search(query, syntax='lucene', time_filter='day')
+        results = reddit.subreddit(subreddit).search(query, syntax='lucene', time_filter='week', sort='top')
         for submission in results:
             yield submission.url
 
