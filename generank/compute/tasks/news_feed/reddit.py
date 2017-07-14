@@ -17,7 +17,7 @@ from . import filters
 
 
 SUBREDDITS = (
-    ('science', '(flair:health OR flair:biology OR flair:medicine) AND self:no'),
+    ('science', '(flair:health OR flair:medicine) AND self:no'),
 )
 
 
