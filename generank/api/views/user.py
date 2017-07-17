@@ -49,7 +49,7 @@ class CreateUserView(CreateAPIView):
 
         # Prep to send email.
         user = User.objects.get(username=response.data['username'])
-        url = reverse('api:user-register', kwargs={'pk': user.id})
+        url = reverse('user-register', kwargs={'pk': user.id})
         registration_url = request.build_absolute_uri(url)
 
         try:
