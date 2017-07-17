@@ -35,12 +35,11 @@ class CreateUserView(CreateAPIView):
         try:
             validate_password(request.data.get('password'))
         except ValidationError as e:
-            logger.error('User creation failed: password did not validate.')
+            print('User creation failed: password did not validate.', e)
             return Response({ 'message': '\n'.join(e.messages) }, 400)
 
         try:
             User.objects.get(username=request.data.get('username'))
-            logger.error('User creation failed: user already exists.')
             return Response({ 'message': 'User already exists' }, 400)
         except ObjectDoesNotExist:
             pass
@@ -56,7 +55,7 @@ class CreateUserView(CreateAPIView):
             send_registration_email_to_user.delay(registration_url,
                 user.registration_code, user.email)
         except Exception as e:
-            logger.error('An exception occurred while creating user. %s' % e)
+            print('Error sending mail', e)
         return Response({
             'description': 'User created. Registration Needed'
         }, 201)
@@ -78,8 +77,8 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
             user.registered = True
             user.save()
             return Response({}, template_name='confirm_registration.html')
-        except ObjectDoesNotExist:
-            logger.error('User registration failed: User did not exist.')
+        except ObjectDoesNotExist as e:
+            print('User registration failed: User did not exist.', e)
 
         return Response({'error': 'Invalid Registration Code'},
             template_name='confirm_registration.html')
