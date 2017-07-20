@@ -19,7 +19,7 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
             many=False,
             queryset=User.objects.all()
         )
-    identifier = HealthSampleIdentifierSerializer()
+    identifier = serializers.CharField()
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
     collected_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
@@ -29,14 +29,15 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'user', 'identifier', 'value', 'units', 'end_date', 'start_date', 'collected_date')
         extra_kwargs = {'url': {'view_name': 'healthsample-detail'}}
 
-    def create(self, validated_data):
-        try:
-            identifier = HealthSampleIdentifier.object.get(value=validated_data['identifier'])
-        except ObjectDoesNotExist:
-            identifier = HealthSampleIdentifier(value=validated_data['identifier'])
-            validated_data['identifier'] = identifier.id
-            identifier.save()
+    def validate_identifier(self, identifier):
+        queryset = HealthSampleIdentifier.objects.filter(value=identifier)
+        if not queryset.exists():
+            raise serializers.ValidationError("Invalid identifier.")
+        return identifier
 
-        return HealthSample.object.create(**validated_data)
+    def create(self, validated_data):
+        identifier = HealthSampleIdentifier.objects.get(value=validated_data['identifier'])
+        validated_data['identifier'] = identifier
+        return HealthSample.objects.create(**validated_data)
 
 
