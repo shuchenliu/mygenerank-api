@@ -1,3 +1,4 @@
+from django.db import utils
 from rest_framework import viewsets, mixins
 from rest_framework import filters as django_filters
 from rest_framework.permissions import IsAuthenticated
@@ -32,8 +33,13 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(data=data, many=is_many)
         serializer.is_valid(raise_exception=True)
 
-        self.perform_create(serializer)
-        return Response(serializer.data, status=201)
+        try:
+            self.perform_create(serializer)
+            return Response(serializer.data, status=201)
+        except utils.IntegrityError:
+            return Response({
+                'error' : { 'message': 'Item already exists.' }
+            }, status=409)
 
     def get(self, request, *args, **kwargs):
         """ A simple API that returns the date of the last health sample that
