@@ -33,7 +33,7 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
 
         self.perform_create(serializer)
-        return Response({}, status=201)
+        return Response(serializer.data, status=201)
 
     def get(self, request, *args, **kwargs):
         """ A simple API that returns the date of the last health sample that

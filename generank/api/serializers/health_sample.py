@@ -22,12 +22,13 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     identifier = serializers.CharField()
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
-    collected_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
 
     class Meta:
         model = HealthSample
-        fields = ('url', 'user', 'identifier', 'value', 'units', 'end_date', 'start_date', 'collected_date')
-        extra_kwargs = {'url': {'view_name': 'healthsample-detail'}}
+        fields = ('identifier', 'value', 'units', 'end_date', 'start_date', 'user')
+
+    def get_identifier(self, sample):
+        return sample.identifier.value
 
     def validate_identifier(self, identifier):
         queryset = HealthSampleIdentifier.objects.filter(value=identifier)
