@@ -33,3 +33,11 @@ def contact_view(request):
         'title': 'MyGeneRank | Contact Us',
         'sticky': True
     }, template_name='contact.html')
+
+
+@api_view(['GET'])
+@renderer_classes((TemplateHTMLRenderer,))
+def privacy_policy_view(request):
+    return Response({
+        'title': 'MyGeneRank | Privacy Policy'
+    }, template_name='privacy_policy.html')
