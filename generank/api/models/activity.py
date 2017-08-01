@@ -48,5 +48,14 @@ class ActivityAnswer(models.Model):
         on_delete=models.CASCADE, blank=True)
     created_on = models.DateTimeField(default=timezone.now)
 
+    @property
+    def boolean_value(self):
+        if(self.value.lower() == "true" or self.value.lower() == "yes"):
+            return True
+        elif(self.value.lower() == "false" or self.value.lower() == "no"):
+            return False
+        else:
+            raise ValueError
+
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.username, self.question_identifier)

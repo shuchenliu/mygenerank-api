@@ -346,6 +346,25 @@ POST_CAD_RESULTS_SURVEY_ID = "PostCADResultsSurveyTask"
 POST_CAD_6MO_SURVEY_ID = "CADFollowUpSurveyTask"
 STEP_COUNT_ACTIVITY_IDENTIFIER = "HKQuantityTypeIdentifierStepCount"
 
+# Survey Question Identifiers
+
+SEX_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.SexQuestion"
+ANCESTRY_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AncestryQuestion"
+HEIGHT_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.HeightQuestion"
+WEIGHT_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.WeightQuestion"
+AGE_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AgeQuestion"
+TOTAL_CHOLESTEROL_IDENTIFIER = "PhenotypeSurveyTask.TotalCholesterol"
+PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER = "PhenotypeSurveyTask.PreciseTotalCholesterol"
+TOTAL_HDL_CHOLESTEROL_IDENTIFIER = "PhenotypeSurveyTask.TotalHDLCholesterol"
+PRECISE_HDL_CHOLESTEROL_IDENTIFIER = "PhenotypeSurveyTask.PreciseTotalHDLCholesterol"
+BLOOD_PRESSURE_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.BloodPressureQuestion"
+SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER = "PhenotypeSurveyTask.SystolicBloodPressureQuestion"
+DIABETES_IDENTIFIER = "PhenotypeSurveyTask.DiabetiesQuestion"
+SMOKING_IDENTIFIER = "PhenotypeSurveyTask.SmokingQuestion"
+ACTIVITY_IDENTIFIER = "PhenotypeSurveyTask.ActivityQuestion"
+DIET_IDENTIFIER = "PhenotypeSurveyTask.HealthyDietQuestion"
+BLOOD_PRESSURE_MEDICATION_IDENTIFIER = "PhenotypeSurveyTask.BloodPressureMedicationQuestion"
+
 # Which tasks are available to new users by default.
 DEFAULT_STUDY_IDS = [
     PHENOTYPE_SURVEY_ID,
