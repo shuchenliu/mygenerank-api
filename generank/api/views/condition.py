@@ -46,7 +46,7 @@ class ConditionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
 class PopulationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """ Risk Scores are calculted relative to the user's determined ancestry.
     This ancestry is determined as a percentage of the user's similarity to the
-    given populations. There is also a "custom" population which is user specific
+    given populations. There is also a 'custom' population which is user specific
     and reflects the user's combined ancestry.
 
     list:
@@ -83,104 +83,86 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'name', 'condition__id', 'condition__name']
 
-    # Queries pipeline to calculate and return baseline, combined, and lifestyle risk.
-    # 07/25/17 Andre Leon
-
-    @detail_route(methods=["GET"])
+    @detail_route(methods=['GET'])
     def predict(self, request, pk):
+        """ Queries pipeline to calculate and return baseline,
+        combined, and lifestyle risk.
+        author: Andre Leon
+        since: 07/25/17
+        """
+
+        individual_risk_score = RiskScore.objects.get(id=pk).value
 
         try:
-
             values = get_survey_responses(request.user.id.hex)
-
-        except ValueError:
-            return Response({"error":
-                    {
-                        "message": "Invalid value(s) provided in survey. Please review your answers and resubmit.",
-                    }
-            }, status=400)
-            # parameter is out of bound
-        except ObjectDoesNotExist:
-            return Response({"error":
-                    {
-                        "message": "Survey has not been completed and risk score cannot be calculated.",
-                    }
-            }, status=400)
-            # survey
-
-        try:
-            # verify boolean checks if value is 1 or 0 and returns ValueError if it is neither
-            # it is stored in compute/tasks/cad.py
-            smoking = verify_boolean(request.GET["smoking"])
-
-            physically_active = verify_boolean(request.GET["physically_active"])
-
-            healthy_diet = verify_boolean(request.GET["healthy_diet"])
-
-            obese = verify_boolean(request.GET["obese"])
-
-        # missing or invalid lifestyle parameter
-        except MultiValueDictKeyError:
-            return Response({"error":
-                    {
-                        "message": "Unable to retrieve lifestyle risk value.",
-                    }
-            }, status=400)
-
-        except ValueError:
-            return Response({"error":
-                {
-                    "message": "Invalid value provided for lifestyle risk category.",
+        except ValueError as e:
+            return Response({
+                'error': {
+                    'message': '%s Please review your answers and resubmit.' % str(e),
                 }
             }, status=400)
+        except ObjectDoesNotExist:
+            pass
+            return Response({
+                'error': {
+                        'message': 'A required survey has not been completed. '
+                            'Risk score predictions cannot be made.',
+                }
+            }, status=400)
+        try:
+            smoking = verify_boolean(request.GET['smoking'])
+            physically_active = verify_boolean(request.GET['physically_active'])
+            healthy_diet = verify_boolean(request.GET['healthy_diet'])
+            obese = verify_boolean(request.GET['obese'])
+        except KeyError as e:
+            return Response({
+                'error': {
+                    'message': 'Unable to retrieve lifestyle risk value.',
+                    'invalid_field': ', '.join([a for a in e.args])
+                }
+            }, status=400)
+        except ValueError as e:
+            return Response({
+                'error': {
+                    'message': 'Invalid value provided for lifestyle risk category.',
+                    'invalid_field': ', '.join([a for a in e.args])
+               }
+            }, status=400)
 
         try:
+            baseline_risk = cad.get_baseline_risk(values['sex'], values['ancestry'],
+              values['age'], values['total_cholesterol'], values['HDL_cholesterol'],
+              values['systolicBP_untreated'], values['systolicBP_treated'],
+              values['smoking_default'], values['diabetic']
+            )
 
-            baseline_risk = cad.get_baseline_risk(values["sex"],
-                                                  values["ancestry"],
-                                                  values["age"],
-                                                  values["total_cholesterol"],
-                                                  values["HDL_cholesterol"],
-                                                  values["systolicBP_untreated"],
-                                                  values["systolicBP_treated"],
-                                                  values["smoking_default"],
-                                                  values["diabetic"])
-
-            individual_risk_score = RiskScore.objects.get(id=pk).value
-
-            combined_risk = cad.get_combined_risk(baseline_risk,
-                                                  individual_risk_score,
-                                                  values["average_odds"])
+            combined_risk = cad.get_combined_risk(baseline_risk, individual_risk_score,
+                values['average_odds'])
 
             # The non-default values need to be provided from the lifestyle risk user interface.
-            lifestyle_risk = cad.get_lifestyle_risk(smoking,
-                                                    obese,
-                                                    physically_active,
-                                                    healthy_diet,
-                                                    combined_risk,
-                                                    values["smoking_default"],
-                                                    values["obesity_default"],
-                                                    values["physical_activity_default"],
-                                                    values["healthy_diet_default"]
-                                                    )
-
-        # missing or invalid parameter from cad.get_survey_responses
-        except Exception:
-            return Response({"error":
-                {
-                    "message": "An error occurred during risk score calculation. Please contact supervisor for support.",
+            lifestyle_risk = cad.get_lifestyle_risk(smoking, obese, physically_active,
+                healthy_diet, combined_risk, values['smoking_default'], values['obesity_default'],
+                values['physical_activity_default'], values['healthy_diet_default']
+            )
+        except Exception as e:
+            return Response({
+                'error': {
+                    'message': 'An error occurred during risk score calculation. '
+                        'Please contact supervisor for support.',
+                    'invalid_field': ', '.join([a for a in e.args])
                 }
             }, status=400)
 
-        return Response({"results": [{
-            "name": "Baseline Risk",
-            "value": baseline_risk
-        },
-        {
-            "name": "Combined Risk",
-            "value": combined_risk
-        },
-        {
-            "name": "Lifestyle Risk",
-            "value": lifestyle_risk
-        }]})
+        return Response({
+            'results': [{
+                    'name': 'Baseline Risk',
+                    'value': baseline_risk
+                }, {
+                    'name': 'Combined Risk',
+                    'value': combined_risk
+                }, {
+                    'name': 'Lifestyle Risk',
+                    'value': lifestyle_risk
+                }
+            ]
+        })

@@ -25,7 +25,6 @@ class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
         if reductor.options.count() > 0:
             serializer = RiskReductorOptionSerializer(reductor.options, many=True)
             return serializer.data
-        return None
 
 
 class PopulationSerializer(serializers.HyperlinkedModelSerializer):
@@ -65,8 +64,11 @@ class RiskScoreSerializer(serializers.HyperlinkedModelSerializer):
             many=False,
             queryset=Population.objects.all()
         )
+    predict = serializers.HyperlinkedIdentityField(
+        view_name='riskscore-predict'
+    )
 
     class Meta:
         model = RiskScore
         fields = ('url', 'user', 'name', 'value', 'description',
-            'condition', 'population', 'calculated', 'featured')
+            'condition', 'population', 'calculated', 'featured', 'predict')
