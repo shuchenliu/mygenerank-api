@@ -6,6 +6,8 @@ from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 
+from generank.utils import as_bool
+
 from .user import User
 
 
@@ -50,7 +52,7 @@ class ActivityAnswer(models.Model):
 
     @property
     def boolean_value(self):
-        return self.value.lower() in ['yes', 'true', '1']
+        return as_bool(self.value)
 
     def __str__(self):
         return '<API: ActivityAnswer: %s %s>' % (self.user.username, self.question_identifier)
