@@ -8,6 +8,6 @@ def is_in_range(parameter, lower_bound_inclusive, upper_bound_inclusive):
 
 def as_bool(parameter):
     try:
-        return int(parameter) == 1
+        return self.value.lower() in ['yes', 'true', '1']
     except ValueError:
-        raise ValueError('Value: \'%s\' is not a valid number.' % parameter)
+        raise ValueError('Value: \'%s\' is not a valid boolean.' % parameter)
