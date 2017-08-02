@@ -10,7 +10,8 @@ from rest_framework.authentication import SessionAuthentication
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from rest_framework.response import Response
 
-from generank.compute.tasks.cad import get_survey_responses, verify_boolean
+from generank.compute.tasks.cad import get_survey_responses
+from generank.utils import as_bool
 
 from .. import filters
 from ..models import Condition, RiskScore, Population
@@ -110,10 +111,10 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
                 }
             }, status=400)
         try:
-            smoking = verify_boolean(request.GET['smoking'])
-            physically_active = verify_boolean(request.GET['physically_active'])
-            healthy_diet = verify_boolean(request.GET['healthy_diet'])
-            obese = verify_boolean(request.GET['obese'])
+            smoking = as_bool(request.GET['smoking'])
+            physically_active = as_bool(request.GET['physically_active'])
+            healthy_diet = as_bool(request.GET['healthy_diet'])
+            obese = as_bool(request.GET['obese'])
         except KeyError as e:
             return Response({
                 'error': {

@@ -5,6 +5,7 @@ from django.conf import settings
 from celery import shared_task, chord, group
 from django.core.exceptions import ObjectDoesNotExist
 
+from generank.utils import is_in_range
 from generank.api import models
 from generank.api.tasks import send_risk_score_notification, send_post_cad_survey_to_users
 from generank.twentythreeandme.models  import User, Profile, Genotype
@@ -252,22 +253,6 @@ def get_obesity_status(user_id):
 
 
 @shared_task
-def validate_numb(parameter, lower_bound_inclusive, upper_bound_inclusive):
-    if parameter < lower_bound_inclusive or parameter > upper_bound_inclusive:
-        raise ValueError('Value: %s is not within the tolerance %s...%s.' % (
-            parameter, lower_bound_inclusive, upper_bound_inclusive))
-    else:
-        return parameter
-
-
-@shared_task
-def verify_boolean(parameter):
-    try:
-        return int(parameter) == 1
-    except ValueError:
-        raise ValueError('Value: \'%s\' is not a valid number.' % parameter)
-
-@shared_task
 def get_survey_responses(user_id):
     """Given an API user id, return a list that contains survey responses
      relevant for risk score calculation ('predict' function) in condition.py.
@@ -289,19 +274,19 @@ def get_survey_responses(user_id):
 
     age_value = int(models.ActivityAnswer.objects.get(
         question_identifier=settings.AGE_QUESTION_IDENTIFIER, user=user).value)
-    validate_numb(age_value, 40, 79)
+    is_in_range(age_value, 40, 79)
 
     diabetic_value = models.ActivityAnswer.objects.get(
         question_identifier=settings.DIABETES_IDENTIFIER, user = user).boolean_value
 
     numeric_HDL_cholesterol = get_numeric_HDL_cholesterol(user.id.hex)
-    validate_numb(numeric_HDL_cholesterol, 20, 100)
+    is_in_range(numeric_HDL_cholesterol, 20, 100)
 
     numeric_total_cholesterol = get_numeric_total_cholesterol(user.id.hex)
-    validate_numb(numeric_total_cholesterol, 130, 320)
+    is_in_range(numeric_total_cholesterol, 130, 320)
 
     numeric_systolic_blood_pressure = get_numeric_systolic_blood_pressure(user.id.hex)
-    validate_numb(numeric_systolic_blood_pressure, 90, 200)
+    is_in_range(numeric_systolic_blood_pressure, 90, 200)
 
     smoking_value = models.ActivityAnswer.objects.get(
         question_identifier=settings.SMOKING_IDENTIFIER, user = user).boolean_value
