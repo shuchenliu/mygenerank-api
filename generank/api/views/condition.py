@@ -102,12 +102,10 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
                     'message': '%s Please review your answers and resubmit.' % str(e),
                 }
             }, status=400)
-        except ObjectDoesNotExist:
-            pass
+        except ObjectDoesNotExist as e:
             return Response({
                 'error': {
-                        'message': 'A required survey has not been completed. '
-                            'Risk score predictions cannot be made.',
+                        'message': '%s Risk score predictions cannot be made.' % str(e),
                 }
             }, status=400)
         try:

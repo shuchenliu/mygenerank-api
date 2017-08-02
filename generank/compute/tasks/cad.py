@@ -246,29 +246,46 @@ def get_survey_responses(user_id):
     if sex_value not in ['male', 'female']:
         raise ValueError('Invalid sex value.')
 
-    ancestry_value = models.ActivityAnswer.objects.get(
-        question_identifier=settings.ANCESTRY_QUESTION_IDENTIFIER, user=user).boolean_value
-
-    age_value = int(models.ActivityAnswer.objects.get(
-        question_identifier=settings.AGE_QUESTION_IDENTIFIER, user=user).value)
-    is_in_range(age_value, 40, 79)
-
-    diabetic_value = models.ActivityAnswer.objects.get(
-        question_identifier=settings.DIABETES_IDENTIFIER, user = user).boolean_value
-
-    numeric_HDL_cholesterol = get_numeric_HDL_cholesterol(user.id.hex)
-    is_in_range(numeric_HDL_cholesterol, 20, 100)
-
-    numeric_total_cholesterol = get_numeric_total_cholesterol(user.id.hex)
-    is_in_range(numeric_total_cholesterol, 130, 320)
-
-    numeric_systolic_blood_pressure = get_numeric_systolic_blood_pressure(user.id.hex)
-    is_in_range(numeric_systolic_blood_pressure, 90, 200)
-
-    smoking_value = models.ActivityAnswer.objects.get(
-        question_identifier=settings.SMOKING_IDENTIFIER, user = user).boolean_value
-
-    obesity_value = get_obesity_status(user.id.hex)
+    try:
+        ancestry_value = models.ActivityAnswer.objects.get(
+            question_identifier=settings.ANCESTRY_QUESTION_IDENTIFIER, user=user).boolean_value
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.ANCESTRY_QUESTION_IDENTIFIER)
+    try:
+        age_value = int(models.ActivityAnswer.objects.get(
+            question_identifier=settings.AGE_QUESTION_IDENTIFIER, user=user).value)
+        is_in_range(age_value, 40, 79)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.AGE_QUESTION_IDENTIFIER)
+    try:
+        diabetic_value = models.ActivityAnswer.objects.get(
+            question_identifier=settings.DIABETES_IDENTIFIER, user=user).boolean_value
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.DIABETES_IDENTIFIER)
+    try:
+        numeric_HDL_cholesterol = get_numeric_HDL_cholesterol(user.id.hex)
+        is_in_range(numeric_HDL_cholesterol, 20, 100)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('HDL Cholesterol has no value.')
+    try:
+        numeric_total_cholesterol = get_numeric_total_cholesterol(user.id.hex)
+        is_in_range(numeric_total_cholesterol, 130, 320)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Total Cholesterol has no value.')
+    try:
+        numeric_systolic_blood_pressure = get_numeric_systolic_blood_pressure(user.id.hex)
+        is_in_range(numeric_systolic_blood_pressure, 90, 200)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Blood pressure has no value.')
+    try:
+        smoking_value = models.ActivityAnswer.objects.get(
+            question_identifier=settings.SMOKING_IDENTIFIER, user = user).boolean_value
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.SMOKING_IDENTIFIER)
+    try:
+        obesity_value = get_obesity_status(user.id.hex)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('No valid obesity value.')
 
     try:
         subjective_activity = models.ActivityAnswer.objects.get(
