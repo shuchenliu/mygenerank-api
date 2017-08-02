@@ -124,6 +124,7 @@ def get_cad_risk_score(user_id):
 
         workflow.delay()
 
+
 @shared_task
 def get_numeric_total_cholesterol(user_id):
     """Reviews responses to total cholesterol survey questions to collect either
@@ -134,31 +135,22 @@ def get_numeric_total_cholesterol(user_id):
 
     user = models.User.objects.get(id=user_id)
 
-    low_total_cholesterol = 190
-    moderate_total_cholesterol = 220
-    high_total_cholesterol = 250
+    try:
+        return float(models.ActivityAnswer.objects.get(question_identifier= settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER, user=user).value)
+    except ObjectDoesNotExist:
+        pass
+
+    # We don't have an exact value
 
     subjective_total_cholesterol_level = models.ActivityAnswer.objects.get(
         question_identifier=settings.TOTAL_CHOLESTEROL_IDENTIFIER, user=user).value
 
-    subjective_total_cholesterol_value = 0
-
-    if subjective_total_cholesterol_level == "low":
-        subjective_total_cholesterol_value = low_total_cholesterol
-
-    elif subjective_total_cholesterol_level == "moderate" or subjective_total_cholesterol_level == "unknown":
-        subjective_total_cholesterol_value = moderate_total_cholesterol
-
+    if subjective_total_cholesterol_level == "moderate":
+        return 220
     elif subjective_total_cholesterol_level == "high":
-        subjective_total_cholesterol_value = high_total_cholesterol
-
-    if models.ActivityAnswer.objects.filter(
-            question_identifier=settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER, user=user).exists():
-
-        return float(models.ActivityAnswer.objects.get(question_identifier= settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER, user=user).value)
-
+        return 250
     else:
-        return subjective_total_cholesterol_value
+        return 190
 
 
 @shared_task
@@ -171,31 +163,24 @@ def get_numeric_HDL_cholesterol(user_id):
 
     user = models.User.objects.get(id=user_id)
 
-    low_total_HDL_cholesterol = 35
-    moderate_total_HDL_cholesterol = 50
-    high_total_HDL_cholesterol = 65
+    try:
+        return float(models.ActivityAnswer.objects.get(
+            question_identifier=settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER, user=user).value)
+    except ObjectDoesNotExist:
+        pass
+
+    # We don't have the exact values.
 
     subjective_HDL_cholesterol_level = models.ActivityAnswer.objects.get(
         question_identifier=settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER, user=user).value
 
-    subjective_HDL_cholesterol_value = 0
-
-    if subjective_HDL_cholesterol_level == "normal":
-        subjective_HDL_cholesterol_value = low_total_HDL_cholesterol
-
-    elif subjective_HDL_cholesterol_level == "moderate" or subjective_HDL_cholesterol_level == "unknown":
-        subjective_HDL_cholesterol_value = moderate_total_HDL_cholesterol
-
+    if subjective_HDL_cholesterol_level == "moderate":
+        return 50
     elif subjective_HDL_cholesterol_level == "high":
-        subjective_HDL_cholesterol_value = high_total_HDL_cholesterol
-
-    if models.ActivityAnswer.objects.filter(
-            question_identifier=settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER, user=user).exists():
-
-        return float(models.ActivityAnswer.objects.get(question_identifier=settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER, user=user).value)
-
+        return 65
     else:
-        return subjective_HDL_cholesterol_value
+        return 35
+
 
 @shared_task
 def get_numeric_systolic_blood_pressure(user_id):
@@ -205,9 +190,6 @@ def get_numeric_systolic_blood_pressure(user_id):
     07/25/17 Andre Leon"""
     user = models.User.objects.get(id=user_id)
 
-    normal_blood_pressure = 110
-    moderate_blood_pressure = 145
-    high_blood_pressure = 170
     try:
         return float(models.ActivityAnswer.objects.get(
             question_identifier=settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER, user=user).value)
@@ -219,17 +201,12 @@ def get_numeric_systolic_blood_pressure(user_id):
 
     subjective_blood_pressure_value = 0
 
-    if subjective_blood_pressure_level == "normal":
-        subjective_blood_pressure_value = normal_blood_pressure
-
-    elif subjective_blood_pressure_level == "moderate" or subjective_blood_pressure_level == "unknown":
-        subjective_blood_pressure_value = moderate_blood_pressure
-
+    if subjective_blood_pressure_level == "moderate":
+        return 145
     elif subjective_blood_pressure_level == "high":
-        subjective_blood_pressure_value = high_blood_pressure
-
+        return 170
     else:
-        return subjective_blood_pressure_value
+        return 110
 
 
 @shared_task
