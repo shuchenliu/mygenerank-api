@@ -41,8 +41,11 @@ class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
         Note:
         Responses are noted by {identifier}_default for all default responses.
         """
-        responses = cad.get_survey_responses(user.id)
-        return responses.get(reductor.identifier+'_default', False)
+        try:
+            responses = cad.get_survey_responses(user.id)
+            return responses.get(reductor.identifier+'_default', False)
+        except ObjectDoesNotExist:
+            return False
 
 
 

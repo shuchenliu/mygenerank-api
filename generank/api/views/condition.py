@@ -112,7 +112,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
             smoking = as_bool(request.GET['smoking'])
             physically_active = as_bool(request.GET['physically_active'])
             healthy_diet = as_bool(request.GET['healthy_diet'])
-            obese = as_bool(request.GET['healthy_weight'])
+            healthy_weight = as_bool(request.GET['healthy_weight'])
         except KeyError as e:
             return Response({
                 'error': {
@@ -139,7 +139,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
                 values['average_odds'])
 
             # The non-default values need to be provided from the lifestyle risk user interface.
-            lifestyle_risk = cad.get_lifestyle_risk(smoking, obese, physically_active,
+            lifestyle_risk = cad.get_lifestyle_risk(smoking, healthy_weight, physically_active,
                 healthy_diet, combined_risk, values['smoking_default'], values['healthy_weight_default'],
                 values['physical_activity_default'], values['healthy_diet_default']
             )
@@ -147,7 +147,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
             return Response({
                 'error': {
                     'message': 'An error occurred during risk score calculation. '
-                        'Please contact supervisor for support.',
+                        'Please contact support.',
                     'invalid_field': ', '.join([a for a in e.args])
                 }
             }, status=400)
