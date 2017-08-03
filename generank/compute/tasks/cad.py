@@ -254,7 +254,11 @@ def get_survey_responses(user_id):
     try:
         age_value = int(models.ActivityAnswer.objects.get(
             question_identifier=settings.AGE_QUESTION_IDENTIFIER, user=user).value)
-        is_in_range(age_value, 40, 79)
+        # Truncate the ages.
+        if age_value < 49:
+            age_value = 49
+        elif age_value > 79:
+            age_value = 79
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.AGE_QUESTION_IDENTIFIER)
     try:
