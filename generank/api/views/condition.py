@@ -140,7 +140,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
 
             # The non-default values need to be provided from the lifestyle risk user interface.
             lifestyle_risk = cad.get_lifestyle_risk(smoking, obese, physically_active,
-                healthy_diet, combined_risk, values['smoking_default'], values['obesity_default'],
+                healthy_diet, combined_risk, values['smoking_default'], values['healthy_weight_default'],
                 values['physical_activity_default'], values['healthy_diet_default']
             )
         except Exception as e:
