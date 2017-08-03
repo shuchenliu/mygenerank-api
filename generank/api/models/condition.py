@@ -89,7 +89,7 @@ class RiskReductor(models.Model):
     condition = models.ForeignKey(Condition, related_name='reductors',
         on_delete=models.CASCADE)
     created_on = models.DateTimeField(default=timezone.now)
-    description = models.CharField(max_length=800, blank=True)
+    description = models.TextField(max_length=800, blank=True)
 
     def __str__(self):
         return '<API: RiskReductor: %s %s>' % (self.name, self.identifier)
