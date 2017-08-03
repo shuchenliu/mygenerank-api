@@ -112,7 +112,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
             smoking = as_bool(request.GET['smoking'])
             physically_active = as_bool(request.GET['physically_active'])
             healthy_diet = as_bool(request.GET['healthy_diet'])
-            obese = as_bool(request.GET['obese'])
+            obese = as_bool(request.GET['healthy_weight'])
         except KeyError as e:
             return Response({
                 'error': {
