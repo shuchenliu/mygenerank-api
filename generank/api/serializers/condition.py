@@ -22,7 +22,7 @@ class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RiskReductor
-        fields = ('name', 'identifier', 'options', 'active')
+        fields = ('name', 'identifier', 'options', 'active', 'description')
 
     def get_options(self, reductor):
         if reductor.options.count() > 0:
