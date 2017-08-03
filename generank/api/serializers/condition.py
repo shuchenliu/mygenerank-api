@@ -4,6 +4,8 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 
+from generank.compute.tasks import cad
+
 from ..models import (Population, User, RiskScore, Condition,
     RiskReductor, RiskReductorOption)
 
@@ -16,15 +18,32 @@ class RiskReductorOptionSerializer(serializers.HyperlinkedModelSerializer):
 
 class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
     options = serializers.SerializerMethodField()
+    active = serializers.SerializerMethodField()
 
     class Meta:
         model = RiskReductor
-        fields = ('value', 'name', 'identifier', 'options')
+        fields = ('name', 'identifier', 'options', 'active')
 
     def get_options(self, reductor):
         if reductor.options.count() > 0:
             serializer = RiskReductorOptionSerializer(reductor.options, many=True)
             return serializer.data
+
+    def get_active(self, reductor):
+        user = getattr(self.context['request'], 'user', False)
+        if user:
+            return self.active_status_for_user(reductor, user)
+
+    def active_status_for_user(self, reductor, user):
+        """ Returns a given user's active status based on how they answered
+        their survey questions.
+
+        Note:
+        Responses are noted by {identifier}_default for all default responses.
+        """
+        responses = cad.get_survey_responses(user.id)
+        return responses.get(reductor.identifier+'_default', False)
+
 
 
 class PopulationSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,7 +62,8 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
         'supporting_evidence', 'follow_up_activity_identifier', 'reductors')
 
     def get_reductors(self, condition):
-        serializer = RiskReductorSerializer(condition.reductors, many=True)
+        serializer = RiskReductorSerializer(condition.reductors,
+            many=True, context=self.context)
         return serializer.data
 
 

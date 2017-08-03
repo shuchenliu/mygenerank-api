@@ -125,6 +125,9 @@ def get_cad_risk_score(user_id):
         workflow.delay()
 
 
+# Health Survey/Risk Reductor Tasks
+
+
 @shared_task
 def get_numeric_total_cholesterol(user_id):
     """Reviews responses to total cholesterol survey questions to collect either

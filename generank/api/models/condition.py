@@ -1,4 +1,4 @@
-import uuid
+import uuid, sys, os
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -74,11 +74,10 @@ class RiskReductor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True)
     identifier = models.CharField(unique=True, max_length=100, blank=True)
-    value = models.FloatField(max_length=100, blank=True, null=True, default=-1.0)
-    active = models.BooleanField(default=False)
     condition = models.ForeignKey(Condition, related_name='reductors',
         on_delete=models.CASCADE)
     created_on = models.DateTimeField(default=timezone.now)
+    description = models.CharField(max_length=800, blank=True)
 
     def __str__(self):
         return '<API: RiskReductor: %s %s>' % (self.name, self.identifier)
