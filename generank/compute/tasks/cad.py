@@ -213,7 +213,7 @@ def get_numeric_systolic_blood_pressure(user_id):
 
 
 @shared_task
-def get_obesity_status(user_id):
+def get_healthy_weight_status(user_id):
     """Reviews responses to height and weight survey questions to calculate BMI
     and obesity status (by extension). Calculations follow guidelines by CDC.
     https://www.cdc.gov/nccdphp/dnpao/growthcharts/training/bmiage/page5_2.html
@@ -229,7 +229,7 @@ def get_obesity_status(user_id):
         question_identifier=settings.WEIGHT_QUESTION_IDENTIFIER, user=user).value)
 
     BMI = (weight / (height * height)) * 703
-    return BMI >= 30
+    return BMI < 25
 
 
 @shared_task
@@ -290,9 +290,9 @@ def get_survey_responses(user_id):
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.SMOKING_IDENTIFIER)
     try:
-        obesity_value = get_obesity_status(user.id.hex)
+        healthy_weight_value = get_healthy_weight_status(user.id.hex)
     except ObjectDoesNotExist:
-        raise ObjectDoesNotExist('No valid obesity value.')
+        raise ObjectDoesNotExist('No valid healthy weight value.')
 
     try:
         subjective_activity = models.ActivityAnswer.objects.get(
@@ -325,7 +325,7 @@ def get_survey_responses(user_id):
         "systolicBP_untreated": systolic_blood_pressure_untreated,
         "systolicBP_treated": systolic_blood_pressure_treated,
         "smoking_default": smoking_value,
-        "obesity_default": obesity_value,
+        "healthy_weight_default": healthy_weight_value,
         "physical_activity_default": subjective_activity,
         "healthy_diet_default": subjective_diet,
 
