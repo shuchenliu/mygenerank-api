@@ -30,23 +30,20 @@ class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
             return serializer.data
 
     def get_active(self, reductor):
-        user = getattr(self.context['request'], 'user', False)
+        user = getattr(self.context['request'], 'user', None)
         if user:
             return self.active_status_for_user(reductor, user)
 
     def active_status_for_user(self, reductor, user):
         """ Returns a given user's active status based on how they answered
-        their survey questions.
+        their survey questions. We assume that this method will not be called
+        unless the user actually has a valid status for the given reductor.
 
         Note:
         Responses are noted by {identifier}_default for all default responses.
         """
-        try:
-            responses = cad.get_survey_responses(user.id)
-            return responses.get(reductor.identifier+'_default', False)
-        except ObjectDoesNotExist:
-            return False
-
+        responses = cad.get_survey_responses(user.id)
+        return responses.get(reductor.identifier+'_default', False)
 
 
 class PopulationSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,10 +58,17 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Condition
         fields = ('url', 'name', 'overview', 'description',
-        'risk_explanation', 'multiple_scores_explanation',
+        'risk_explanation', 'multiple_scores_explanation', 'is_modifiable_by_behavior',
         'supporting_evidence', 'follow_up_activity_identifier', 'reductors')
 
     def get_reductors(self, condition):
+        # Before showing any risk reductors, make sure that the user has
+        # filled in the required information for them.
+        try:
+            user = getattr(self.context['request'], 'user', None)
+            cad.get_survey_responses(user.id)
+        except ObjectDoesNotExist:
+            return None
         serializer = RiskReductorSerializer(condition.reductors,
             many=True, context=self.context)
         return serializer.data

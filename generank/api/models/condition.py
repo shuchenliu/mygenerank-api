@@ -22,6 +22,18 @@ class Condition(models.Model):
     def __str__(self):
         return '<API: Condition: %s>' % self.name
 
+    @property
+    def is_modifiable_by_behavior(self):
+        """ Returns whether or not a given condition has the ability to be
+        modified by behavior or not.
+
+        Note:
+        Just because a given condition *can* have be modified by behavior
+        does not mean that the user has completed the requirements to
+        perform the modifications.
+        """
+        return self.reductors.count() > 0
+
 
 class Population(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -248,7 +248,6 @@ def get_survey_responses(user_id):
     sex_value = models.ActivityAnswer.objects.get(question_identifier=settings.SEX_QUESTION_IDENTIFIER, user=user).value
     if sex_value not in ['male', 'female']:
         raise ValueError('Invalid sex value.')
-
     try:
         ancestry_value = models.ActivityAnswer.objects.get(
             question_identifier=settings.ANCESTRY_QUESTION_IDENTIFIER, user=user).boolean_value
