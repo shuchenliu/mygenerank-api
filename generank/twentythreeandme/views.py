@@ -4,6 +4,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.decorators import api_view, renderer_classes, \
     detail_route, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.authentication import SessionAuthentication
+from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
@@ -15,8 +17,8 @@ from .serializers import UserSerializer,\
 
 
 class SettingsViewSet(viewsets.ModelViewSet):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [IsAdminUser]
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Settings.objects.all()
     serializer_class = SettingsSerializer
 
