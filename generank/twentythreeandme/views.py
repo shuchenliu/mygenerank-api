@@ -1,9 +1,10 @@
 from rest_framework import viewsets, request, response, renderers
-from rest_framework.permissions import IsAdminUser, SessionAuthentication
+from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import detail_route
 from rest_framework.decorators import api_view, renderer_classes, \
     detail_route, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.authentication import SessionAuthentication
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 
