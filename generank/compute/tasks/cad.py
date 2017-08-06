@@ -20,7 +20,7 @@ SCORE_RESULTS_ORDER = [
 ]
 
 
-@shared_task
+@shared_task(autoretry_for=FileNotFoundError, retry_kwargs={'max_retries': 3})
 def _get_cad_haplotypes(user_id, chromosome):
     """ Given a chromosome, determine the known haplotypes inside it. """
     with record('tasks.cad._get_cad_haplotypes', user_id):
@@ -37,7 +37,7 @@ def _get_cad_haplotypes(user_id, chromosome):
 #        for chunk in steps.get_chunks() if chunk[0] == chromosome))
 
 
-@shared_task
+@shared_task(autoretry_for=FileNotFoundError, retry_kwargs={'max_retries': 3})
 def _impute_and_get_cad_risk_per_chunk(haps, user_id, chunk):
     """ Given a user, the chunk of a chromosome and the known haplotypes for that
     chromosome, calculate their risk for that given chunk. """
@@ -58,7 +58,7 @@ def _get_total_cad_risk(results, user_id):
         return (ancestry_contents, *steps.grs_step_4(uuid.uuid4().hex, filename,
             ancestry_path, ancestry_contents, risk_of_risks, user_id, PHENOTYPE))
 
-#NEED to modify store results and get total risk
+
 @shared_task
 def _store_results(results, user_id):
     """ Given the results of a user's CAD risk score, store the data. """
@@ -92,7 +92,7 @@ def _send_cad_notification(user_id):
 
 # Public Tasks
 
-@shared_task
+@shared_task(autoretry_for=FileNotFoundError, retry_kwargs={'max_retries': 3})
 def get_ancestry(user_id):
     """ Given an API user id, perform the ancestry calculations on that
     user's genotype data. """
