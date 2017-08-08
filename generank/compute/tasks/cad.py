@@ -113,14 +113,15 @@ def get_cad_risk_score(user_id):
             for chunk in steps.get_chunks()
         ]
         step_4 = _get_total_cad_risk.s(user_id)
-        notify_user = (
-            _send_cad_notification.si(user_id) | send_post_cad_survey_to_users.si(user_id)
-        )
 
         workflow = chord(
             header=group([step_1, *steps_2_and_3]),
             body=step_4
-        ) | _store_results.s(user_id) | notify_user
+        ) | (
+            _store_results.s(user_id) |
+            _send_cad_notification.si(user_id) |
+            send_post_cad_survey_to_users.si(user_id)
+        )
 
         workflow.delay()
 
