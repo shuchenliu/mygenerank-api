@@ -39,18 +39,33 @@ def send_registration_email_to_user(registration_url, registration_code, user_em
 @shared_task
 def send_risk_score_notification(user_id, condition_name):
     with record('tasks.api.send_risk_score_notification', user_id):
+        message = 'Your risk score for {condition} is available.'.format(
+            condition=condition_name)
+        # APNS
         devices = APNSDevice.objects.filter(active=True, user__is_active=True, user__id=user_id)
-        devices.send_message("Your risk score for {condition} is available.".format(
-            condition=condition_name))
+        devices.send_message(message)
+        # Email
+        user = User.objects.get(id=user_id)
+        html = render_to_string('new_risk_score.html', {
+            'condition_name': condition_name
+        })
+        send_mail(message, message, settings.EMAIL_HOST_USER,
+            [user.email], fail_silently=False, html_message=html)
 
 
 @shared_task
 def send_activity_notification(activity_id):
     with record('tasks.api.send_activity_notification'):
+        message = 'A new activity is ready for you!'
+        # APNS
         activity = Activity.objects.get(id=activity_id)
-        # TODO: refactor to use mass_send
         devices = APNSDevice.objects.filter(active=True, user__is_active=True)
-        devices.send_message('A new activity is ready for you!')
+        devices.send_message(message)
+        # Email
+        for user in User.objects.filter(is_active=True):
+            html = render_to_string('new_activity.html', {})
+            send_mail(message, message, settings.EMAIL_HOST_USER,
+                [user.email], fail_silently=False, html_message=html)
 
 
 # Create New Model Tasks
