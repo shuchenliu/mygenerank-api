@@ -92,7 +92,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
         since: 07/25/17
         """
 
-        individual_risk_score = RiskScore.objects.get(id=pk).value
+        odds_category_value = RiskScore.objects.get(id=pk).odds_category_value
 
         try:
             values = get_survey_responses(request.user.id.hex)
@@ -135,7 +135,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
               values['smoking_default'], values['diabetic']
             )
 
-            combined_risk = cad.get_combined_risk(baseline_risk, individual_risk_score,
+            combined_risk = cad.get_combined_risk(baseline_risk, odds_category_value,
                 values['average_odds'])
 
             # The non-default values need to be provided from the lifestyle risk user interface.

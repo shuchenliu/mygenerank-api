@@ -65,6 +65,16 @@ class RiskScore(models.Model):
         return '<API: RiskScore: %s %s %s>' % (self.user.username, self.condition,
             self.population)
 
+    @property
+    def odds_category_value(self):
+        if self.value < 0.20:
+            return 1.0
+        elif self.value >= 0.20 and self.value <= 0.80:
+            return 1.32
+        else:
+            return 1.71
+
+
 
 class Ancestry(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
