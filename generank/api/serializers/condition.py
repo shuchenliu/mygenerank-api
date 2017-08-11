@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from rest_framework.reverse import reverse
 from rest_framework import serializers
 from rest_framework import status
@@ -42,7 +42,10 @@ class RiskReductorSerializer(serializers.HyperlinkedModelSerializer):
         Note:
         Responses are noted by {identifier}_default for all default responses.
         """
-        responses = cad.get_survey_responses(user.id)
+        try:
+            responses = cad.get_survey_responses(user.id)
+        except MultipleObjectsReturned:
+            return False
         return responses.get(reductor.identifier+'_default', False)
 
 
