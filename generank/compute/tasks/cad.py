@@ -285,8 +285,8 @@ def get_survey_responses(user_id):
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Blood pressure has no value.')
     try:
-        smoking_value = models.ActivityAnswer.objects.get(
-            question_identifier=settings.SMOKING_IDENTIFIER, user = user).boolean_value
+        non_smoking_value = not models.ActivityAnswer.objects.get(
+            question_identifier=settings.SMOKING_IDENTIFIER, user=user).boolean_value
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.SMOKING_IDENTIFIER)
     try:
@@ -324,7 +324,7 @@ def get_survey_responses(user_id):
         "total_cholesterol": numeric_total_cholesterol,
         "systolicBP_untreated": systolic_blood_pressure_untreated,
         "systolicBP_treated": systolic_blood_pressure_treated,
-        "smoking_default": smoking_value,
+        "non_smoking_default": non_smoking_value,
         "healthy_weight_default": healthy_weight_value,
         "physical_activity_default": subjective_activity,
         "healthy_diet_default": subjective_diet,

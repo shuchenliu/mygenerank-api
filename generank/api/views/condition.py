@@ -109,7 +109,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
                 }
             }, status=400)
         try:
-            smoking = as_bool(request.GET['smoking'])
+            non_smoking = as_bool(request.GET['non_smoking'])
             physically_active = as_bool(request.GET['physically_active'])
             healthy_diet = as_bool(request.GET['healthy_diet'])
             healthy_weight = as_bool(request.GET['healthy_weight'])
@@ -132,15 +132,15 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
             baseline_risk = cad.get_baseline_risk(values['sex'], values['ancestry'],
               values['age'], values['total_cholesterol'], values['HDL_cholesterol'],
               values['systolicBP_untreated'], values['systolicBP_treated'],
-              values['smoking_default'], values['diabetic']
+              values['non_smoking_default'], values['diabetic']
             )
 
             combined_risk = cad.get_combined_risk(baseline_risk, odds_category_value,
                 values['average_odds'])
 
             # The non-default values need to be provided from the lifestyle risk user interface.
-            lifestyle_risk = cad.get_lifestyle_risk(smoking, healthy_weight, physically_active,
-                healthy_diet, combined_risk, values['smoking_default'], values['healthy_weight_default'],
+            lifestyle_risk = cad.get_lifestyle_risk(non_smoking, healthy_weight, physically_active,
+                healthy_diet, combined_risk, values['non_smoking_default'], values['healthy_weight_default'],
                 values['physical_activity_default'], values['healthy_diet_default']
             )
         except Exception as e:
