@@ -57,7 +57,7 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Condition
-        fields = ('url', 'name', 'overview', 'description',
+        fields = ('url', 'name', 'overview', 'description', 'risk_profile_title',
         'risk_explanation', 'multiple_scores_explanation', 'is_modifiable_by_behavior',
         'supporting_evidence', 'follow_up_activity_identifier', 'reductors')
 
