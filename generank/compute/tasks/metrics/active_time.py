@@ -23,7 +23,8 @@ def get_relevant_score_values(user, day, series):
         identifier=identifier, start_date__gte=start_of_day,
         end_date__lt=end_of_day).only('value')
     for count in step_counts:
-        yield count.value
+        # Returns the step count active time in minutes.
+        yield (count.end_date - count.start_date).seconds / 60
 
 
 def is_new_personal_best(user, value, series):
