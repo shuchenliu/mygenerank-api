@@ -13,7 +13,7 @@ from django.utils import timezone
 from push_notifications.models import APNSDevice
 
 from generank.compute.contextmanagers import record
-from .models import User, Activity, ActivityStatus, RiskScore
+from .models import User, Activity, ActivityStatus, RiskScore, LifestyleMetric, LifestyleMetricStatus
 
 
 # Email Tasks
@@ -70,6 +70,14 @@ def send_activity_notification(activity_id):
 
 # Create New Model Tasks
 
+@shared_task
+def create_metric_statuses_for_existing_users(metric_id):
+    with record('tasks.api.create_metric_statuses_for_new_user'):
+        metric = LifestyleMetric.objects.get(id=metric_id)
+        for user in User.objects.filter(is_active=True):
+            status = LifestyleMetricStatus(user=user, metric=metric)
+            status.save()
+
 
 @shared_task
 def create_statuses_for_existing_users(activity_id):
@@ -96,6 +104,10 @@ def create_statuses_for_new_user(user_id):
             if activity.is_tracked_serverside:
                 status = ActivityStatus(user=user, activity=activity)
                 status.save()
+        for metric in LifestyleMetric.objects.all():
+            status = LifestyleMetricStatus(user=user, metric=metric)
+            status.save()
+
 
 
 @shared_task
