@@ -34,7 +34,7 @@ def is_new_personal_best(user, value, series):
     """
     try:
         previous_best = models.LifestyleMetricScore.objects.get(user=user,
-            series=series, is_personal_best=True
+            series=series, is_personal_best=True)
     except ObjectDoesNotExist:
         # The user has no personal best, so the given value can be it.
         return True
