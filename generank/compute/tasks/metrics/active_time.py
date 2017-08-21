@@ -76,4 +76,3 @@ def update_active_time_status(status_id):
             update_scores_for(status.user, day, status.metric.series.first())
         status.last_updated = timezone.now()
         status.save()
-
