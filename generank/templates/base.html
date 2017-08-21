@@ -38,15 +38,12 @@
         </ul>
       </div>
     </nav>
+    <div {% block navpadding %} style="margin-top:80px;" {% endblock %}>
     {% block content %}
 
     {% endblock %}
-
-    {% if sticky %}
-    <footer class="site-footer fixed-bottom">
-    {% else %}
-    <footer class="site-footer">
-    {% endif %}
+    </div>
+    <footer class="site-footer {% block sticky %}fixed-bottom{% endblock %}">
       <div class="bottom">
         <div class="container">
           <div class="row">
