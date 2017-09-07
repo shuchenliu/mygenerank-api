@@ -84,7 +84,7 @@ def update_scores_for(user, day, series):
     try:
         is_personal_best = is_new_personal_best(user, day_active_time.value, series)
     except MultipleObjectsReturned:
-        is_new_personal_best = recover_personal_best(user, day_active_time.value, series)
+        is_personal_best = recover_personal_best(user, day_active_time.value, series)
 
     if is_personal_best:
         day_active_time.is_personal_best = True
