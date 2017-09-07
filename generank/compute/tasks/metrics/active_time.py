@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from celery import shared_task, chord, group
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils import timezone
 
 from generank.compute.contextmanagers import record
@@ -46,6 +46,25 @@ def is_new_personal_best(user, value, series):
     return True
 
 
+def recover_personal_best(user, value, series):
+    """ Somehow multiple values have been saved as the user's personal best.
+    Normally this doesn't happen, but can occur during multiple runs if the
+    system reboots and recalculates the user's value.
+
+    This function will recover the most recent personal best score for the given
+    series and return if the given value is indeed the correct personal best.
+    """
+    incorrect_previous_bests = models.LifestyleMetricScore.objects.filter(user=user,
+        series=series, is_personal_best=True).order_by('-created_on')[1:]
+
+    for best in incorrect_previous_bests:
+        best.is_personal_best = False
+        best.save()
+
+    # Will throw if, for some reason, the recovery didn't work.
+    return is_new_personal_best(user, value, series)
+
+
 def update_scores_for(user, day, series):
     """ Given a user, day and series update the score for that user on
     that day in that series  with the newest sum of the the relevant scores.
@@ -61,7 +80,13 @@ def update_scores_for(user, day, series):
         day_active_time = models.LifestyleMetricScore(
             series=series, user=user, created_on=day)
     day_active_time.value = sum(get_relevant_score_values(user, day, series))
-    if is_new_personal_best(user, day_active_time.value, series):
+
+    try:
+        is_personal_best = is_new_personal_best(user, day_active_time.value, series)
+    except MultipleObjectsReturned:
+        is_new_personal_best = recover_personal_best(user, day_active_time.value, series)
+
+    if is_personal_best:
         day_active_time.is_personal_best = True
     day_active_time.save()
 
