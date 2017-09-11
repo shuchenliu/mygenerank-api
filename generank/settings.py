@@ -349,7 +349,7 @@ STEP_COUNT_ACTIVITY_IDENTIFIER = "HKQuantityTypeIdentifierStepCount"
 # Survey Question Identifiers
 
 SEX_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.SexQuestion"
-ANCESTRY_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AncestryQuestion"
+RACIAL_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.RacialQuestion"
 HEIGHT_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.HeightQuestion"
 WEIGHT_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.WeightQuestion"
 AGE_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AgeQuestion"
@@ -364,6 +364,8 @@ SMOKING_IDENTIFIER = "PhenotypeSurveyTask.SmokingQuestion"
 ACTIVITY_IDENTIFIER = "PhenotypeSurveyTask.ActivityQuestion"
 DIET_IDENTIFIER = "PhenotypeSurveyTask.HealthyDietQuestion"
 BLOOD_PRESSURE_MEDICATION_IDENTIFIER = "PhenotypeSurveyTask.BloodPressureMedicationQuestion"
+# Depricated
+ANCESTRY_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AncestryQuestion"
 
 # Which tasks are available to new users by default.
 DEFAULT_STUDY_IDS = [

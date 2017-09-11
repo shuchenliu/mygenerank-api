@@ -20,6 +20,9 @@ SCORE_RESULTS_ORDER = [
 ]
 
 
+# Private Tasks
+
+
 @shared_task(autoretry_for=(FileNotFoundError,), retry_kwargs={'max_retries': 3})
 def _get_cad_haplotypes(user_id, chromosome):
     """ Given a chromosome, determine the known haplotypes inside it. """
@@ -90,7 +93,119 @@ def _send_cad_notification(user_id):
         send_risk_score_notification(user_id, cad.name)
 
 
+# Utility Functions
+
+
+def _get_numeric_total_cholesterol(user_id):
+    """Reviews responses to total cholesterol survey questions to collect either
+        numerical value provided by user or estimated qualitative values (low, moderate, high)
+        which are then translated to numerical values as provided by NIH Medline plus
+        https://medlineplus.gov/magazine/issues/summer12/articles/summer12pg6-7.html.
+        07/25/17 Andre Leon"""
+
+    user = models.User.objects.get(id=user_id)
+
+    try:
+        return float(_get_value_answer(settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER, user))
+    except ObjectDoesNotExist:
+        pass
+
+    # We don't have an exact value
+
+    subjective_total_cholesterol_level = _get_value_answer(settings.TOTAL_CHOLESTEROL_IDENTIFIER, user)
+
+    if subjective_total_cholesterol_level == "moderate":
+        return 220
+    elif subjective_total_cholesterol_level == "high":
+        return 250
+    else:
+        return 190
+
+
+def _get_answer(identifier, user):
+    """ A shortcut method for getting activity answers for a given user. """
+    return models.ActivityAnswer.objects.get(question_identifier=identifier, user=user)
+
+
+def _get_value_answer(identifier, user):
+    """ A shortcut method for getting activity answer values for a given user. """
+    return _get_answer(identifier, user).value
+
+
+def _get_bool_answer(identifier, user):
+    """ A shortcut method for getting boolean values for activity answers for a given user. """
+    return _get_answer(identifier, user).boolean_value
+
+
+def _get_numeric_HDL_cholesterol(user_id):
+    """Reviews responses to HDL cholesterol survey questions to collect either
+    numerical value provided by user or estimated qualitative values (low, moderate, high)
+    which are then translated to numerical values as provided by NIH Medline plus
+    https://medlineplus.gov/magazine/issues/summer12/articles/summer12pg6-7.html.
+    07/25/17 Andre Leon"""
+
+    user = models.User.objects.get(id=user_id)
+
+    try:
+        return float(_get_value_answer(settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER, user))
+    except ObjectDoesNotExist:
+        pass
+
+    # We don't have the exact values.
+
+    subjective_HDL_cholesterol_level = _get_value_answer(settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER, user)
+
+    if subjective_HDL_cholesterol_level == "moderate":
+        return 50
+    elif subjective_HDL_cholesterol_level == "high":
+        return 65
+    else:
+        return 35
+
+
+def _get_numeric_systolic_blood_pressure(user_id):
+    """Reviews responses to blood pressure survey questions to collect either
+    numerical value provided by user or estimated qualitative values (normal, moderate, high)
+    which are then translated to numerical values as supplied by Evan Muse.
+    07/25/17 Andre Leon"""
+    user = models.User.objects.get(id=user_id)
+
+    try:
+        return float(_get_value_answer(settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER, user))
+    except ObjectDoesNotExist:
+        pass
+
+    subjective_blood_pressure_level = _get_value_answer(settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER, user)
+
+    subjective_blood_pressure_value = 0
+
+    if subjective_blood_pressure_level == "moderate":
+        return 145
+    elif subjective_blood_pressure_level == "high":
+        return 170
+    else:
+        return 110
+
+
+def _get_healthy_weight_status(user_id):
+    """Reviews responses to height and weight survey questions to calculate BMI
+    and obesity status (by extension). Calculations follow guidelines by CDC.
+    https://www.cdc.gov/nccdphp/dnpao/growthcharts/training/bmiage/page5_2.html
+    Returns Obesity: FALSE if either height or weight are omitted.
+    author:  Andre Leon
+    since: 07/25/17
+    """
+    user = models.User.objects.get(id = user_id)
+
+    height = float(_get_value_answer(settings.HEIGHT_QUESTION_IDENTIFIER, user=user))
+    weight = float(_get_value_answer(settings.WEIGHT_QUESTION_IDENTIFIER, user))
+
+    BMI = (weight / (height * height)) * 703
+    return BMI < 25
+
+
 # Public Tasks
+
 
 @shared_task(autoretry_for=(FileNotFoundError,), retry_kwargs={'max_retries': 3})
 def get_ancestry(user_id):
@@ -126,113 +241,6 @@ def get_cad_risk_score(user_id):
         workflow.delay()
 
 
-# Health Survey/Risk Reductor Tasks
-
-
-@shared_task
-def get_numeric_total_cholesterol(user_id):
-    """Reviews responses to total cholesterol survey questions to collect either
-        numerical value provided by user or estimated qualitative values (low, moderate, high)
-        which are then translated to numerical values as provided by NIH Medline plus
-        https://medlineplus.gov/magazine/issues/summer12/articles/summer12pg6-7.html.
-        07/25/17 Andre Leon"""
-
-    user = models.User.objects.get(id=user_id)
-
-    try:
-        return float(models.ActivityAnswer.objects.get(question_identifier= settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER, user=user).value)
-    except ObjectDoesNotExist:
-        pass
-
-    # We don't have an exact value
-
-    subjective_total_cholesterol_level = models.ActivityAnswer.objects.get(
-        question_identifier=settings.TOTAL_CHOLESTEROL_IDENTIFIER, user=user).value
-
-    if subjective_total_cholesterol_level == "moderate":
-        return 220
-    elif subjective_total_cholesterol_level == "high":
-        return 250
-    else:
-        return 190
-
-
-@shared_task
-def get_numeric_HDL_cholesterol(user_id):
-    """Reviews responses to HDL cholesterol survey questions to collect either
-    numerical value provided by user or estimated qualitative values (low, moderate, high)
-    which are then translated to numerical values as provided by NIH Medline plus
-    https://medlineplus.gov/magazine/issues/summer12/articles/summer12pg6-7.html.
-    07/25/17 Andre Leon"""
-
-    user = models.User.objects.get(id=user_id)
-
-    try:
-        return float(models.ActivityAnswer.objects.get(
-            question_identifier=settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER, user=user).value)
-    except ObjectDoesNotExist:
-        pass
-
-    # We don't have the exact values.
-
-    subjective_HDL_cholesterol_level = models.ActivityAnswer.objects.get(
-        question_identifier=settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER, user=user).value
-
-    if subjective_HDL_cholesterol_level == "moderate":
-        return 50
-    elif subjective_HDL_cholesterol_level == "high":
-        return 65
-    else:
-        return 35
-
-
-@shared_task
-def get_numeric_systolic_blood_pressure(user_id):
-    """Reviews responses to blood pressure survey questions to collect either
-    numerical value provided by user or estimated qualitative values (normal, moderate, high)
-    which are then translated to numerical values as supplied by Evan Muse.
-    07/25/17 Andre Leon"""
-    user = models.User.objects.get(id=user_id)
-
-    try:
-        return float(models.ActivityAnswer.objects.get(
-            question_identifier=settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER, user=user).value)
-    except ObjectDoesNotExist:
-        pass
-
-    subjective_blood_pressure_level = models.ActivityAnswer.objects.get(
-        question_identifier=settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER, user= user).value
-
-    subjective_blood_pressure_value = 0
-
-    if subjective_blood_pressure_level == "moderate":
-        return 145
-    elif subjective_blood_pressure_level == "high":
-        return 170
-    else:
-        return 110
-
-
-@shared_task
-def get_healthy_weight_status(user_id):
-    """Reviews responses to height and weight survey questions to calculate BMI
-    and obesity status (by extension). Calculations follow guidelines by CDC.
-    https://www.cdc.gov/nccdphp/dnpao/growthcharts/training/bmiage/page5_2.html
-    Returns Obesity: FALSE if either height or weight are omitted.
-    author:  Andre Leon
-    since: 07/25/17
-    """
-    user = models.User.objects.get(id = user_id)
-
-    height = float(models.ActivityAnswer.objects.get(
-        question_identifier=settings.HEIGHT_QUESTION_IDENTIFIER, user=user).value)
-    weight = float(models.ActivityAnswer.objects.get(
-        question_identifier=settings.WEIGHT_QUESTION_IDENTIFIER, user=user).value)
-
-    BMI = (weight / (height * height)) * 703
-    return BMI < 25
-
-
 @shared_task
 def get_survey_responses(user_id):
     """Given an API user id, return a list that contains survey responses
@@ -246,17 +254,23 @@ def get_survey_responses(user_id):
     """
     user = models.User.objects.get(id=user_id)
 
-    sex_value = models.ActivityAnswer.objects.get(question_identifier=settings.SEX_QUESTION_IDENTIFIER, user=user).value
+    sex_value = _get_value_answer(settings.SEX_QUESTION_IDENTIFIER, user)
     if sex_value not in ['male', 'female']:
         raise ValueError('Invalid sex value.')
+
     try:
-        ancestry_value = models.ActivityAnswer.objects.get(
-            question_identifier=settings.ANCESTRY_QUESTION_IDENTIFIER, user=user).boolean_value
+        racial_value = _get_value_answer(settings.RACIAL_QUESTION_IDENTIFIER, user)
+        # Does the user consider themselves "of african american descent"?
+        ancestry_value = racial_value == 'african_american'
     except ObjectDoesNotExist:
-        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.ANCESTRY_QUESTION_IDENTIFIER)
+        try:
+            # Try to get ancestry directly (depreciated 2017-9-11)
+            ancestry_value = _get_value_answer(settings.ANCESTRY_QUESTION_IDENTIFIER, user)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist('Answer for %s does not exist' % settings.RACIAL_QUESTION_IDENTIFIER)
+
     try:
-        age_value = int(models.ActivityAnswer.objects.get(
-            question_identifier=settings.AGE_QUESTION_IDENTIFIER, user=user).value)
+        age_value = int(_get_value_answer(settings.AGE_QUESTION_IDENTIFIER, user))
         # Truncate the ages.
         if age_value < 49:
             age_value = 49
@@ -264,56 +278,56 @@ def get_survey_responses(user_id):
             age_value = 79
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.AGE_QUESTION_IDENTIFIER)
+
     try:
-        diabetic_value = models.ActivityAnswer.objects.get(
-            question_identifier=settings.DIABETES_IDENTIFIER, user=user).boolean_value
+        diabetic_value = _get_bool_answer(settings.DIABETES_IDENTIFIER, user)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.DIABETES_IDENTIFIER)
+
     try:
-        numeric_HDL_cholesterol = get_numeric_HDL_cholesterol(user.id.hex)
+        numeric_HDL_cholesterol = _get_numeric_HDL_cholesterol(user.id.hex)
         is_in_range(numeric_HDL_cholesterol, 20, 100)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('HDL Cholesterol has no value.')
+
     try:
-        numeric_total_cholesterol = get_numeric_total_cholesterol(user.id.hex)
+        numeric_total_cholesterol = _get_numeric_total_cholesterol(user.id.hex)
         is_in_range(numeric_total_cholesterol, 130, 320)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Total Cholesterol has no value.')
+
     try:
-        numeric_systolic_blood_pressure = get_numeric_systolic_blood_pressure(user.id.hex)
+        numeric_systolic_blood_pressure = _get_numeric_systolic_blood_pressure(user.id.hex)
         is_in_range(numeric_systolic_blood_pressure, 90, 200)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Blood pressure has no value.')
+
     try:
-        non_smoking_value = not models.ActivityAnswer.objects.get(
-            question_identifier=settings.SMOKING_IDENTIFIER, user=user).boolean_value
+        non_smoking_value = not _get_bool_answer(settings.SMOKING_IDENTIFIER, user)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('Answer for %s does not exist' % settings.SMOKING_IDENTIFIER)
+
     try:
-        healthy_weight_value = get_healthy_weight_status(user.id.hex)
+        healthy_weight_value = _get_healthy_weight_status(user.id.hex)
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist('No valid healthy weight value.')
 
     try:
-        subjective_activity = models.ActivityAnswer.objects.get(
-            question_identifier=settings.ACTIVITY_IDENTIFIER, user=user).boolean_value
+        subjective_activity = _get_bool_answer(settings.ACTIVITY_IDENTIFIER, user)
     except ObjectDoesNotExist:
         subjective_activity = False
 
     try:
-        subjective_diet = models.ActivityAnswer.objects.get(question_identifier=settings.DIET_IDENTIFIER, user=user).boolean_value
+        subjective_diet = _get_bool_answer(settings.DIET_IDENTIFIER, user)
     except ObjectDoesNotExist:
         subjective_diet = False
 
-    #THIS IS THE SCRIPT THAT DETERMINES WHAT SYSTOLIC BLOOD PRESSURE TO USE.
-    if(models.ActivityAnswer.objects.filter(question_identifier=settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER, user= user).exists()):
-        if(models.ActivityAnswer.objects.get(question_identifier=settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER,
-                                                            user= user).boolean_value):
-            systolic_blood_pressure_treated = numeric_systolic_blood_pressure
-            systolic_blood_pressure_untreated = 1
-        else:
-            systolic_blood_pressure_untreated = numeric_systolic_blood_pressure
-            systolic_blood_pressure_treated = 1
+    if _get_bool_answer(settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER, user):
+        systolic_blood_pressure_treated = numeric_systolic_blood_pressure
+        systolic_blood_pressure_untreated = 1
+    else:
+        systolic_blood_pressure_untreated = numeric_systolic_blood_pressure
+        systolic_blood_pressure_treated = 1
 
     relevant_values = {
         "sex": sex_value,
@@ -335,4 +349,3 @@ def get_survey_responses(user_id):
     }
 
     return relevant_values
-
