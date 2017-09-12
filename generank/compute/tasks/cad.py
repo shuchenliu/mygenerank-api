@@ -254,7 +254,11 @@ def get_survey_responses(user_id):
     """
     user = models.User.objects.get(id=user_id)
 
-    sex_value = _get_value_answer(settings.SEX_QUESTION_IDENTIFIER, user)
+    try:
+        sex_value = _get_value_answer(settings.SEX_QUESTION_IDENTIFIER, user)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist('Answer for %s does not exist' % settings.SEX_QUESTION_IDENTIFIER)
+
     if sex_value not in ['male', 'female']:
         raise ValueError('Invalid sex value.')
 

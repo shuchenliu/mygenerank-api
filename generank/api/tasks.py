@@ -70,6 +70,7 @@ def send_activity_notification(activity_id):
 
 # Create New Model Tasks
 
+
 @shared_task
 def create_metric_statuses_for_existing_users(metric_id):
     with record('tasks.api.create_metric_statuses_for_new_user'):
@@ -107,7 +108,6 @@ def create_statuses_for_new_user(user_id):
         for metric in LifestyleMetric.objects.all():
             status = LifestyleMetricStatus(user=user, metric=metric)
             status.save()
-
 
 
 @shared_task

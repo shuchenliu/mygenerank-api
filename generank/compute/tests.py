@@ -27,7 +27,6 @@ class TestCADTasks(unittest.TestCase):
                     with mock.patch('generank.api.models.User.objects.get', return_value=MockUser()):
                         responses = tasks.cad.get_survey_responses(user_id)
                         for key, value in responses.items():
-                            print(key)
                             self.assertEqual(value, answers[key])
 
 
