@@ -2,8 +2,6 @@
 
 *A research study by the Scripps Translational Science Institute*
 
-![MyGeneRank Logo](https://mygenerank.scripps.edu/static/img/MyGeneRank_Logo_White.png)
-
 [Visit our site and get started with the study.](https://mygenerank.scripps.edu)
 
 [![Build Status](https://travis-ci.org/TormamaniLab/gene-pc-api.svg?branch=master)](https://travis-ci.org/TorkamaniLab/gene-pc-api)
