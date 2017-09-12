@@ -2,7 +2,7 @@
 
 *A research study by the Scripps Translational Science Institute*
 
-<img alt="MyGeneRank Logo" src="https://mygenerank.scripps.edu/static/img/MyGeneRank_Logo_White.png" width=200px">
+![MyGeneRank Logo](https://mygenerank.scripps.edu/static/img/MyGeneRank_Logo_White.png)
 
 [Visit our site and get started with the study.](https://mygenerank.scripps.edu)
 
