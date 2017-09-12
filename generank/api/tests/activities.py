@@ -31,5 +31,4 @@ class ActivityAnswersAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
             'user': '/api/users/{}/'.format(self.test_user.id)
         }
         r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
-        print(r.content)
         self.assertEqual(r.status_code, 201)
