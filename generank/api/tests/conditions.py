@@ -6,6 +6,7 @@ from .base import BaseAPITestMixin, MyGeneRankTestCase
 
 from .. import models
 
+
 class ConditionsAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
