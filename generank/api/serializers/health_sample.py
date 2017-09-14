@@ -17,7 +17,7 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
             view_name='user-detail',
             many=False,
-            queryset=User.objects.all()
+            read_only=True
         )
     identifier = serializers.CharField()
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
@@ -39,6 +39,7 @@ class HealthSampleSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         identifier = HealthSampleIdentifier.objects.get(value=validated_data['identifier'])
         validated_data['identifier'] = identifier
-        return HealthSample.objects.create(**validated_data)
+        user = self.context['request'].user
+        return HealthSample.objects.create(**validated_data, user=user)
 
 

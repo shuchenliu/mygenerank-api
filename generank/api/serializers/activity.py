@@ -34,7 +34,7 @@ class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
             view_name='user-detail',
             many=False,
-            queryset=User.objects.all()
+            read_only=True
         )
     activity = serializers.HyperlinkedRelatedField(
             view_name='activity-detail',
@@ -45,4 +45,9 @@ class ActivityAnswerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ActivityAnswer
         fields = ('url', 'user', 'question_identifier', 'value', 'activity')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return ActivityAnswer.objects.create(**validated_data, user=user)
+
 

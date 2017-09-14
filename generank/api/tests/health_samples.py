@@ -21,7 +21,6 @@ class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGene
     def test_authorized_get_with_results(self):
         data = {
             'identifier': 'HKStepCount',
-            'user': '/api/users/{}/'.format(self.test_user.id),
             'value': '10',
             'start_date': '2017-09-13 00:32:33.617238+00:00',
             'end_date': '2017-09-13 00:34:33.617238+00:00',
@@ -43,7 +42,6 @@ class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGene
     def test_authorized_post(self):
         data = {
             'identifier': 'HKStepCount',
-            'user': '/api/users/{}/'.format(self.test_user.id),
             'value': '10',
             'start_date': '2017-09-13 00:32:33.617238+00:00',
             'end_date': '2017-09-13 00:34:33.617238+00:00',

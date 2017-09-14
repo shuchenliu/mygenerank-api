@@ -27,6 +27,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             user.save()
             return user
 
+
 class SignatureSerializer(serializers.HyperlinkedModelSerializer):
     consent_pdf = serializers.HyperlinkedRelatedField(
             view_name='consentpdf-detail',
@@ -38,12 +39,18 @@ class SignatureSerializer(serializers.HyperlinkedModelSerializer):
         model = Signature
         fields = ('url', 'date_signed', 'consent_pdf', 'consent_signed')
 
+    def validate_consent_pdf(self, value):
+        user = self.context['request'].user
+        if value not in user.consent_pdfs.all():
+            raise serializers.ValidationError('Invalid value for consent form.')
+        return value
+
 
 class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.HyperlinkedRelatedField(
             view_name='user-detail',
             many=False,
-            queryset=User.objects.all()
+            read_only=True
         )
 
     class Meta:
@@ -53,3 +60,7 @@ class ConsentPDFSerializer(serializers.HyperlinkedModelSerializer):
             'signature': {'read_only': True},
             'url': {'view_name': 'consentpdf-detail'}
         }
+
+    def create(self, validated_data):
+        return ConsentPDF.objects.create(
+            **validated_data, user=self.context['request'].user)

@@ -120,7 +120,6 @@ class ConsentFormAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTe
     def test_authorized_post(self):
         with open(os.sep.join((PDF_FIXTURE_PATH, 'sample_consent.pdf')), 'rb') as f:
             data = {
-                'user': '/api/users/{}/'.format(self.test_user.id.hex),
                 'consent_pdf': f,
                 'name': 'sample_consent.pdf'
             }

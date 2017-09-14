@@ -28,7 +28,6 @@ class ActivityAnswersAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRa
             'question_identifier': 'TEST ID',
             'value': 'test-data',
             'activity': '/api/activities/{}/'.format(self.activity.id),
-            'user': '/api/users/{}/'.format(self.test_user.id)
         }
         r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
         self.assertEqual(r.status_code, 201)
