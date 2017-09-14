@@ -16,3 +16,61 @@ This repository contains the Django-REST API and wrapper for the computation lay
 
 The goal of this study is to determine how your genetic risk influences health decisions and other things that can be controlled in life. Our first genetic risk score is calculated for coronary artery disease (CAD).
 
+
+## Development and Running the Tests
+
+It's recommended to run the MyGeneRank API in a [virtual environment][venv]. This tutorial will assume you've already set that up.
+
+[venv]: http://virtualenvwrapper.readthedocs.io/en/latest/
+
+
+### Environment
+
+There are a few environment variables you'll need to set to use MyGeneRank's API locally.
+
+
+#### Email Settings
+
+- `EMAIL_HOST`
+- `EMAIL_PORT`
+- `EMAIL_HOST_USER`
+- `EMAIL_HOST_PASSWORD`
+
+
+#### Reddit Settings
+
+- `REDDIT_CLIENT_ID`
+- `REDDIT_CLIENT_SECRET`
+- `REDDIT_USERNAME`
+- `REDDIT_PASSWORD`
+
+
+#### Twenty Three and Me Settings
+
+- `TTM_CLIENT_ID`
+- `TTM_CLIENT_SECRET`
+- `TTM_GRANT_TYPE`
+- `TTM_REDIRECT_URI`
+- `TTM_SCOPE`
+
+
+#### Misc Settings
+
+- `PIPELINE_DIRECTORY`
+- `APNS_CERTIFICATE`
+- `SECRET_KEY`
+
+
+### Initial Setup
+
+Tests are run using `nose`. Installing the project's dev dependencies will install everything needed to run the tests.
+
+```bash
+$ git clone https://github.com/TorkamaniLab/gene-pc-api.git && cd gene-pc-api
+$ pip install -r dev_requirements.txt
+$ pip install -r requirements.txt
+$ ./manage.py migrate
+$ ./manage.py test
+```
+
+Congrats! You've got a running development version of MyGeneRank's API.
