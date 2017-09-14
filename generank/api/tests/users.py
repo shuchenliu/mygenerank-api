@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.utils import timezone
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, PublicAPITestMixin, MyGeneRankTestCase
 
 from .. import models
 
@@ -12,11 +12,69 @@ MODULE_PATH = os.path.dirname(os.path.dirname(__file__))
 PDF_FIXTURE_PATH = os.path.abspath(os.path.join(MODULE_PATH, 'fixtures', 'consent_forms'))
 
 
-class UsersAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class UsersAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/users/'
 
 
-class ConsentFormAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class UsersRegistrationAPIViewTestCase(PublicAPITestMixin, MyGeneRankTestCase):
+    RESOURCE_URL = None
+
+    def setUp(self):
+        super(UsersRegistrationAPIViewTestCase, self).setUp()
+        self.RESOURCE_URL = '/api/users/{}/register/'.format(self.test_user.id.hex)
+
+
+class CreateUsersAPIViewTestCase(PublicAPITestMixin, MyGeneRankTestCase):
+    RESOURCE_URL = '/api/register/'
+
+    # GET
+
+    def test_get(self):
+        r = self.client.get(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 405)
+
+    # POST
+
+    def test_post(self):
+        data = {
+            'username': 'tester@test.com',
+            'password': 'tester9456'
+        }
+        r = self.client.post(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 201)
+
+    def test_invalid_post(self):
+        data = {
+            'username': 'tester@test.com',
+        }
+        r = self.client.post(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 400)
+
+    def test_short_password_post(self):
+        data = {
+            'username': 'tester@test.com',
+            'password': 'te'
+        }
+        r = self.client.post(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 400)
+
+    def test_username_not_email_post(self):
+        data = {
+            'username': 'tester',
+            'password': 'tester9456'
+        }
+        r = self.client.post(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 400)
+
+    def test_username_missing_post(self):
+        data = {
+            'password': 'tester9456'
+        }
+        r = self.client.post(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 400)
+
+
+class ConsentFormAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/consent-forms/'
 
     def test_authorized_post(self):
@@ -31,7 +89,7 @@ class ConsentFormAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
         self.assertEqual(r.status_code, 201)
 
 
-class SignaturesAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class SignaturesAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/signatures/'
 
     def setUp(self):

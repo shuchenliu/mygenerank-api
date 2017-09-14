@@ -1,8 +1,8 @@
 from django.conf import settings
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
 
-class LifestyleFeedAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class LifestyleFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/lifestyle/'
 

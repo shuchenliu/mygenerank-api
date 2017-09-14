@@ -1,9 +1,11 @@
 import uuid
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import EmailValidator
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse
+from django.utils.datastructures import MultiValueDictKeyError
 
 from rest_framework import viewsets, request, mixins
 from rest_framework import filters as django_filters
@@ -33,13 +35,24 @@ class CreateUserView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            validate_password(request.data.get('password'))
+            validate_password(request.POST['password'])
         except ValidationError as e:
-            print('User creation failed: password did not validate.', e)
             return Response({ 'message': '\n'.join(e.messages) }, 400)
+        except MultiValueDictKeyError:
+            return Response({ 'message': 'Password is required'}, 400)
 
         try:
-            User.objects.get(username=request.data.get('username'))
+            username=request.POST['username']
+        except MultiValueDictKeyError:
+            return Response({ 'message': 'Username is required'}, 400)
+
+        try:
+            EmailValidator()(username)
+        except ValidationError:
+            return Response({ 'message': 'Username must be a valid email address'}, 400)
+
+        try:
+            User.objects.get(username=username)
             return Response({ 'message': 'User already exists' }, 400)
         except ObjectDoesNotExist:
             pass

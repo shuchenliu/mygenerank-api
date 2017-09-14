@@ -1,8 +1,8 @@
 from django.conf import settings
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
 
-class NewsFeedAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class NewsFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/newsfeed/'
 

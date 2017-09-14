@@ -1,19 +1,19 @@
 from django.conf import settings
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
 from .. import models
 
 
-class ActivitiesAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class ActivitiesAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/activities/'
 
 
-# class ActivityStatusesAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+# class ActivityStatusesAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
 #     RESOURCE_URL = '/api/activity-statuses/'
 
 
-class ActivityAnswersAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class ActivityAnswersAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/activity-answers/'
 
 

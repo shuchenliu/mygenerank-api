@@ -2,12 +2,12 @@ from unittest import mock
 
 from django.conf import settings
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
 from .. import models
 
 
-class ConditionsAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class ConditionsAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -15,7 +15,7 @@ class ConditionsAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/conditions/'
 
 
-class ConditionsDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class ConditionsDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -28,7 +28,7 @@ class ConditionsDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
         super(ConditionsDetailAPIViewTestCase, self).setUp()
 
 
-class RiskScoresAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class RiskScoresAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the risk-scores endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -36,7 +36,7 @@ class RiskScoresAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/risk-scores/'
 
 
-class RiskScoreDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class RiskScoreDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -54,7 +54,7 @@ class RiskScoreDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
         self.RESOURCE_URL = '/api/risk-scores/{}/'.format(risk_score.id)
 
 
-class RiskScorePredictionDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class RiskScorePredictionDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -110,7 +110,7 @@ class RiskScorePredictionDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestC
         self.assertEqual(r.status_code, 400)
 
 
-class PopulationsAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class PopulationsAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the poulations endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.
@@ -118,7 +118,7 @@ class PopulationsAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/populations/'
 
 
-class PopulationDetailAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class PopulationDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the conditions endpoints to prove that they are
     read-only and that all attempts to change the data, authorized or not,
     will fail.

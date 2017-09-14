@@ -51,7 +51,42 @@ class MyGeneRankTestCase(TestCase):
         UserModel.objects.all().delete()
         models.Activity.objects.all().delete()
 
-class BaseAPITestMixin(object):
+
+class PublicAPITestMixin(object):
+    RESOURCE_URL = None
+
+    # GET
+
+    def test_get(self):
+        r = self.client.get(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 200)
+
+    # POST
+
+    def test_post(self):
+        r = self.client.post(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 405)
+
+    # PUT
+
+    def test_put(self):
+        r = self.client.put(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 405)
+
+    # PATCH
+
+    def test_patch(self):
+        r = self.client.patch(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 405)
+
+    # DELETE
+
+    def test_delete(self):
+        r = self.client.delete(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 405)
+
+
+class AuthorizationRequiredAPITestMixin(object):
     RESOURCE_URL = None
 
     @property

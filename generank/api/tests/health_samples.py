@@ -1,11 +1,11 @@
 from django.conf import settings
 
-from .base import BaseAPITestMixin, MyGeneRankTestCase
+from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
 from .. import models
 
 
-class HealthSamplesFeedAPIViewTestCase(BaseAPITestMixin, MyGeneRankTestCase):
+class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = '/api/health-samples/'
 
     def setUp(self):
