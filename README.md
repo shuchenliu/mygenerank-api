@@ -23,6 +23,8 @@ It's recommended to run the MyGeneRank API in a [virtual environment][venv]. Thi
 
 [venv]: http://virtualenvwrapper.readthedocs.io/en/latest/
 
+**Note:** This repository does not contain any of the actual calculations for the Genetic Risk Scores or Combined Lifestyle Risk Scores. It requires an external module (supplied by the `PIPELINE_DIRECTORY` environment variable). By default the API will use it's own Mock Pipeline for development purposes.
+
 
 ### Environment
 
