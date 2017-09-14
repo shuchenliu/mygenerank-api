@@ -1,4 +1,4 @@
-import os
+import os, uuid
 
 from django.conf import settings
 from django.utils import timezone
@@ -16,12 +16,52 @@ class UsersAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
     RESOURCE_URL = '/api/users/'
 
 
+class UsersDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
+    RESOURCE_URL = None
+
+    def setUp(self):
+        super(UsersDetailAPIViewTestCase, self).setUp()
+        self.RESOURCE_URL = '/api/users/{}/'.format(self.test_user.id.hex)
+
+    # DELETE
+
+    def test_authorized_delete(self):
+        r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(r.status_code, 204)
+
+    def test_unauthorized_delete(self):
+        r = self.client.delete(self.RESOURCE_URL, **self.invalid_auth_headers)
+        self.assertEqual(r.status_code, 401)
+
+    def test_delete_and_login(self):
+        r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        r = self.client.get(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(r.status_code, 404)
+
+    def test_delete_twice(self):
+        r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(r.status_code, 404)
+
+
 class UsersRegistrationAPIViewTestCase(PublicAPITestMixin, MyGeneRankTestCase):
     RESOURCE_URL = None
 
     def setUp(self):
         super(UsersRegistrationAPIViewTestCase, self).setUp()
         self.RESOURCE_URL = '/api/users/{}/register/'.format(self.test_user.id.hex)
+
+    def test_get(self):
+        data = {
+            'code': self.test_user.registration_code
+        }
+        r = self.client.get(self.RESOURCE_URL, data)
+        self.assertEqual(r.status_code, 200)
+
+    def test_register_invalid(self):
+        self.RESOURCE_URL = '/api/users/{}/register/'.format(uuid.uuid4().hex)
+        r = self.client.get(self.RESOURCE_URL)
+        self.assertEqual(r.status_code, 400)
 
 
 class CreateUsersAPIViewTestCase(PublicAPITestMixin, MyGeneRankTestCase):
@@ -85,7 +125,6 @@ class ConsentFormAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTe
                 'name': 'sample_consent.pdf'
             }
             r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
-        print(r.content)
         self.assertEqual(r.status_code, 201)
 
 

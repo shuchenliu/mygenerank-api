@@ -91,19 +91,10 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
             user.save()
             return Response({}, template_name='confirm_registration.html')
         except ObjectDoesNotExist as e:
-            print('User registration failed: User did not exist.', e)
+            print('User registration failed:', e)
 
-        return Response({'error': 'Invalid Registration Code'},
+        return Response({'error': 'Invalid Registration Code'}, 400,
             template_name='confirm_registration.html')
-
-
-class DestroyUserViewSet(viewsets.GenericViewSet):
-    """ API endpoint that allows users to be viewed or edited. """
-    authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
-    queryset = User.objects.filter(is_active=True).order_by('-date_joined')
-    serializer_class = UserSerializer
-    filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
 
     def destroy(self, request, pk, *args, **kwargs):
         user = get_object_or_404(self.queryset, pk=pk)
