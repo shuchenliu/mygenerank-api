@@ -38,10 +38,10 @@ def _fetch_from_reddit(client_id, client_secret, username, password):
 
 
 @shared_task
-def _get_urls_from_recent_reddits(client_id, client_secret, username, password, n=1):
+def _get_urls_from_recent_reddits(client_id, client_secret, username, password):
     """ Fetch all of the urls from the desired subissions on the given subreddits. """
     with record('tasks.reddit._get_urls_from_recent_reddits'):
-        return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)][0:n]
+        return [url for url in _fetch_from_reddit(client_id, client_secret, username, password)]
 
 
 @shared_task
@@ -57,20 +57,26 @@ def _filter_urls(urls):
 
 
 @shared_task
-def _save_opengraph_data_for_url(url):
-    """ Given a url, save it's open graph data if it has it. If the
-    Open Graph data doesn't exist then move on.
+def _save_opengraph_data_for_urls(urls):
+    """ Given a set of urls, try to save each one's open graph data
+    if it has it. If the Open Graph data doesn't exist then move on.
+    Stop after the first one has been successfully parsed and saved.
     """
     with record('tasks.reddit._save_opengraph_data_for_url'):
-        og = OpenGraph(url=url)
-        item = models.Item(
-            title=og.title,
-            link=url,
-            description=og.description,
-            image=getattr(og, 'image', None),
-            source=models.Item.SOURCES['reddit']
-        )
-        item.save()
+        for url in urls:
+            try:
+                og = OpenGraph(url=url)
+                item = models.Item(
+                    title=og.title,
+                    link=url,
+                    description=og.description,
+                    image=getattr(og, 'image', None),
+                    source=models.Item.SOURCES['reddit']
+                )
+                item.save()
+                break
+            except Exception:
+                pass
 
 
 # Public Methods
@@ -87,8 +93,6 @@ def update_news_feed_from_reddit():
         )
 
         workflow = (
-            get_urls_from_reddit | _filter_urls.s() | dmap.s(
-                _save_opengraph_data_for_url.s()
-            )
+            get_urls_from_reddit | _filter_urls.s() | _save_opengraph_data_for_urls.s()
         )
         workflow.delay()
