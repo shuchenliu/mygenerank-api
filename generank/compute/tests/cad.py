@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from . import tasks
+from .. import tasks
 
 
 class MockUser():
