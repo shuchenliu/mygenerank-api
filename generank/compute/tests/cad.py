@@ -210,3 +210,154 @@ class TestCADTasks(unittest.TestCase):
             "healthy_diet_default": False,
             "average_odds": 1.32
         })
+
+
+    def test_no_blood_pressure_meds(self):
+        self.check_responses(uuid.uuid4(), {
+            settings.SEX_QUESTION_IDENTIFIER: 'male',
+            settings.RACIAL_QUESTION_IDENTIFIER: 'african_american',
+            settings.HEIGHT_QUESTION_IDENTIFIER: 75,
+            settings.WEIGHT_QUESTION_IDENTIFIER: 270,
+            settings.AGE_QUESTION_IDENTIFIER: 80,
+            settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
+            settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER: 200,
+            settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+            settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
+            settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
+            settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
+            settings.DIABETES_IDENTIFIER: True,
+            settings.SMOKING_IDENTIFIER: True,
+            settings.ACTIVITY_IDENTIFIER: False,
+            settings.DIET_IDENTIFIER: False,
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: False,
+        }, {
+            "sex": 'male',
+            "ancestry": True,
+            "age": 79,
+            "diabetic": True,
+            "HDL_cholesterol": 80,
+            "total_cholesterol": 200,
+            "systolicBP_untreated": 120.0,
+            "systolicBP_treated": 1,
+            "non_smoking_default": False,
+            "healthy_weight_default": False,
+            "physical_activity_default": False,
+            "healthy_diet_default": False,
+            "average_odds": 1.32
+        })
+
+
+    # Missing Data Tests
+
+    def test_invalid_sex(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: '--female--',
+            }, {})
+        self.assertRaises(ValueError, wrapper)
+
+    def test_missing_sex(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {}, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_ancestry(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+            }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_age(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+            }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_diabetes(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+            }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_hdl_cholesterol(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_total_cholesterol(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+                settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_systolic_blood_pressure(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+                settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+                settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_smoking(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+                settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+                settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
+                settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_healthy_weight(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+                settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+                settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
+                settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
+                settings.SMOKING_IDENTIFIER: True,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+
+    def test_missing_activity(self):
+        def wrapper():
+            self.check_responses(uuid.uuid4(), {
+                settings.SEX_QUESTION_IDENTIFIER: 'female',
+                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.AGE_QUESTION_IDENTIFIER: 80,
+                settings.DIABETES_IDENTIFIER: True,
+                settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
+                settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
+                settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
+                settings.SMOKING_IDENTIFIER: True,
+                settings.HEIGHT_QUESTION_IDENTIFIER: 75,
+                settings.WEIGHT_QUESTION_IDENTIFIER: 270,
+           }, {})
+        self.assertRaises(ObjectDoesNotExist, wrapper)
+

@@ -76,3 +76,12 @@ $ ./manage.py test
 ```
 
 Congrats! You've got a running development version of MyGeneRank's API.
+
+
+### Code Coverage
+
+To measure code coverage in MyGeneRank, run the following command to generate an HTML report of the current code coverage.
+
+```bash
+$ coverage run --branch --source=generank ./manage.py test && coverage html
+```
