@@ -5,7 +5,7 @@
 [Visit our site and get started with the study.](https://mygenerank.scripps.edu)
 
 [![Build Status](https://travis-ci.org/TorkamaniLab/mygenerank-api.svg?branch=master)](https://travis-ci.org/TorkamaniLab/mygenerank-api)
-[![Coverage Status](https://coveralls.io/repos/github/TorkamaniLab/gene-pc-api/badge.svg?branch=master)](https://coveralls.io/github/TorkamaniLab/gene-pc-api?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/TorkamaniLab/mygenerank-api/badge.svg?branch=master)](https://coveralls.io/github/TorkamaniLab/mygenerank-api?branch=master)
 
 ## Introduction
 
