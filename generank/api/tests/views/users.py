@@ -5,10 +5,10 @@ from django.utils import timezone
 
 from .base import AuthorizationRequiredAPITestMixin, PublicAPITestMixin, MyGeneRankTestCase
 
-from .. import models
+from ... import models
 
 
-MODULE_PATH = os.path.dirname(os.path.dirname(__file__))
+MODULE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 PDF_FIXTURE_PATH = os.path.abspath(os.path.join(MODULE_PATH, 'fixtures', 'consent_forms'))
 
 

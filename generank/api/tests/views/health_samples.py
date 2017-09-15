@@ -2,7 +2,7 @@ from django.conf import settings
 
 from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
-from .. import models
+from ... import models
 
 
 class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):

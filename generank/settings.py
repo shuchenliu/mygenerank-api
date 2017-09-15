@@ -364,7 +364,7 @@ SMOKING_IDENTIFIER = "PhenotypeSurveyTask.SmokingQuestion"
 ACTIVITY_IDENTIFIER = "PhenotypeSurveyTask.ActivityQuestion"
 DIET_IDENTIFIER = "PhenotypeSurveyTask.HealthyDietQuestion"
 BLOOD_PRESSURE_MEDICATION_IDENTIFIER = "PhenotypeSurveyTask.BloodPressureMedicationQuestion"
-# Depricated
+# Deprecated
 ANCESTRY_QUESTION_IDENTIFIER = "PhenotypeSurveyTask.AncestryQuestion"
 
 # Which tasks are available to new users by default.

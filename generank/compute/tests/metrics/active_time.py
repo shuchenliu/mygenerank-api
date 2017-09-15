@@ -15,7 +15,7 @@ from generank.compute.tasks.lifestyle import active_time
 UserModel = get_user_model()
 
 
-class LifestyleTasksTestCase(TestCase):
+class ActiveTimeTasksTestCase(TestCase):
 
     def setUp(self):
         # Set up activities
@@ -139,9 +139,3 @@ class LifestyleTasksTestCase(TestCase):
             .order_by('created_on')
         )[0]
         self.assertFalse(score.is_personal_best)
-
-
-
-
-
-
