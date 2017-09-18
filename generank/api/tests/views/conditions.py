@@ -109,6 +109,47 @@ class RiskScorePredictionDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin
         r = self.client.get(self.RESOURCE_URL, **self.auth_headers)
         self.assertEqual(r.status_code, 400)
 
+    def test_invalid_get_missing_answer(self):
+        activity_answer = models.ActivityAnswer.objects.get(
+            question_identifier=settings.SEX_QUESTION_IDENTIFIER
+        )
+        activity_answer.delete()
+
+        r = self.client.get(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(
+            r.json()['error']['message'],
+            'Answer for PhenotypeSurveyTask.SexQuestion does not exist Risk score predictions cannot be made.'
+        )
+        self.assertEqual(r.status_code, 400)
+
+    def test_invalid_get_invalid_answer(self):
+        activity_answer = models.ActivityAnswer.objects.get(
+            question_identifier=settings.SEX_QUESTION_IDENTIFIER
+        )
+        activity_answer.value = 'no sex'
+        activity_answer.save()
+
+        r = self.client.get(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(
+            r.json()['error']['message'],
+            'Invalid sex value. Please review your answers and resubmit.'
+        )
+        self.assertEqual(r.status_code, 400)
+
+    def test_invalid_get_invalid_param(self):
+        params = {
+            'healthy_weight': 'potato',
+            'healthy_diet': 0,
+            'physically_active': 0,
+            'non_smoking': 0
+        }
+
+        r = self.client.get(self.RESOURCE_URL, params, **self.auth_headers)
+        self.assertEqual(
+            r.json()['error']['message'],
+            'Invalid value provided for lifestyle risk category.'
+        )
+        self.assertEqual(r.status_code, 400)
 
 class PopulationsAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTestCase):
     """ Tests for the poulations endpoints to prove that they are
