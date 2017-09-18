@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 from . import api_client
-from .models import Profile, Genotype
+from .models import Profile, Genotype, User
 from . import tasks
 from generank.api.models import User as ApiUser
 
@@ -109,8 +109,8 @@ def test_import_account():
 #
 #     tasks._import_genotype(token, uuid.uuid4(), '')
 #     tasks._convert_genotype.delay.called.should.equal(True)
-#
-#
+
+
 @patch('generank.twentythreeandme.tasks.convert')
 def test_convert_genotype_task(convert):
     """ Tests the convert_genotype_task function from tasks. """
@@ -124,3 +124,21 @@ def test_convert_genotype_task(convert):
     tasks._convert_genotype(genotype.id.hex)
 
     convert.assert_called_with("__AAAAAAAAAAAAAA__AA__GGAA")
+
+
+@patch('generank.twentythreeandme.api_client.get_genotype_data')
+def test_import_genotype(get_genotype_data):
+    """ Tests the 23andMe genotype import. """
+
+    gdata = json.loads('{"id": "SP1_FATHER_V4",  \
+                            "genome": "__AAAAAAAAAAAAAA__AA__GGAA"}')
+    get_genotype_data.return_value = gdata
+    api_user_id = uuid.uuid4()
+    profile_id = 'test_api_profile_id'
+    user = User.objects.create(api_user_id=api_user_id)
+    profile = Profile.objects.create(genotyped=True, user=user, profile_id=profile_id)
+    result_genotype = Genotype.objects.create(profile=profile)
+    Genotype.from_json = MagicMock(return_value=result_genotype)
+
+    r = tasks._import_genotype('test_token', api_user_id, profile_id)
+    r.should.equal(str(result_genotype.id))
