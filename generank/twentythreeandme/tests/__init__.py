@@ -4,9 +4,9 @@ import requests
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from . import api_client
-from .models import Profile, Genotype, User
-from . import tasks
+from .. import api_client, tasks
+from ..models import Profile, Genotype, User
+from .commands.convertfile import ConvertFileTestCase
 from generank.api.models import User as ApiUser
 
 class mock_response(object):
