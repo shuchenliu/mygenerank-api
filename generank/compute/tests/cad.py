@@ -33,17 +33,22 @@ class TestCADTasks(TestCase):
     def check_responses(self, user_id, data, answers):
         def mock_get_answer(identifier, user):
             try:
-                return data[identifier]
+                return api.models.ActivityAnswer(
+                    value=data[identifier],
+                    question_identifier=identifier,
+                    user=self.api_user
+                )
             except KeyError:
                 raise ObjectDoesNotExist('identifier')
 
         with mock.patch('generank.compute.tasks.cad._get_answer', side_effect=mock_get_answer):
-            with mock.patch('generank.compute.tasks.cad._get_bool_answer', side_effect=mock_get_answer):
-                with mock.patch('generank.compute.tasks.cad._get_value_answer', side_effect=mock_get_answer):
-                    with mock.patch('generank.api.models.User.objects.get', return_value=MockUser()):
-                        responses = tasks.cad.get_survey_responses(user_id)
-                        for key, value in responses.items():
-                            self.assertEqual(value, answers[key])
+#             with mock.patch('generank.compute.tasks.cad._get_bool_answer', side_effect=mock_get_answer):
+#                 with mock.patch('generank.compute.tasks.cad._get_value_answer', side_effect=mock_get_answer):
+            with mock.patch('generank.api.models.User.objects.get', return_value=MockUser()):
+                responses = tasks.cad.get_survey_responses(user_id)
+                for key, value in responses.items():
+                    print(key)
+                    self.assertEqual(value, answers[key])
 
 
     def test_healthy_white_male_53(self):
@@ -59,11 +64,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: False,
-            settings.SMOKING_IDENTIFIER: False,
-            settings.ACTIVITY_IDENTIFIER: True,
-            settings.DIET_IDENTIFIER: True,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'false',
+            settings.SMOKING_IDENTIFIER: 'false',
+            settings.ACTIVITY_IDENTIFIER: 'true',
+            settings.DIET_IDENTIFIER: 'true',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
             # Deprecated
 #             settings.ANCESTRY_QUESTION_IDENTIFIER: '',
         }, {
@@ -95,11 +100,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: False,
-            settings.SMOKING_IDENTIFIER: False,
-            settings.ACTIVITY_IDENTIFIER: True,
-            settings.DIET_IDENTIFIER: True,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'false',
+            settings.SMOKING_IDENTIFIER: 'false',
+            settings.ACTIVITY_IDENTIFIER: 'true',
+            settings.DIET_IDENTIFIER: 'true',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
             # Deprecated
 #             settings.ANCESTRY_QUESTION_IDENTIFIER: '',
         }, {
@@ -132,11 +137,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
             # Deprecated
 #             settings.ANCESTRY_QUESTION_IDENTIFIER: '',
         }, {
@@ -168,13 +173,13 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
             # Deprecated
-            settings.ANCESTRY_QUESTION_IDENTIFIER: True,
+            settings.ANCESTRY_QUESTION_IDENTIFIER: 'true',
         }, {
             "sex": 'male',
             "ancestry": True,
@@ -204,13 +209,13 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
             # Deprecated
-            settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+            settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
         }, {
             "sex": 'female',
             "ancestry": False,
@@ -241,11 +246,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: '',
             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: False,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'false',
         }, {
             "sex": 'male',
             "ancestry": True,
@@ -275,11 +280,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'moderate',
 #             settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -309,11 +314,11 @@ class TestCADTasks(TestCase):
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'high',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -342,11 +347,11 @@ class TestCADTasks(TestCase):
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
             settings.PRECISE_HDL_CHOLESTEROL_IDENTIFIER: 80,
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -374,11 +379,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER: 200,
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'low',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -406,11 +411,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER: 200,
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'moderate',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -438,11 +443,11 @@ class TestCADTasks(TestCase):
             settings.PRECISE_TOTAL_CHOLESTEROL_IDENTIFIER: 200,
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'high',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -469,11 +474,11 @@ class TestCADTasks(TestCase):
             settings.TOTAL_CHOLESTEROL_IDENTIFIER: 'high',
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'high',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -500,11 +505,11 @@ class TestCADTasks(TestCase):
             settings.TOTAL_CHOLESTEROL_IDENTIFIER: 'moderate',
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'high',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -531,11 +536,11 @@ class TestCADTasks(TestCase):
             settings.TOTAL_CHOLESTEROL_IDENTIFIER: 'low',
             settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'high',
             settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'low',
-            settings.DIABETES_IDENTIFIER: True,
-            settings.SMOKING_IDENTIFIER: True,
-            settings.ACTIVITY_IDENTIFIER: False,
-            settings.DIET_IDENTIFIER: False,
-            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: True,
+            settings.DIABETES_IDENTIFIER: 'true',
+            settings.SMOKING_IDENTIFIER: 'true',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'true',
         }, {
             "sex": 'female',
             "ancestry": True,
@@ -547,6 +552,37 @@ class TestCADTasks(TestCase):
             "systolicBP_treated": 110,
             "non_smoking_default": False,
             "healthy_weight_default": False,
+            "physical_activity_default": False,
+            "healthy_diet_default": False,
+            "average_odds": 1.32
+        })
+
+    def test_unknown_values(self):
+        self.check_responses(uuid.uuid4(), {
+            settings.AGE_QUESTION_IDENTIFIER: 55808,
+            settings.SEX_QUESTION_IDENTIFIER: 'male',
+            settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
+            settings.HEIGHT_QUESTION_IDENTIFIER: 8866,
+            settings.WEIGHT_QUESTION_IDENTIFIER: 2558882,
+            settings.TOTAL_CHOLESTEROL_IDENTIFIER: 'unknown',
+            settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 'unknown',
+            settings.BLOOD_PRESSURE_MEDICATION_IDENTIFIER: 'unknown',
+            settings.BLOOD_PRESSURE_QUESTION_IDENTIFIER: 'unknown',
+            settings.DIABETES_IDENTIFIER: 'unknown',
+            settings.SMOKING_IDENTIFIER: 'false',
+            settings.ACTIVITY_IDENTIFIER: 'false',
+            settings.DIET_IDENTIFIER: 'false',
+        }, {
+            "sex": 'male',
+            "ancestry": False,
+            "age": 79,
+            "diabetic": False,
+            "HDL_cholesterol": 35,
+            "total_cholesterol": 190,
+            "systolicBP_untreated": 110,
+            "systolicBP_treated": 1,
+            "non_smoking_default": True,
+            "healthy_weight_default": True,
             "physical_activity_default": False,
             "healthy_diet_default": False,
             "average_odds": 1.32
@@ -577,7 +613,7 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
             }, {})
         self.assertRaises(ObjectDoesNotExist, wrapper)
 
@@ -585,7 +621,7 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
             }, {})
         self.assertRaises(ObjectDoesNotExist, wrapper)
@@ -594,9 +630,9 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
            }, {})
         self.assertRaises(ObjectDoesNotExist, wrapper)
 
@@ -604,9 +640,9 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
                 settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
            }, {})
         self.assertRaises(ObjectDoesNotExist, wrapper)
@@ -615,9 +651,9 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
                 settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
                 settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
            }, {})
@@ -627,9 +663,9 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
                 settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
                 settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
                 settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
@@ -640,13 +676,13 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
                 settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
                 settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
                 settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-                settings.SMOKING_IDENTIFIER: True,
+                settings.SMOKING_IDENTIFIER: 'true',
            }, {})
         self.assertRaises(ObjectDoesNotExist, wrapper)
 
@@ -654,13 +690,13 @@ class TestCADTasks(TestCase):
         def wrapper():
             self.check_responses(uuid.uuid4(), {
                 settings.SEX_QUESTION_IDENTIFIER: 'female',
-                settings.ANCESTRY_QUESTION_IDENTIFIER: False,
+                settings.ANCESTRY_QUESTION_IDENTIFIER: 'false',
                 settings.AGE_QUESTION_IDENTIFIER: 80,
-                settings.DIABETES_IDENTIFIER: True,
+                settings.DIABETES_IDENTIFIER: 'true',
                 settings.TOTAL_HDL_CHOLESTEROL_IDENTIFIER: 110,
                 settings.TOTAL_CHOLESTEROL_IDENTIFIER: 130,
                 settings.SYSTOLIC_BLOOD_PRESSURE_IDENTIFIER: 120,
-                settings.SMOKING_IDENTIFIER: True,
+                settings.SMOKING_IDENTIFIER: 'true',
                 settings.HEIGHT_QUESTION_IDENTIFIER: 75,
                 settings.WEIGHT_QUESTION_IDENTIFIER: 270,
            }, {})

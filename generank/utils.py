@@ -10,7 +10,7 @@ def as_bool(parameter):
     try:
         if parameter.lower() in ['yes', 'true', '1']:
             return True
-        elif parameter.lower() in ['no', 'false', '0']:
+        elif parameter.lower() in ['no', 'false', '0', 'unknown']:
             return False
     except Exception:
         pass

@@ -269,7 +269,7 @@ def get_survey_responses(user_id):
     except ObjectDoesNotExist:
         try:
             # Try to get ancestry directly (depreciated 2017-9-11)
-            ancestry_value = _get_value_answer(settings.ANCESTRY_QUESTION_IDENTIFIER, user)
+            ancestry_value = _get_bool_answer(settings.ANCESTRY_QUESTION_IDENTIFIER, user)
         except ObjectDoesNotExist:
             raise ObjectDoesNotExist('Answer for %s does not exist' % settings.RACIAL_QUESTION_IDENTIFIER)
 
