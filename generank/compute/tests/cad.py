@@ -741,3 +741,42 @@ class TestCADTasks(TestCase):
             r,
             ('ancestry data', '/path/to/score', '0.0001\n0.02\n0.1\n0.0003\n0.32\n0.78')
         )
+
+    def test_send_cad_notification(self):
+        api.models.Condition.objects.create(name='Coronary Artery Disease')
+        with mock.patch('generank.compute.tasks.cad.send_risk_score_notification') as send_risk_score_notification:
+            tasks.cad._send_cad_notification(self.api_user.id.hex)
+        self.assertTrue(send_risk_score_notification.called)
+
+    def test_get_answer(self):
+        with mock.patch('generank.api.models.ActivityAnswer.objects.get') as get:
+            tasks.cad._get_answer(settings.AGE_QUESTION_IDENTIFIER, self.api_user)
+        get.assert_called_with(
+            question_identifier=settings.AGE_QUESTION_IDENTIFIER,
+            user=self.api_user
+        )
+
+    def test_store_results(self):
+        for pop in tasks.cad.SCORE_RESULTS_ORDER:
+            api.models.Population.objects.create(name=pop)
+        api.models.Condition.objects.create(name='Coronary Artery Disease')
+
+        tasks.cad._store_results(
+            (
+                '0.01 0.02 0.03 0.03 0.3\n',
+                '/path/to/score',
+                '0.0001\n0.02\n0.1\n0.0003\n0.32\n0.78'
+            ),
+            self.api_user.id.hex,
+        )
+
+        for pop in api.models.Population.objects.all():
+            self.assertTrue(api.models.RiskScore.objects.filter(
+                user=self.api_user,
+                population=pop
+            ).exists())
+        self.assertTrue(api.models.Ancestry.objects.filter(
+            user=self.api_user,
+            population=api.models.Population.objects.get(name='custom')
+        ).exists())
+
