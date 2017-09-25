@@ -79,7 +79,8 @@ def update_scores_for(user, day, series):
     except ObjectDoesNotExist:
         day_active_time = models.LifestyleMetricScore(
             series=series, user=user, created_on=day)
-    day_active_time.value = sum(get_relevant_score_values(user, day, series))
+    scores = get_relevant_score_values(user, day, series)
+    day_active_time.value = round(sum(scores), 2)
 
     try:
         is_personal_best = is_new_personal_best(user, day_active_time.value, series)

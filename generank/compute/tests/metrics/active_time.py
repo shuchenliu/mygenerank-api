@@ -93,13 +93,13 @@ class ActiveTimeTasksTestCase(TestCase):
     # Updating Scores
 
     def test_update_scores_for_existing(self):
-        samples = [12, 2, 31, 4, 35, 63, 2, 5, 7]
+        samples = [12, 2, 31, 4, 35.4443, 63.0000003, 2.33335, 5.1253, 7.0003]
         with mock.patch('generank.compute.tasks.metrics.active_time.get_relevant_score_values', return_value=samples):
             day = timezone.now()
             active_time.update_scores_for(self.test_user, day, self.series)
 
         self.second_score.refresh_from_db()
-        self.assertEqual(self.second_score.value, sum(samples))
+        self.assertEqual(self.second_score.value, round(sum(samples), 2))
 
     def test_update_scores_for_new(self):
         samples = [12, 2, 31, 4, 35, 63, 2, 5, 7]
@@ -112,7 +112,7 @@ class ActiveTimeTasksTestCase(TestCase):
             .filter(user=self.test_user)
             .order_by('created_on')
         )[0]
-        self.assertEqual(score.value, sum(samples))
+        self.assertEqual(score.value, round(sum(samples), 2))
 
     def test_update_scores_for_existing_with_duplicates(self):
         self.first_score.is_personal_best = True
@@ -124,7 +124,7 @@ class ActiveTimeTasksTestCase(TestCase):
             active_time.update_scores_for(self.test_user, day, self.series)
 
         self.second_score.refresh_from_db()
-        self.assertEqual(self.second_score.value, sum(samples))
+        self.assertEqual(self.second_score.value, round(sum(samples)), 2)
         self.assertTrue(self.second_score.is_personal_best)
 
     def test_update_scores_for_new_but_not_best(self):
