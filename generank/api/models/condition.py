@@ -58,6 +58,7 @@ class RiskScore(models.Model):
     calculated = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     created_on = models.DateTimeField(default=timezone.now)
+    version = models.CharField(max_length=10, default='')
 
     class Meta:
         unique_together = ('user', 'condition', 'population')
@@ -84,6 +85,7 @@ class Ancestry(models.Model):
         on_delete=models.CASCADE)
     population = models.ForeignKey(Population, on_delete=models.CASCADE)
     created_on = models.DateTimeField(default=timezone.now)
+    version = models.CharField(max_length=10, default='')
 
     class Meta:
         unique_together = ('user', 'population')

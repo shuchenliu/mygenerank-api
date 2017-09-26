@@ -773,10 +773,12 @@ class TestCADTasks(TestCase):
         for pop in api.models.Population.objects.all():
             self.assertTrue(api.models.RiskScore.objects.filter(
                 user=self.api_user,
-                population=pop
+                population=pop,
+                version='1.0.1'
             ).exists())
         self.assertTrue(api.models.Ancestry.objects.filter(
             user=self.api_user,
+            version='1.0.1',
             population=api.models.Population.objects.get(name='custom')
         ).exists())
 

@@ -69,17 +69,21 @@ def _store_results(results, user_id):
         ancestries, path, scores = results
         user = models.User.objects.get(id=user_id)
         cad = models.Condition.objects.filter(name__iexact='coronary artery disease')[0]
+        version = steps.get_version()
 
         for population_name, score in zip(SCORE_RESULTS_ORDER, scores.split('\n')):
             featured = True if population_name == 'custom' else False
             population = models.Population.objects.filter(name__iexact=population_name)[0]
             risk_score = models.RiskScore(user=user, condition=cad, featured=featured,
-                population=population, calculated=True, value=float(score))
+                population=population, calculated=True, value=float(score), version=version)
             risk_score.save()
 
         for population_name, per_ancestry in zip(SCORE_RESULTS_ORDER, ancestries.split()):
             population = models.Population.objects.filter(name__iexact=population_name)[0]
-            ancestry = models.Ancestry(user=user, population=population, value=float(per_ancestry))
+            ancestry = models.Ancestry(
+                user=user, population=population,
+                value=float(per_ancestry), version=version
+            )
             ancestry.save()
 
 
