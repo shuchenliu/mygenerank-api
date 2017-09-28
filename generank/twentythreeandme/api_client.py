@@ -13,9 +13,10 @@ def get(url, token):
     headers = {
         'Authorization': 'Bearer {token}'.format(token=token)
         }
-    response = requests.get(url, headers=headers, timeout=10)
+    response = requests.get(url, headers=headers, timeout=60)
     data = json.loads(response.text)
     return data
+
 
 def get_user_info(token):
     """ Given a bearer token this function will fetch the
@@ -24,13 +25,15 @@ def get_user_info(token):
     response = get(url,token)
     return response
 
-def get_genotype_data(token,profile):
+
+def get_genotype_data(token, profile):
     """ Given a bearer token and a profile id this function will
     fetch the genotype json data from 23 and me."""
     profile_id = profile.profile_id
     url = Genotype.resource_url.format(profile_id=profile_id)
     response = get(url,token)
     return response
+
 
 def get_token(auth_code):
     """ Given an authentication code this function should

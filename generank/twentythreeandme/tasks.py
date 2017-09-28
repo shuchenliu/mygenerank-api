@@ -5,8 +5,10 @@ from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
+from requests.exceptions import ReadTimeout
 
 from generank.compute import tasks as compute_tasks
+from generank.compute.contextmanagers import record
 
 from .models  import User, Profile, Genotype, APIToken
 from .api_client import get_user_info, get_genotype_data
@@ -16,26 +18,23 @@ sys.path.append(os.environ['PIPELINE_DIRECTORY'].strip())
 from conversion.convert_ttm_to_vcf import convert
 
 
-logger = get_task_logger(__name__)
-
-
-@shared_task
+@shared_task(autoretry_for=(ReadTimeout,), retry_kwargs={'max_retries': 3})
 def _import_user(token, api_user_id):
     """ Given a token and a api_user and a 23andMe profile_id,
     it fetches user data for that profile from 23andMe and saves the user.
     :returns user_info: A dict of the 23andMe User/Profile information.
     """
-    logger.debug('tasks.twentythreeandme_delayed_import_task')
-    user_info = get_user_info(token['access_token'])
+    with record('23andMe.tasks._import_user'):
+        user_info = get_user_info(token['access_token'])
 
-    user = User.from_json(user_info)
-    user.api_user_id = api_user_id
-    user.save()
+        user = User.from_json(user_info)
+        user.api_user_id = api_user_id
+        user.save()
 
-    token = APIToken.from_json(token, user)
-    token.save()
+        token = APIToken.from_json(token, user)
+        token.save()
 
-    return user_info
+        return user_info
 
 
 @shared_task
@@ -44,30 +43,30 @@ def _import_profile(user_info, token, api_user_id, profileid):
     User. It will also create a Profile object and spawn a job to import the
     genotype data.
     """
-    logger.debug('tasks.twentythreeandme_import_task')
-    prof = [prof for prof in user_info['profiles']
-        if prof['id'] == profileid][0]
+    with record('23andMe.tasks._import_profile'):
+        prof = [prof for prof in user_info['profiles']
+            if prof['id'] == profileid][0]
 
-    user = User.objects.get(api_user_id=api_user_id)
-    profile = Profile.from_json(prof, user)
-    profile.save()
+        user = User.objects.get(api_user_id=api_user_id)
+        profile = Profile.from_json(prof, user)
+        profile.save()
 
-    return str(profile.id)
+        return str(profile.id)
 
 
-@shared_task
+@shared_task(autoretry_for=(ReadTimeout,), retry_kwargs={'max_retries': 3})
 def _import_genotype(token, api_user_id, profile_id):
     """ Given the id of a profile model and a bearer token, this function will download
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format.
     """
-    logger.debug('tasks.twentythreeandme_genotype_import_task')
-    profile = Profile.objects.get(profile_id=profile_id, user__api_user_id=api_user_id)
-    genotype_data = get_genotype_data(token, profile)
-    genotype = Genotype.from_json(genotype_data, profile)
-    genotype.save()
+    with record('23andMe.tasks._import_genotype'):
+        profile = Profile.objects.get(profile_id=profile_id, user__api_user_id=api_user_id)
+        genotype_data = get_genotype_data(token, profile)
+        genotype = Genotype.from_json(genotype_data, profile)
+        genotype.save()
 
-    return str(genotype.id)
+        return str(genotype.id)
 
 
 @shared_task
@@ -75,16 +74,16 @@ def _convert_genotype(genotype_id):
     """ Given a genotype, this function converts the genotype data file from the
     23 and Me format to a VCF format.
     """
-    logger.debug('tasks.convert_genotype_task')
-    genotype = Genotype.objects.get(id=genotype_id)
+    with record('23andMe.tasks._convert_genotype'):
+        genotype = Genotype.objects.get(id=genotype_id)
 
-    raw_data = genotype.genotype_file.read().decode('ascii')
-    vcf_data = convert(raw_data)
+        raw_data = genotype.genotype_file.read().decode('ascii')
+        vcf_data = convert(raw_data)
 
-    filename = '{}_genotype.vcf'.format(genotype.profile.id)
-    genotype.converted_file.save(name=filename, content=ContentFile(vcf_data))
+        filename = '{}_genotype.vcf'.format(genotype.profile.id)
+        genotype.converted_file.save(name=filename, content=ContentFile(vcf_data))
 
-    genotype.save()
+        genotype.save()
 
 
 # Public Tasks

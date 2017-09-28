@@ -77,7 +77,6 @@ class RiskScore(models.Model):
             return 1.71
 
 
-
 class Ancestry(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     value = models.FloatField(max_length=100, blank=True, default=-1.0)
