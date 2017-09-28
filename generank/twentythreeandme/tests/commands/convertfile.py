@@ -48,7 +48,7 @@ class ConvertFileTestCase(TestCase):
     @mock.patch('generank.twentythreeandme.tasks._convert_genotype.delay')
     def test_handle(self, delay):
         r = convertfile.Command().handle(
-            user_id='test',
+            user_id=self.user.api_user_id,
             profile_id=self.profile.profile_id
         )
         self.assertTrue(delay.called)
@@ -58,7 +58,7 @@ class ConvertFileTestCase(TestCase):
     def test_handle_no_user(self, delay):
         self.user.delete()
         r = convertfile.Command().handle(
-            user_id='test',
+            user_id=self.user.api_user_id,
             profile_id=self.profile.profile_id
         )
         self.assertFalse(delay.called)
@@ -68,7 +68,7 @@ class ConvertFileTestCase(TestCase):
     def test_handle_no_profile(self, delay):
         self.profile.delete()
         r = convertfile.Command().handle(
-            user_id='test',
+            user_id=self.user.api_user_id,
             profile_id=self.profile.profile_id
         )
         self.assertFalse(delay.called)
@@ -77,7 +77,7 @@ class ConvertFileTestCase(TestCase):
     def test_handle_no_genotype(self, delay):
         self.genotype.delete()
         r = convertfile.Command().handle(
-            user_id='test',
+            user_id=self.user.api_user_id,
             profile_id=self.profile.profile_id
         )
         self.assertFalse(delay.called)
@@ -86,7 +86,7 @@ class ConvertFileTestCase(TestCase):
     def test_handle_no_genotype_file(self, delay):
         self.genotype.genotype_file.delete()
         r = convertfile.Command().handle(
-            user_id='test',
+            user_id=self.user.api_user_id,
             profile_id=self.profile.profile_id
         )
         self.assertFalse(delay.called)

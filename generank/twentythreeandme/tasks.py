@@ -24,7 +24,7 @@ def _import_user(token, api_user_id):
     it fetches user data for that profile from 23andMe and saves the user.
     :returns user_info: A dict of the 23andMe User/Profile information.
     """
-    with record('23andMe.tasks._import_user'):
+    with record('23andMe.tasks._import_user', user_id=api_user_id):
         user_info = get_user_info(token['access_token'])
 
         user = User.from_json(user_info)
@@ -43,7 +43,7 @@ def _import_profile(user_info, token, api_user_id, profileid):
     User. It will also create a Profile object and spawn a job to import the
     genotype data.
     """
-    with record('23andMe.tasks._import_profile'):
+    with record('23andMe.tasks._import_profile', user_id=api_user_id):
         prof = [prof for prof in user_info['profiles']
             if prof['id'] == profileid][0]
 
@@ -60,7 +60,7 @@ def _import_genotype(token, api_user_id, profile_id):
     the raw genotype data from 23andme and save it in a genotype object and
     spawns a job to convert the raw file into the VCF format.
     """
-    with record('23andMe.tasks._import_genotype'):
+    with record('23andMe.tasks._import_genotype', user_id=api_user_id):
         profile = Profile.objects.get(profile_id=profile_id, user__api_user_id=api_user_id)
         genotype_data = get_genotype_data(token, profile)
         genotype = Genotype.from_json(genotype_data, profile)
@@ -87,6 +87,7 @@ def _convert_genotype(genotype_id):
 
 
 # Public Tasks
+
 
 @shared_task
 def import_account(token, api_user_id, profile_id, run_after=True):

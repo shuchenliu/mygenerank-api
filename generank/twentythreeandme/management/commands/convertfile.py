@@ -17,9 +17,9 @@ class Command(BaseCommand):
         profile_id = options['profile_id']
 
         try:
-            user = User.objects.get(user_id=user_id)
-        except ObjectDoesNotExist:
-            self.stdout.write(self.style.ERROR('No such user.'))
+            user = User.objects.get(api_user_id=user_id)
+        except ObjectDoesNotExist as e:
+            self.stdout.write(self.style.ERROR('No such user. %s' % e))
             return
 
         try:
