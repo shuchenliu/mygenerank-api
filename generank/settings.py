@@ -321,7 +321,7 @@ CELERYBEAT_SCHEDULE = {
     # TODO: Make time shorter and paginate users to update.
     'update-user-metrics': {
         'task': 'generank.compute.tasks.lifestyle.update_user_metrics',
-        'schedule': timedelta(minutes=5)
+        'schedule': timedelta(minutes=1)
     },
     'update-news-feed': {
         'task': 'generank.compute.tasks.news_feed.update_news_feed',

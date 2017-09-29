@@ -26,9 +26,9 @@ def _find_metric_statuses_to_update():
     need to be updated.
     """
     with record('tasks.lifestyle._find_metric_statuses_to_update'):
-        one_day_old = (timezone.now() - timedelta(hours=1))
+        expiry_time = (timezone.now() - timedelta(minutes=10))
         expired_statuses = models.LifestyleMetricStatus.objects.filter(
-            last_updated__lte=one_day_old
+            last_updated__lte=expiry_time
         )
         return [str(status.id) for status in expired_statuses]
 
