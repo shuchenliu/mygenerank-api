@@ -285,6 +285,7 @@ LOGGING = {
 
 ADMINS = [
     ('admin', os.getenv('ADMIN_EMAIL', None)),
+    ('host', DEFAULT_FROM_EMAIL),
 ]
 
 # Celery Settings
@@ -314,7 +315,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(days=1),
     },
     'send-daily-report-to-admins': {
-        'task': 'generank.api.tasks.send_daily_report_to_admins',
+        'task': 'generank.compute.tasks.admin.send_daily_report_to_admins',
         'schedule': timedelta(days=1),
     },
     'update-user-metrics': {

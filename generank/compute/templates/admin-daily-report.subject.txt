@@ -1,0 +1,1 @@
+Daily Admin Report: {{ start_date|date:"SHORT_DATETIME_FORMAT" }} - {{ end_date|date:"SHORT_DATETIME_FORMAT" }}

@@ -1,0 +1,104 @@
+<html>
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="h1 text-center">Daily Admin Report<br />
+    </div>
+
+    <p class="lead">
+      Report Period (UTC):
+      {{ start_date|date:"SHORT_DATETIME_FORMAT" }} -
+      {{ end_date|date:"SHORT_DATETIME_FORMAT" }}
+    </p>
+
+    <p>You've received this report because you're on the list of
+    notifiable admins or support staff.</p>
+
+    <!-- Progress Bars -->
+    <div class="h2">Overall Task Completion Metrics<br /></div>
+    <ul>
+      <li>Total Tasks Processed: {{ tasks.all.counts.all }}</li>
+      <li>Total Tasks Succeeded: {{ tasks.succeeded.counts.all }}</li>
+      <li>Total Tasks Failed: {{ tasks.failed.counts.all }}</li>
+    </ul>
+    <div class="progress">
+      {% widthratio tasks.succeeded.counts.all  tasks.all.counts.all 100 as success_width %}
+      <div class="progress-bar progress-bar-success"
+          style="width: {{success_width}}%">
+        {{success_width}}% Succeeded
+      </div>
+
+      {% widthratio tasks.failed.counts.all  tasks.all.counts.all 100 as failure_width %}
+      <div class="progress-bar progress-bar-danger progress-bar"
+          style="width: {{failure_width}}%">
+          {{failure_width}}% Failed
+      </div>
+    </div>
+
+    {% if tasks.failed.counts.all == 0 %}
+      Nothing failed today. No more to show.
+    {% else %}
+    <div class="h4">Users Affected by Failures</div>
+    <p>Total: {{ tasks.failed.users_affected.count }}</p>
+    <ul>
+      {{ tasks.failed.users_affected.ids|unordered_list }}
+    </ul>
+
+    <div class="h4">All Task Failures</div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Identifier</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for identifier, count in tasks.failed.counts.items %}
+          {% if identifier != 'all' %}
+            <tr>
+              <td>{{identifier}}</td>
+              <td>{{count}}</td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <hr />
+
+    {% if tasks.succeeded.counts.all == 0 %}
+      Nothing succeeded today. No more to show.
+    {% else %}
+    <div class="h4">Users Affected by Successes</div>
+    <p>Total: {{ tasks.succeeded.users_affected.count }}</p>
+    <ul>
+      {{ tasks.succeeded.users_affected.ids|unordered_list }}
+    </ul>
+
+    <div class="h4">All Task Successes</div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Identifier</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for identifier, count in tasks.succeeded.counts.items %}
+          {% if identifier != 'all' %}
+            <tr>
+              <td>{{identifier}}</td>
+              <td>{{count}}</td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</body>
+</html>
