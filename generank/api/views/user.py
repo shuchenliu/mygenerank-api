@@ -18,12 +18,13 @@ from rest_framework.authentication import SessionAuthentication
 
 from oauth2_provider.ext.rest_framework.authentication import OAuth2Authentication
 from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
+from oauth2_provider.models import AccessToken, RefreshToken
 
 from .. import filters
 from ..models import User, Activity, ActivityStatus, ActivityAnswer, \
     Condition, RiskScore, Population, ConsentPDF, Signature, HealthSample
 from ..tasks import send_registration_email_to_user
-from ..permissions import IsRegistered
+from ..permissions import IsRegistered, IsActive
 from ..serializers import UserSerializer, ConsentPDFSerializer, \
     SignatureSerializer
 
@@ -77,7 +78,7 @@ class CreateUserView(CreateAPIView):
 class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """ API endpoint that allows users to be viewed or edited. """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = User.objects.filter(is_active=True).order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -97,17 +98,23 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
             template_name='confirm_registration.html')
 
     def destroy(self, request, pk, *args, **kwargs):
+        # Deactivate the account
         user = get_object_or_404(self.queryset, pk=pk)
         user.is_active = False
         user.username = '_inactive_%s' % str(uuid.uuid4().hex)[:20]
         user.save()
+
+        # Purge Access/Refresh Tokens
+        AccessToken.objects.filter(user=user).delete()
+        RefreshToken.objects.filter(user=user).delete()
+
         return Response(None, 204)
 
 
 class SignatureViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows signatures to be viewed or edited. """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = Signature.objects.all().order_by('-consent_pdf')
     serializer_class = SignatureSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
@@ -117,7 +124,7 @@ class SignatureViewSet(viewsets.ModelViewSet):
 class ConsentPDFViewSet(viewsets.ModelViewSet):
     """ API endpoint that allows consent pdfs to be viewed or edited. """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = ConsentPDF.objects.all().order_by('-user')
     serializer_class = ConsentPDFSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)

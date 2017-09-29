@@ -16,7 +16,7 @@ from generank.utils import as_bool
 from .. import filters
 from ..models import Condition, RiskScore, Population
 from ..tasks import send_registration_email_to_user
-from ..permissions import IsRegistered
+from ..permissions import IsRegistered, IsActive
 from ..serializers import RiskScoreSerializer, ConditionSerializer, \
     PopulationSerializer
 
@@ -39,7 +39,7 @@ class ConditionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     Get a single condition and its risk reductors by the condition {id}.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = Condition.objects.all().order_by('-name')
     serializer_class = ConditionSerializer
 
@@ -58,7 +58,7 @@ class PopulationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewse
     A single population given by its {id}.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = Population.objects.all().order_by('-name')
     serializer_class = PopulationSerializer
 
@@ -78,7 +78,7 @@ class RiskScoreViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
     """
 
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = RiskScore.objects.all().order_by('-user')
     serializer_class = RiskScoreSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)

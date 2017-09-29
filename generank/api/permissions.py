@@ -9,3 +9,12 @@ class IsRegistered(permissions.BasePermission):
             return request.user.registered
         except AttributeError:
             return False
+
+class IsActive(permissions.BasePermission):
+    message = 'This account is inactive.'
+
+    def has_permission(self, request, view):
+        try:
+            return request.user.is_active
+        except AttributeError:
+            return False

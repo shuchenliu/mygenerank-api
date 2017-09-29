@@ -35,13 +35,17 @@ class UsersDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRankTe
 
     def test_delete_and_login(self):
         r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(r.status_code, 204)
         r = self.client.get(self.RESOURCE_URL, **self.auth_headers)
-        self.assertEqual(r.status_code, 404)
+        self.assertEqual(r.status_code, 401)
+        r = self.client.get('/api/conditions/', **self.auth_headers)
+        self.assertEqual(r.status_code, 401)
 
     def test_delete_twice(self):
         r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
+        self.assertEqual(r.status_code, 204)
         r = self.client.delete(self.RESOURCE_URL, **self.auth_headers)
-        self.assertEqual(r.status_code, 404)
+        self.assertEqual(r.status_code, 401)
 
 
 class UsersRegistrationAPIViewTestCase(PublicAPITestMixin, MyGeneRankTestCase):

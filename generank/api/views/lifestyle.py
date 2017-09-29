@@ -8,6 +8,7 @@ from oauth2_provider.ext.rest_framework.permissions import TokenHasScope
 
 from .. import filters
 from ..models import LifestyleMetricStatus
+from ..permissions import IsActive
 from ..serializers import LifestyleMetricStatusSerializer
 
 
@@ -16,7 +17,7 @@ class LifestyleMetricStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMi
     as well as metadata about when said metrics were last updated.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = LifestyleMetricStatus.objects.all().order_by('-metric')
     serializer_class = LifestyleMetricStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend,)

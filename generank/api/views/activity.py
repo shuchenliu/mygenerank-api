@@ -12,6 +12,7 @@ from oauth2_provider.ext.rest_framework.authentication import OAuth2Authenticati
 
 from .. import filters
 from ..models import User, Activity, ActivityStatus, ActivityAnswer
+from ..permissions import IsActive
 from ..serializers import ActivityAnswerSerializer, ActivitySerializer, \
     ActivityStatusSerializer
 
@@ -31,7 +32,7 @@ class ActivityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
     Fetch a single instance of a given activity by {id}.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = Activity.objects.all().order_by('-name')
     serializer_class = ActivitySerializer
 
@@ -52,7 +53,7 @@ class ActivityAnswerViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mi
     enforced, using one from the list of utilized identifiers is encouraged.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = ActivityAnswer.objects.all().order_by('-user')
     serializer_class = ActivityAnswerSerializer
     search_fields = ['user__id','question_identifier']
@@ -76,7 +77,7 @@ class ActivityStatusViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mi
     be updated to reflect the completion.
     """
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActive]
     queryset = ActivityStatus.objects.all().order_by('-user')
     serializer_class = ActivityStatusSerializer
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
