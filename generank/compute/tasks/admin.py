@@ -24,7 +24,7 @@ def _get_stats_for_tasks(tasks):
         },
         'users_affected': {
             'count': len(affected_users),
-            'ids': [user.id for user in affected_users]
+            'ids': set([user.id for user in affected_users])
         }
     }
 
