@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import transaction
 
 from .base import AuthorizationRequiredAPITestMixin, MyGeneRankTestCase
 
@@ -10,6 +11,7 @@ class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGene
 
     def setUp(self):
         sample_identifier = models.HealthSampleIdentifier.objects.create(value='HKStepCount')
+        models.HealthSampleIdentifier.objects.create(value='HKQuantityTypeIdentifierFlightsClimbed')
         super(HealthSamplesFeedAPIViewTestCase, self).setUp()
 
     # GET
@@ -49,3 +51,19 @@ class HealthSamplesFeedAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGene
         }
         r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
         self.assertEqual(r.status_code, 201)
+
+    def test_authorized_post2(self):
+        data = {
+          "identifier": "HKQuantityTypeIdentifierFlightsClimbed",
+          "user": "https:\/\/mygenerank.scripps.edu\/api\/users\/80550d42-d499-4052-9911-8f2fd173db9f\/",
+          "value": 1,
+          "start_date": "2017-09-26T18:47:56",
+          "end_date": "2017-09-26T18:47:56",
+          "units": "count"
+        }
+        # Intentionally creating integrity exceptions breaks unit tests.
+        # https://stackoverflow.com/a/23326971/2085172
+        with transaction.atomic():
+            r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
+            r = self.client.post(self.RESOURCE_URL, data, **self.auth_headers)
+        self.assertEqual(r.status_code, 400)

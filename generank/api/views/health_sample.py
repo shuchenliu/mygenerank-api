@@ -20,30 +20,13 @@ class HealthSampleViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     filter_backends = (filters.IsOwnerFilterBackend, django_filters.SearchFilter)
     search_fields = ['user__id', 'identifier', 'start_date', 'end_date']
 
-#     def create(self, request, *args, **kwargs):
-#         """ Override allows for bulk upload due to heavy volume of requests.
-#         source: http://stackoverflow.com/questions/37329771/django-rest-bulk-post-post-array-of-json-objects#37332640
-#         """
-#
-#         # TODO: Fix multiple uploads... it's broke...
-#         if 'objects' in request.data.keys():
-#             data = request.POST['objects']it
-#             is_many = True
-#         else:
-#             data = request.data
-#             is_many = False
-#
-#         print(data)
-#         serializer = self.get_serializer(data=data, many=is_many)
-#         serializer.is_valid(raise_exception=True)
-#
-#         try:
-#             self.perform_create(serializer)
-#             return Response(serializer.data, status=201)
-#         except utils.IntegrityError:
-#             return Response({
-#                 'error' : { 'message': 'Item already exists.' }
-#             }, status=409)
+    def create(self, request, *args, **kwargs):
+        try:
+            return super(HealthSampleViewSet, self).create(request, *args, **kwargs)
+        except utils.IntegrityError:
+            return Response({
+                'error' : { 'message': 'Item already exists.' }
+            }, status=400)
 
     def get(self, request, *args, **kwargs):
         """ A simple API that returns the date of the last health sample that
