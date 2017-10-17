@@ -67,7 +67,7 @@ class ConditionSerializer(serializers.HyperlinkedModelSerializer):
         try:
             user = getattr(self.context['request'], 'user', None)
             cad.get_survey_responses(user.id)
-        except (ObjectDoesNotExist, MultipleObjectsReturned):
+        except Exception:
             return None
         serializer = RiskReductorSerializer(condition.reductors,
             many=True, context=self.context)
