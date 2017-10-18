@@ -5,4 +5,5 @@ from .condition import RiskScoreSerializer, ConditionSerializer, \
 from .health_sample import HealthSampleSerializer
 from .news_feed import ItemSerializer
 from .lifestyle import LifestyleMetricStatusSerializer
+from .tracking import TrackedEventSerializer
 from .user import UserSerializer, ConsentPDFSerializer, SignatureSerializer

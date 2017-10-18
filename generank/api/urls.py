@@ -18,6 +18,7 @@ from . import signals
 
 api_router = routers.DefaultRouter()
 api_router.register(r'users', views.UserViewSet)
+api_router.register(r'events', views.TrackedEventViewSet, base_name='events')
 api_router.register(r'activities', views.ActivityViewSet)
 api_router.register(r'conditions', views.ConditionViewSet)
 api_router.register(r'populations', views.PopulationViewSet)
