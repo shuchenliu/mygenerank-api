@@ -17,11 +17,15 @@ def get_relevant_score_values(user, day, series):
     end_of_day = start_of_day + timedelta(days=1)
 
     identifier = models.HealthSampleIdentifier.objects.get(
-        value=settings.STEP_COUNT_ACTIVITY_IDENTIFIER)
+        value=settings.STEP_COUNT_ACTIVITY_IDENTIFIER
+    )
 
     step_counts = models.HealthSample.objects.filter(
-        identifier=identifier, start_date__gte=start_of_day,
-        end_date__lt=end_of_day).only('value')
+        identifier=identifier,
+        start_date__gte=start_of_day,
+        end_date__lt=end_of_day,
+        user=user
+    ).only('value')
     for count in step_counts:
         # Returns the step count active time in minutes.
         yield (count.end_date - count.start_date).seconds / 60
@@ -33,8 +37,9 @@ def is_new_personal_best(user, value, series):
     personal best score.
     """
     try:
-        previous_best = models.LifestyleMetricScore.objects.get(user=user,
-            series=series, is_personal_best=True)
+        previous_best = models.LifestyleMetricScore.objects.get(
+            user=user, series=series, is_personal_best=True
+        )
     except ObjectDoesNotExist:
         # The user has no personal best, so the given value can be it.
         return True
@@ -54,8 +59,11 @@ def recover_personal_best(user, value, series):
     This function will recover the most recent personal best score for the given
     series and return if the given value is indeed the correct personal best.
     """
-    incorrect_previous_bests = models.LifestyleMetricScore.objects.filter(user=user,
-        series=series, is_personal_best=True).order_by('-created_on')[1:]
+    incorrect_previous_bests = models.LifestyleMetricScore.objects.filter(
+        user=user,
+        series=series,
+        is_personal_best=True
+    ).order_by('-created_on')[1:]
 
     for best in incorrect_previous_bests:
         best.is_personal_best = False
@@ -74,8 +82,11 @@ def update_scores_for(user, day, series):
 
     try:
         day_active_time = models.LifestyleMetricScore.objects.get(
-            series=series, user=user, created_on__lt=end_of_day,
-            created_on__gte=start_of_day)
+            series=series,
+            user=user,
+            created_on__lt=end_of_day,
+            created_on__gte=start_of_day
+        )
     except ObjectDoesNotExist:
         day_active_time = models.LifestyleMetricScore(
             series=series, user=user, created_on=day)
