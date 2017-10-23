@@ -20,7 +20,7 @@ from ..permissions import IsActive
 
 
 class TrackedEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    authentication_classes = [AllowAny]
+    authentication_classes = (OAuth2Authentication, AllowAny)
     permission_classes = []
     serializer_class = TrackedEventSerializer
 
