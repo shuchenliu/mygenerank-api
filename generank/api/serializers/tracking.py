@@ -35,5 +35,3 @@ class TrackedEventSerializer(serializers.ModelSerializer):
         context_user = self.context['request'].user
         user = context_user if is_authenticated(context_user) else None
         return TrackedEvent.objects.create(**validated_data, user=user)
-
-

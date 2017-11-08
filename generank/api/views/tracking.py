@@ -20,6 +20,7 @@ from ..permissions import IsActive
 
 
 class TrackedEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """ Tracked event objects can only be POST-ed not retrieved, deleted, or updated. """
     authentication_classes = (OAuth2Authentication, AllowAny)
     permission_classes = []
     serializer_class = TrackedEventSerializer
