@@ -760,6 +760,8 @@ class TestCADTasks(TestCase):
         for pop in tasks.cad.SCORE_RESULTS_ORDER:
             api.models.Population.objects.create(name=pop)
         api.models.Condition.objects.create(name='Coronary Artery Disease')
+        post_activity = api.models.Activity.objects.create(
+            study_task_identifier=settings.POST_CAD_RESULTS_SURVEY_ID, name='Test POST Activity')
 
         tasks.cad._store_results(
             (

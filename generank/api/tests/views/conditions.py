@@ -48,6 +48,8 @@ class RiskScoreDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin, MyGeneRa
 
         condition = models.Condition.objects.create(name='Testing Condition')
         population = models.Population.objects.create(name='Testing Population')
+        post_activity = models.Activity.objects.create(
+            study_task_identifier=settings.POST_CAD_RESULTS_SURVEY_ID, name='Test POST Activity')
         risk_score = models.RiskScore.objects.create(
             condition=condition, population=population, value=0.10, user=self.test_user)
 
@@ -66,10 +68,12 @@ class RiskScorePredictionDetailAPIViewTestCase(AuthorizationRequiredAPITestMixin
 
         condition = models.Condition.objects.create(name='Testing Condition')
         population = models.Population.objects.create(name='Testing Population')
-        risk_score = models.RiskScore.objects.create(
-            condition=condition, population=population, value=0.10, user=self.test_user)
         activity = models.Activity.objects.create(
             study_task_identifier=settings.PHENOTYPE_SURVEY_ID, name='Test Activity')
+        post_activity = models.Activity.objects.create(
+            study_task_identifier=settings.POST_CAD_RESULTS_SURVEY_ID, name='Test POST Activity')
+        risk_score = models.RiskScore.objects.create(
+            condition=condition, population=population, value=0.10, user=self.test_user)
         answers = {
             settings.SEX_QUESTION_IDENTIFIER: 'male',
             settings.RACIAL_QUESTION_IDENTIFIER: 'white',

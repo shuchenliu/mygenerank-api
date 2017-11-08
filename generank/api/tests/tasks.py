@@ -58,6 +58,12 @@ class TasksTestCase(TestCase):
             created_on=(timezone.now() - timedelta(weeks=10))
         )
 
+        # Delete the auto-created statuses so we can test them.
+        queryset = models.ActivityStatus.objects.filter(
+            user=self.test_user, activity=self.post_results_activity
+        ).delete()
+
+
     def test_send_followup_survey_to_users(self):
         queryset = models.ActivityStatus.objects.filter(
             user=self.test_user, activity=self.followup_activity
@@ -70,7 +76,6 @@ class TasksTestCase(TestCase):
             user=self.test_user, activity=self.followup_activity
         )
         self.assertTrue(queryset.exists())
-
 
     def test_send_post_cad_survey_to_users(self):
         queryset = models.ActivityStatus.objects.filter(
