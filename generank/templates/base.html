@@ -43,6 +43,7 @@
 
     {% endblock %}
     </div>
+    {% block footer %}
     <footer class="site-footer {% block sticky %}fixed-bottom{% endblock %}">
       <div class="bottom">
         <div class="container">
@@ -93,6 +94,7 @@
         </div>
       </div>
     </footer>
+    {% endblock %}
     <a class="scrolltop" href="#"><span class="fa fa-angle-up"></span></a>
     <script src="{% static 'lib/jquery/jquery.min.js'%}"></script>
     <script src="{% static 'lib/superfish/hoverIntent.js'%}"></script>
