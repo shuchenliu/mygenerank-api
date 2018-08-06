@@ -1,6 +1,6 @@
 # MyGeneRank API
 
-*A research study by the Scripps Translational Science Institute*
+*A research study by the Scripps Research Translational Institute*
 
 [Visit our site and get started with the study.](https://mygenerank.scripps.edu)
 
@@ -9,7 +9,7 @@
 
 ## Introduction
 
-This repository contains the Django-REST API and wrapper for the computation layer of MyGeneRank, a study run by the Scripps Translational Science Institute.
+This repository contains the Django-REST API and wrapper for the computation layer of MyGeneRank, a study run by the Scripps Research Translational Institute.
 
 
 ## About the Study
