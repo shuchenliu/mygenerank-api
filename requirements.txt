@@ -40,7 +40,7 @@ paramiko==1.16.0
 pbr==1.10.0
 praw==4.5.1
 prawcore==0.10.1
-psycopg2==2.6.1
+psycopg2==2.7.1
 pycrypto==2.6.1
 pyparsing==2.1.10
 python-dateutil==2.5.3
